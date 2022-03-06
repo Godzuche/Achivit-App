@@ -1,5 +1,6 @@
 <resources>
-    <color name="md_theme_light_primary">#5D53A8</color> 1834d8
+    <color name="md_theme_light_primary">#5D53A8</color>
+    1834d8
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_primaryContainer">#E5DEFF</color>
     <color name="md_theme_light_onPrimaryContainer">#170262</color>
