@@ -20,7 +20,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
-        style="@style/Widget.Material3.BottomNavigationView"
+        style="@style/Widget.Material3.BottomNavigationView.ActiveIndicator"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"

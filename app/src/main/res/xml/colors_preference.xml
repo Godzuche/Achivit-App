@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Status">
+
+        <ListPreference
+            android:defaultValue="Grey"
+            android:entries="@array/entries_status_colors"
+            android:key="key_todo"
+            android:title="Todo"
+            app:entryValues="@array/entries_status_colors"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/entries_status_colors"
+            android:key="key_in_progress"
+            android:title="In Progress"
+            app:entryValues="@array/entries_status_colors"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/entries_status_colors"
+            android:key="key_late"
+            android:title="Late"
+            app:entryValues="@array/entries_status_colors"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/entries_status_colors"
+            android:key="key_done"
+            android:title="Done"
+            app:entryValues="@array/entries_status_colors"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:enabled="false"
+        android:title="Priority (Coming soon...)">
+
+        <ListPreference
+            android:key="key_low"
+            android:title="Low"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="key_medium"
+            android:title="Medium"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="key_high"
+            android:title="High"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:enabled="false"
+        android:title="Time (Coming soon...)">
+
+        <ListPreference
+            android:key="key_my_day"
+            android:title="My Day"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="key_my_week"
+            android:title="My Week"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="key_my_month"
+            android:title="My Month"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

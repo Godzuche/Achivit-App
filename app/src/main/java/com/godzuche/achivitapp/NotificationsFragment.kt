@@ -7,7 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 
-class ProfileFragment : Fragment() {
+class NotificationsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +20,9 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        return inflater.inflate(R.layout.fragment_notifications, container, false)
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -37,7 +38,7 @@ class ProfileFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                findNavController().navigate(ProfileFragmentDirections.actionActionProfileToAccountPrefFragment())
+                findNavController().navigate(NotificationsFragmentDirections.actionActionNotificationsToActionNotificationsSettings())
                 true
             }
             else -> super.onOptionsItemSelected(item)

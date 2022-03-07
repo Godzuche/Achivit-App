@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="entries_email_filter">
+        <item>"Todo"</item>
+        <item>"In Progress"</item>
+        <item>"Done"</item>
+        <item>"My Day"</item>
+    </string-array>
+
+    <!--colors array-->
+    <string-array name="entries_status_colors">
+        <item>"Not set"</item>
+        <item><font color='#696969'>"Grey"</font></item>
+        <item><font color='#FFA500'>"Orange"</font></item>
+        <item><font color='#FF0000'>"Red"</font></item>
+        <item><font color='#00FF00'>"Green"</font></item>
+    </string-array>
+</resources>

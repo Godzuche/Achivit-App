@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="key_notification_badge"
+        android:summary="Displays a badge on the notification icon with the number of unread notifications"
+        android:title="Notification count badge" />
+
+    <PreferenceCategory android:title="Push Notifications">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="key_notify_device"
+            android:title="Notify on this device" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="key_notify_device"
+            android:key="key_vibrate"
+            android:title="Vibrate" />
+
+        <MultiSelectListPreference
+            android:dependency="key_notify_device"
+            android:dialogMessage="Select the notifications you'd like to get."
+            android:dialogTitle="Categories"
+            android:entries="@array/entries_email_filter"
+            android:key="key_filter_push_notifications"
+            android:title="Filter push notifications"
+            app:entryValues="@array/entries_email_filter" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Email Notifications">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="key_receive_emails"
+            android:title="Get email notifications"
+            app:defaultValue="false" />
+
+        <MultiSelectListPreference
+            android:dependency="key_receive_emails"
+            android:entries="@array/entries_email_filter"
+            android:entryValues="@array/entries_email_filter"
+            android:key="key_filter"
+            android:title="Filter email notifications" />
+
+    </PreferenceCategory>
+
+    <Preference
+        android:selectable="false"
+        android:summary="You can change default notifications by going to the individual collection, for example 'In Progress'"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

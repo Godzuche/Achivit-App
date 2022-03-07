@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        android:icon="@drawable/ic_baseline_person_24"
+        android:key="key_your_account"
+        android:summary="See and change information about your account."
+        android:title="Your Account" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_notifications_24"
+        android:key="key_notifications"
+        android:title="Notifications" />
+
+    <PreferenceCategory android:title="Display">
+
+        <SwitchPreferenceCompat
+            android:icon="@drawable/device_theme"
+            android:key="key_dark_mode"
+            android:summary="Turn on/off dark mode."
+            android:title="Dark mode"
+            app:defaultValue="false" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_color_lens_24"
+            android:key="key_colors"
+            android:summary="Customize the colors associated with the different categories and collections."
+            android:title="Colors" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
