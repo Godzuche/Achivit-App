@@ -10,6 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (isDarkMode) AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
 
-        setSupportActionBar(binding.appBarMain.toolbarMain)
+        setSupportActionBar(binding.toolbarMain)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -54,13 +55,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             fallbackOnNavigateUpListener = ::onSupportNavigateUp
         )
 
-        binding.appBarMain.collapsingToolbarMain.setupWithNavController(
-            binding.appBarMain.toolbarMain, navController, appBarConfiguration
+        binding.collapsingToolbarMain.setupWithNavController(
+            binding.toolbarMain, navController, appBarConfiguration
         )
 
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-
+        setupActionBarWithNavController(navController, appBarConfiguration)
         binding.bottomNavView.setupWithNavController(navController)
+        // Notification badge
+        val badge = binding.bottomNavView.getOrCreateBadge(R.id.action_notifications)
+        // Icon only
+        badge.isVisible = true
+        // notification count
+        badge.number = 100
+        // digit count
+        badge.maxCharacterCount = 3
+
         /*binding.bottomNavView.setOnItemSelectedListener {
             when (it.itemId) {
 

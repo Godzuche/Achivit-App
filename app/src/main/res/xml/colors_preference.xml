@@ -37,7 +37,7 @@
 
     <PreferenceCategory
         android:enabled="false"
-        android:title="Priority (Coming soon...)">
+        android:title="Priority \ncoming soon...">
 
         <ListPreference
             android:key="key_low"
@@ -58,7 +58,7 @@
 
     <PreferenceCategory
         android:enabled="false"
-        android:title="Time (Coming soon...)">
+        android:title="Time \ncoming soon...">
 
         <ListPreference
             android:key="key_my_day"

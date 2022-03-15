@@ -26,13 +26,20 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.VISIBLE
         activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.VISIBLE
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_top_app_bar, menu)
+        inflater.inflate(R.menu.menu_home, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

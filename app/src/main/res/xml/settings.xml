@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_baseline_person_24"
         android:key="key_your_account"
         android:summary="See and change information about your account."
-        android:title="Your Account" />
+        android:title="Your account" />
 
     <Preference
         android:icon="@drawable/ic_baseline_notifications_24"

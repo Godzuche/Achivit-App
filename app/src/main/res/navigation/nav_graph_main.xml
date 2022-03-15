@@ -65,7 +65,7 @@
     <fragment
         android:id="@+id/accountPrefFragment"
         android:name="com.godzuche.achivitapp.AccountPrefFragment"
-        android:label="Your Account"
+        android:label="Your account"
         tools:layout="@xml/account_preferences" />
 
 </navigation>

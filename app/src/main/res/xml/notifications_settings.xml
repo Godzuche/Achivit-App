@@ -5,7 +5,7 @@
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="key_notification_badge"
-        android:summary="Displays a badge on the notification icon with the number of unread notifications"
+        android:summary="Displays a badge on the notification icon with the number of unread notifications."
         android:title="Notification count badge" />
 
     <PreferenceCategory android:title="Push Notifications">
@@ -51,7 +51,7 @@
 
     <Preference
         android:selectable="false"
-        android:summary="You can change default notifications by going to the individual collection, for example 'In Progress'"
+        android:summary="You can change default notifications by going to the individual collection, for example 'In Progress'."
         app:iconSpaceReserved="false" />
 
 </PreferenceScreen>
