@@ -23,13 +23,12 @@
 
         <MultiSelectListPreference
             android:dependency="key_notify_device"
-            android:dialogMessage="Select the notifications you'd like to get."
-            android:dialogTitle="Categories"
             android:entries="@array/entries_email_filter"
             android:key="key_filter_push_notifications"
             android:title="Filter push notifications"
             app:entryValues="@array/entries_email_filter" />
-
+        <!--android:dialogMessage="Select the notifications you'd like to get."
+                    android:dialogTitle="Categories"-->
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Email Notifications">
