@@ -65,10 +65,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val badge = binding.bottomNavView.getOrCreateBadge(R.id.action_notifications)
         // Icon only
         badge.isVisible = true
-        // notification count
-        badge.number = 100
         // digit count
         badge.maxCharacterCount = 3
+
+        val isShowCountBadge = sharedPref.getBoolean("key_notification_badge", true)
+        // notification count
+        if (isShowCountBadge) badge.number = 100
+        else badge.clearNumber()
 
         /*binding.bottomNavView.setOnItemSelectedListener {
             when (it.itemId) {
@@ -108,6 +111,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
                 } else {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+                }
+            }
+            "key_notification_badge" -> {
+                val badgeDrawable =
+                    binding.bottomNavView.getBadge(R.id.action_notifications)
+//                 Resets any badge number so that a numberless badge will be displayed.
+                val newValue = p0?.getBoolean(p1, true)
+                if (newValue == false) {
+                    badgeDrawable?.clearNumber()
+                } else {
+                    badgeDrawable?.number = 100
                 }
             }
         }
