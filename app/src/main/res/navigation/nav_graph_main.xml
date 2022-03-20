@@ -31,11 +31,7 @@
         android:id="@+id/action_profile"
         android:name="com.godzuche.achivitapp.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_action_profile_to_accountPrefFragment"
-            app:destination="@id/accountPrefFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_profile"/>
 
     <fragment
         android:id="@+id/action_notifications_settings"
@@ -53,11 +49,7 @@
         android:id="@+id/action_notifications"
         android:name="com.godzuche.achivitapp.NotificationsFragment"
         android:label="Notifications"
-        tools:layout="@layout/fragment_notifications">
-        <action
-            android:id="@+id/action_action_notifications_to_action_notifications_settings"
-            app:destination="@id/action_notifications_settings" />
-    </fragment>
+        tools:layout="@layout/fragment_notifications"/>
 
     <action
         android:id="@+id/action_global_action_settings"
@@ -67,5 +59,18 @@
         android:name="com.godzuche.achivitapp.AccountPrefFragment"
         android:label="Your account"
         tools:layout="@xml/account_preferences" />
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.godzuche.achivitapp.TaskFragment"
+        tools:layout="@layout/fragment_task" />
+    <action
+        android:id="@+id/action_global_taskFragment"
+        app:destination="@id/taskFragment" />
+    <action
+        android:id="@+id/action_global_action_notifications_settings"
+        app:destination="@id/action_notifications_settings" />
+    <action
+        android:id="@+id/action_global_accountPrefFragment"
+        app:destination="@id/accountPrefFragment" />
 
 </navigation>

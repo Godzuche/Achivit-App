@@ -38,7 +38,7 @@ class NotificationsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                findNavController().navigate(NotificationsFragmentDirections.actionActionNotificationsToActionNotificationsSettings())
+                findNavController().navigate(NotificationsFragmentDirections.actionGlobalActionNotificationsSettings())
                 true
             }
             else -> super.onOptionsItemSelected(item)

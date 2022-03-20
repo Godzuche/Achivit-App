@@ -84,6 +84,49 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // I would refresh the layout here
         }
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.action_home -> {
+                    binding.fabAdd.show()
+
+                    binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                        // Scrolling down
+                        if (scrollY > oldScrollY + 12 && binding.fabAdd.isExtended) binding.fabAdd.shrink()
+                        // Scrolling up
+                        if (scrollY < oldScrollY - 12 && !binding.fabAdd.isExtended) binding.fabAdd.extend()
+                        // Scrolled to top
+                        if (scrollY == 0) binding.fabAdd.extend()
+                    }
+
+                }
+                R.id.taskFragment -> {
+                    if (!binding.fabAdd.isShown) {
+                        binding.fabAdd.show()
+                    }
+
+                    binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+
+                        if (scrollY == oldScrollY || scrollY == 0) {
+                            binding.fabAdd.shrink()
+
+                        } else {
+                            binding.fabAdd.apply {
+                                if (this.isExtended) {
+                                    shrink()
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+                else -> {
+                    binding.fabAdd.hide()
+                }
+            }
+        }
+
     }
 
     override fun onResume() {

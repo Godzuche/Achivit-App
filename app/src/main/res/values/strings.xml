@@ -111,5 +111,9 @@
     <string name="you_can_view_create_customize_and_edit_tasks">You can view, create, customize, and edit tasks</string>
     <string name="you_can_view_and_edit_profile_details">You can view, and edit profile details</string>
     <string name="search">Search</string>
+    <string name="create">Create</string>
+    <string name="create_new_task">Create new task or reminder</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="delete">Delete</string>
 
 </resources>
