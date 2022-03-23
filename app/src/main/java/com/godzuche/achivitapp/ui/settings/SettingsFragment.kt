@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.ui.settings
 
 import android.os.Bundle
 import android.view.View
@@ -6,6 +6,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.godzuche.achivitapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 

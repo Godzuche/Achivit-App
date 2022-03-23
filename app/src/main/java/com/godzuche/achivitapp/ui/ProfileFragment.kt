@@ -1,9 +1,10 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.ui
 
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.godzuche.achivitapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 

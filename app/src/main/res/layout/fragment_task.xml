@@ -5,43 +5,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".TaskFragment">
+    tools:context=".ui.TaskFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_task_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
         android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Read a book" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_task_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_baseline_description_24"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        tools:text="An Android Dev related book"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/tv_task_title"
+        app:layout_constraintStart_toStartOf="@id/tv_task_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_title" />
+
+
+    <ImageView
+        android:id="@+id/imv_ic_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Time icon"
+        app:checkedIconVisible="false"
+        app:layout_constraintBottom_toBottomOf="@id/chip_time"
+        app:layout_constraintStart_toStartOf="@id/tv_task_description"
+        app:layout_constraintTop_toTopOf="@id/chip_time"
+        app:srcCompat="@drawable/ic_baseline_access_time_24" />
+
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_time"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:checkable="false"
+        android:clickable="false"
+        android:text="Tue, 6 Jul, 15:00"
+        app:checkedIconVisible="false"
+        app:layout_constraintStart_toEndOf="@id/imv_ic_time"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_description" />
 
     <!--    desc-->
     <!--    Priority-->
     <!--    time/schedule-->
     <!--    add subtask-->
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Edit Task"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1" />
+    <!--    <com.google.android.material.button.MaterialButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Edit Task"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="1" />-->
 
-<!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="50dp"-->
-<!--        android:text="@string/edit_task"-->
-<!--        app:fabSize="auto"-->
-<!--        app:icon="@drawable/ic_baseline_edit_24"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+    <!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="50dp"-->
+    <!--        android:text="@string/edit_task"-->
+    <!--        app:fabSize="auto"-->
+    <!--        app:icon="@drawable/ic_baseline_edit_24"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,9 @@
 <resources>
 
     <style name="Theme.App" parent="Theme.Material3.Light.NoActionBar">
+
+        <item name="bottomSheetDialogTheme">@style/ModalBottomSheetDialog</item>
+
         <item name="fontFamily">@font/poppins</item>
         <item name="android:fontFamily">@font/poppins</item>
 
@@ -33,4 +36,25 @@
                 <item name="colorShadow">@color/md_theme_light_shadow</item>-->
         <item name="colorPrimaryInverse">@color/md_theme_light_primaryInverse</item>
     </style>
+
+
+    <style name="ModalBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="behavior_saveFlags">all</item>
+        <item name="paddingBottomSystemWindowInsets">true</item>
+        <item name="paddingLeftSystemWindowInsets">true</item>
+        <item name="paddingRightSystemWindowInsets">true</item>
+        <item name="paddingTopSystemWindowInsets">true</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="ModalBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+
 </resources>

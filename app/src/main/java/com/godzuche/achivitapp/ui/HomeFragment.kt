@@ -1,18 +1,36 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.TaskApplication
 import com.godzuche.achivitapp.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val modalBottomSheet = ModalBottomSheet()
+
+    private val viewModel: TaskViewModel by activityViewModels {
+        TaskViewModelFactory(
+            (activity?.application as TaskApplication)
+                .database.taskDao()
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +59,15 @@ class HomeFragment : Fragment() {
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.icon =
             ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_add_24, activity?.theme)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.bottomSheetTaskId.emit(-1)
+            Log.d("Home Fragment", "emitted bottomSheet id = -1")
+        }
     }
 
     override fun onResume() {
         super.onResume()
-
 
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.apply {
@@ -56,7 +78,16 @@ class HomeFragment : Fragment() {
 
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
-                findNavController().navigate(HomeFragmentDirections.actionGlobalTaskFragment())
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.bottomSheetAction.emit("Add Task")
+                }
+
+                activity?.supportFragmentManager?.let { fm ->
+                    modalBottomSheet.show(fm,
+                        ModalBottomSheet.TAG)
+
+                }
             }
 
     }
@@ -80,9 +111,20 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.cvTask.setOnClickListener {
-
+        val adapter = TaskListAdapter {
+            val action = HomeFragmentDirections.actionGlobalTaskFragment(it.id)
+            findNavController().navigate(action)
         }
+        binding.recyclerViewTasksList.adapter = adapter
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.allTask.collectLatest {
+                    adapter.submitList(it)
+                }
+            }
+        }
+
     }
 
 

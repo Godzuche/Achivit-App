@@ -1,22 +1,24 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.ui.settings
 
 import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
+import com.godzuche.achivitapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 
-class ColorPrefFragment : PreferenceFragmentCompat() {
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.colors_preference, rootKey)
-    }
+class AccountPrefFragment : PreferenceFragmentCompat() {
 
     override fun onStart() {
         super.onStart()
+
         activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
         activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.GONE
     }
 
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.account_preferences, rootKey)
+
+    }
 }

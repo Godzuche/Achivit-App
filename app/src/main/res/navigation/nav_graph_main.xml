@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/action_home"
-        android:name="com.godzuche.achivitapp.HomeFragment"
+        android:name="com.godzuche.achivitapp.ui.HomeFragment"
         android:label="Tasks"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/action_settings"
-        android:name="com.godzuche.achivitapp.SettingsFragment"
+        android:name="com.godzuche.achivitapp.ui.settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@xml/settings">
         <action
@@ -29,40 +29,45 @@
 
     <fragment
         android:id="@+id/action_profile"
-        android:name="com.godzuche.achivitapp.ProfileFragment"
+        android:name="com.godzuche.achivitapp.ui.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/action_notifications_settings"
-        android:name="com.godzuche.achivitapp.NotificationsPrefFragment"
+        android:name="com.godzuche.achivitapp.ui.settings.NotificationsPrefFragment"
         android:label="Notifications"
         tools:layout="@xml/notifications_settings" />
 
     <fragment
         android:id="@+id/action_colors_settings"
-        android:name="com.godzuche.achivitapp.ColorPrefFragment"
+        android:name="com.godzuche.achivitapp.ui.settings.ColorPrefFragment"
         android:label="Colors"
         tools:layout="@xml/colors_preference" />
 
     <fragment
         android:id="@+id/action_notifications"
-        android:name="com.godzuche.achivitapp.NotificationsFragment"
+        android:name="com.godzuche.achivitapp.ui.NotificationsFragment"
         android:label="Notifications"
-        tools:layout="@layout/fragment_notifications"/>
+        tools:layout="@layout/fragment_notifications" />
 
     <action
         android:id="@+id/action_global_action_settings"
         app:destination="@id/action_settings" />
     <fragment
         android:id="@+id/accountPrefFragment"
-        android:name="com.godzuche.achivitapp.AccountPrefFragment"
+        android:name="com.godzuche.achivitapp.ui.settings.AccountPrefFragment"
         android:label="Your account"
         tools:layout="@xml/account_preferences" />
     <fragment
         android:id="@+id/taskFragment"
-        android:name="com.godzuche.achivitapp.TaskFragment"
-        tools:layout="@layout/fragment_task" />
+        android:name="com.godzuche.achivitapp.ui.TaskFragment"
+        android:label=""
+        tools:layout="@layout/fragment_task" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
     <action
         android:id="@+id/action_global_taskFragment"
         app:destination="@id/taskFragment" />
