@@ -63,7 +63,7 @@
         android:id="@+id/taskFragment"
         android:name="com.godzuche.achivitapp.ui.TaskFragment"
         android:label=""
-        tools:layout="@layout/fragment_task" >
+        tools:layout="@layout/fragment_task">
         <argument
             android:name="id"
             app:argType="integer" />

@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -47,10 +46,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btSave.setOnClickListener {
-            addNewTask()
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.collectLatest {
@@ -66,25 +61,38 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     private fun bind(taskId: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.bottomSheetAction.collect {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.bottomSheetAction.collectLatest {
                     binding.tvHeader.text = it
                 }
             }
         }
 
-        Log.d("BottomSheet Fragment", "collected bottomSheet id = $taskId")
         if (taskId != -1) {
+            binding.btSave.setOnClickListener {
+                updateTask()
+            }
             var task: Task? = null
             viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.retrieveTask(taskId).collectLatest {
                         task = it
                         binding.apply {
                             etTitle.setText(task?.title)
                             etDescription.setText(task?.description)
+                            btSave.text = "Update"
                         }
                     }
+                }
+            }
+
+        } else if (taskId == -1) {
+            (binding.ilCategory.editText as MaterialAutoCompleteTextView)
+                .setText("My Tasks", false)
+            binding.btSave.apply {
+                text = "Save"
+                setOnClickListener {
+                    addNewTask()
                 }
             }
         }
@@ -94,6 +102,26 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         return viewModel.isEntryValid(
             binding.etTitle.text.toString()
         )
+    }
+
+    private fun updateTask() {
+        if (isEntryValid()) {
+            taskId?.let {
+                viewModel.updateTask(
+                    it,
+                    binding.etTitle.text.toString(),
+                    binding.etDescription.text.toString()
+                )
+            }
+
+            val bottomSheetBehavior =
+                (dialog as BottomSheetDialog).behavior
+
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            resetInputs()
+
+        }
     }
 
     private fun addNewTask() {
@@ -125,12 +153,13 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.list_item_category,
-            resources.getStringArray(R.array.drop_down_categories)
+//            resources.getStringArray(R.array.drop_down_categories)
+            listOf("My Tasks", "School", "Work")
         )
-
 
         (binding.ilCategory.editText as? AutoCompleteTextView)
             ?.setAdapter(adapter)
+
     }
 
     override fun onDestroy() {

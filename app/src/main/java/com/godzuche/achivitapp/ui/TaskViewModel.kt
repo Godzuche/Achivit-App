@@ -62,6 +62,25 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
         insertTask(task)
     }
 
+    fun updateTask(taskId: Int, taskTitle: String, taskDescription: String) {
+        val updatedTask = getUpdatedTaskEntry(taskId, taskTitle, taskDescription)
+        updateTask(updatedTask)
+    }
+
+    private fun getUpdatedTaskEntry(taskId: Int, taskTitle: String, taskDescription: String): Task {
+        return Task(
+            id = taskId,
+            title = taskTitle,
+            description = taskDescription
+        )
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            taskDao.update(task)
+        }
+    }
+
 }
 
 class TaskViewModelFactory(private val taskDao: TaskDao) : ViewModelProvider.Factory {

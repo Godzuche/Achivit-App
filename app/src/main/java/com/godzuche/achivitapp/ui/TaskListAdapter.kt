@@ -34,8 +34,19 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
 
         init {
             itemView.setOnClickListener {
-                currentItem?.let { task -> onItemClicked(task) }
+                binding.root.apply {
+                    if (this.isChecked) {
+                        this.isChecked = false
+                    } else {
+                        currentItem?.let { task -> onItemClicked(task) }
+                    }
+                }
             }
+
+            /*binding.root.setOnLongClickListener {
+                binding.root.isChecked = !binding.root.isChecked
+                true
+            }*/
         }
 
         fun bind(task: Task) {

@@ -58,4 +58,7 @@
     <color name="md_theme_dark_primaryInverse">#5D53A8</color>
     <color name="seed">#1F145C</color>
     <color name="error">#BA1B1B</color>
+
+    <!--custom-->
+    <color name="rv_drag_action_background">@color/md_theme_light_background</color>
 </resources>

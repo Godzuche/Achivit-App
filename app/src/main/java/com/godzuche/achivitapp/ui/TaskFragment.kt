@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -16,6 +15,7 @@ import com.godzuche.achivitapp.TaskApplication
 import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -68,6 +68,18 @@ class TaskFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.bottomSheetAction.emit("Edit Task")
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.bottomSheetTaskId.emit(navigationArgs.id)
+            }
+        }
+
     }
 
     private fun bind(task: Task) {
@@ -81,6 +93,7 @@ class TaskFragment : Fragment() {
         super.onStart()
 
         activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
+        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE
         activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.GONE
 
@@ -88,10 +101,7 @@ class TaskFragment : Fragment() {
             ?.icon =
             ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_edit_24, activity?.theme)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.bottomSheetTaskId.emit(navigationArgs.id)
-            Log.d("Task Fragment", "emitted bottomSheet id = ${navigationArgs.id}")
-        }
+
     }
 
 /*    override fun onStop() {
@@ -106,10 +116,6 @@ class TaskFragment : Fragment() {
 
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.bottomSheetAction.emit("Edit Task")
-                }
 
                 activity?.supportFragmentManager?.let { fm ->
                     modalBottomSheet.show(fm,
@@ -134,7 +140,7 @@ class TaskFragment : Fragment() {
         return if (item.itemId == R.id.action_delete_task) {
             showConfirmationDialog()
             true
-        } else return super.onOptionsItemSelected(item)
+        } else super.onOptionsItemSelected(item)
     }
 
     private fun showConfirmationDialog() {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:paddingBottom="8dp">
@@ -44,12 +44,12 @@
             android:layout_marginTop="8dp"
             android:clickable="true"
             android:focusable="true"
-            tools:text="Task"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_draggable" />
+            app:layout_constraintTop_toBottomOf="@id/view_draggable"
+            tools:text="Task" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -113,6 +113,36 @@
                 android:inputType="textMultiLine" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_pick_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:contentPadding="8dp"
+            app:layout_constraintEnd_toEndOf="@id/il_description"
+            app:layout_constraintStart_toStartOf="@id/il_description"
+            app:layout_constraintTop_toBottomOf="@id/il_description">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ic_pick_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_access_time_24" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_set_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Set time" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_save"

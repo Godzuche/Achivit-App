@@ -79,10 +79,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }*/
 
-        binding.bottomNavView.setOnItemReselectedListener {
+/*        binding.bottomNavView.setOnItemReselectedListener {
             it.isEnabled = true
             // I would refresh the layout here
-        }
+        }*/
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {

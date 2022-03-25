@@ -4,8 +4,24 @@
 
         <item name="bottomSheetDialogTheme">@style/ModalBottomSheetDialog</item>
 
-        <item name="fontFamily">@font/poppins</item>
-        <item name="android:fontFamily">@font/poppins</item>
+
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.App.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.App.BodySmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.App.BodyLarge</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.App.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.App.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.App.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.App.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.App.TitleSmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.App.BodySmall</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.App.BodySmall</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.App.BodySmall</item>
+
+        <!--<item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>-->
 
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
@@ -56,5 +72,20 @@
         <item name="cornerSize">24dp</item>
     </style>
 
+
+    <!--    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Input">
+            <item name="chipIconTint">@color/</item>
+            <item name="chipBackgroundColor">@color/white</item>
+            <item name="chipStrokeWidth">2dp</item>
+            <item name="chipStrokeColor">@color/stroke_tint</item>
+            <item name="checkedIconVisible">false</item>
+            <item name="shapeAppearanceOverlay">@null</item>
+        </style>-->
+
+
+    <!-- <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+         <item name="cornerFamily">cut</item>
+         <item name="cornerSize">4dp</item>
+     </style>-->
 
 </resources>

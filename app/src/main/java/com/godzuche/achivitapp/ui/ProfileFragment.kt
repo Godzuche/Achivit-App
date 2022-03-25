@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 class ProfileFragment : Fragment() {
@@ -27,6 +28,7 @@ class ProfileFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
+        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE
         activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.VISIBLE
     }
