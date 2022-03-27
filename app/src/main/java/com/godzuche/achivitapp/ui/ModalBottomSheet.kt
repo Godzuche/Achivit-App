@@ -1,6 +1,10 @@
 package com.godzuche.achivitapp.ui
 
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +18,6 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.TaskApplication
 import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.flow.collectLatest
@@ -39,6 +41,9 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+
+        Log.d("ModalBottomSheetDialog Fragment: ", "onCreateView")
+
         _binding = ModalBottomSheetContentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,6 +61,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
+
+        Log.d("ModalBottomSheetDialog Fragment: ", "onViewCreated")
 
     }
 
@@ -114,10 +121,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                 )
             }
 
-            val bottomSheetBehavior =
-                (dialog as BottomSheetDialog).behavior
-
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            dismiss()
 
             resetInputs()
 
@@ -126,14 +130,14 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     private fun addNewTask() {
         if (isEntryValid()) {
-            viewModel.addNewTask(
-                binding.etTitle.text.toString(),
-                binding.etDescription.text.toString()
-            )
-            val bottomSheetBehavior =
-                (dialog as BottomSheetDialog).behavior
+            lifecycleScope.launch {
+                viewModel.addNewTask(
+                    binding.etTitle.text.toString(),
+                    binding.etDescription.text.toString()
+                )
+            }
 
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            dismiss()
 
             resetInputs()
 
@@ -150,6 +154,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     override fun onResume() {
         super.onResume()
 
+        Log.d("ModalBottomSheetDialog Fragment: ", "onResume")
+
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.list_item_category,
@@ -164,6 +170,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("ModalBottomSheetDialog Fragment: ", "onDestroy")
         _binding = null
     }
 

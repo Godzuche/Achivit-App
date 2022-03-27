@@ -2,7 +2,6 @@ package com.godzuche.achivitapp.ui
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -31,10 +30,10 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var dragHelper: ItemTouchHelper
     private lateinit var swipeHelper: ItemTouchHelper
 
     private val modalBottomSheet = ModalBottomSheet()
+    private val filterBottomSheet = FilterBottomSheetDialog()
 
     private val viewModel: TaskViewModel by activityViewModels {
         TaskViewModelFactory(
@@ -86,12 +85,15 @@ class HomeFragment : Fragment() {
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
 
-                activity?.supportFragmentManager?.let { fm ->
-                    modalBottomSheet.show(fm,
-                        ModalBottomSheet.TAG)
+                if (!modalBottomSheet.isAdded) {
+                    activity?.supportFragmentManager?.let { fm ->
+                        modalBottomSheet.show(fm,
+                            ModalBottomSheet.TAG)
 
+                    }
                 }
             }
+
 
     }
 
@@ -151,9 +153,9 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.allTask.collectLatest {
                     adapter.submitList(it)
-                    for (i in it) {
+                    /*for (i in it) {
                         Log.d("Home Fragment", "task ids = ${i.id}")
-                    }
+                    }*/
                 }
             }
         }
@@ -183,10 +185,6 @@ class HomeFragment : Fragment() {
         ))
         swipeHelper.attachToRecyclerView(recyclerViewTaskList)
 
-      /*  // Drag helper
-        dragHelper = ItemTouchHelper(DragHelper(adapter, viewModel))
-        dragHelper.attachToRecyclerView(recyclerViewTaskList)*/
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -197,6 +195,16 @@ class HomeFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 findNavController().navigate(R.id.action_global_action_settings)
+                true
+            }
+            R.id.action_filter -> {
+                if (!filterBottomSheet.isAdded) {
+                    activity?.supportFragmentManager?.let { fragmentManager ->
+                        filterBottomSheet.show(
+                            fragmentManager, FilterBottomSheetDialog.TAG
+                        )
+                    }
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

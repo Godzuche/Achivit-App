@@ -117,10 +117,15 @@ class TaskFragment : Fragment() {
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
 
-                activity?.supportFragmentManager?.let { fm ->
-                    modalBottomSheet.show(fm,
-                        ModalBottomSheet.TAG)
+                if (!modalBottomSheet.isAdded) {
+
+                    activity?.supportFragmentManager?.let { fm ->
+                        modalBottomSheet.show(fm,
+                            ModalBottomSheet.TAG + "_task_fragment")
+                    }
+
                 }
+
             }
 
     }
@@ -145,11 +150,11 @@ class TaskFragment : Fragment() {
 
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Attention")
-            .setMessage("Are you sure you want to delete?")
+            .setTitle("Delete task")
+            .setMessage("Are you sure you want to delete this task?")
             .setCancelable(false)
-            .setNegativeButton("No") { _, _ -> }
-            .setPositiveButton("Yes") { _, _ ->
+            .setNegativeButton("Cancel") { _, _ -> }
+            .setPositiveButton("Delete") { _, _ ->
                 deleteTask()
             }
             .show()

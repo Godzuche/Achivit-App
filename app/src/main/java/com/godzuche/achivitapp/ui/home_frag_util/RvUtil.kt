@@ -62,7 +62,8 @@ class SwipeHelper(
         super.onSelectedChanged(viewHolder, actionState)
         if (actionState == ACTION_STATE_DRAG) {
             viewHolder?.itemView?.apply {
-                scaleY = 1.1F
+                scaleY = 1.05F
+                scaleX = 1.05F
                 alpha = 0.8F
             }
         }
@@ -72,6 +73,7 @@ class SwipeHelper(
         super.clearView(recyclerView, viewHolder)
         viewHolder.itemView.apply {
             scaleY = 1.0F
+            scaleX = 1.0F
             alpha = 1.0F
 
             if (task1 != null) {
@@ -80,7 +82,7 @@ class SwipeHelper(
         }
     }
 
-    override fun onMoved(
+/*    override fun onMoved(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         fromPos: Int,
@@ -90,7 +92,7 @@ class SwipeHelper(
         y: Int,
     ) {
         super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-    }
+    }*/
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         position = viewHolder.bindingAdapterPosition
