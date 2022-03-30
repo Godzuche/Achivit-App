@@ -12,6 +12,7 @@
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/device_theme.xml" value="0.1485" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/device_theme__1_.xml" value="0.1485" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.152" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_archive_24.xml" value="0.1515" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_check_box_24.xml" value="0.1" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_library_add_check_24.xml" value="0.1035" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_nights_stay_24.xml" value="0.1485" />
@@ -31,7 +32,7 @@
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_item_list_dialog.xml" value="0.15818725951261223" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_item_list_dialog_item.xml" value="0.15818725951261223" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_notifications.xml" value="0.15818725951261223" />
-        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_profile.xml" value="0.1621376811594203" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_task.xml" value="0.25" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/item_task_list.xml" value="0.25" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/list_item_category.xml" value="0.22" />

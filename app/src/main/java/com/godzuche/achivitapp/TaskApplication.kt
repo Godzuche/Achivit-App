@@ -1,10 +1,7 @@
 package com.godzuche.achivitapp
 
 import android.app.Application
-import com.godzuche.achivitapp.data.TaskRoomDatabase
+import dagger.hilt.android.HiltAndroidApp
 
-class TaskApplication : Application() {
-    val database by lazy {
-        TaskRoomDatabase.getDatabase(this)
-    }
-}
+@HiltAndroidApp
+class TaskApplication : Application()

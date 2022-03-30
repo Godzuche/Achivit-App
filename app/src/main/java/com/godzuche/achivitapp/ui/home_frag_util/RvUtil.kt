@@ -2,36 +2,42 @@ package com.godzuche.achivitapp.ui.home_frag_util
 
 import android.graphics.Canvas
 import android.graphics.Rect
-import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG
 import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
-import com.godzuche.achivitapp.data.model.Task
-import com.godzuche.achivitapp.ui.TaskViewModel
+import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
 lateinit var task: Task
 
-class SwipeHelper(
+class SwipeDragHelper(
     private val colors: RvColors,
     private val icons: Icons,
     private val measurements: Measurements,
     private val viewUtil: ViewUtil,
     private val viewModel: TaskViewModel,
-    private val lifecycleScope: LifecycleCoroutineScope,
+    private val lifecycleOwner: LifecycleOwner,
 ) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+    ItemTouchHelper.START or ItemTouchHelper.END
 ) {
     private var task2: Task? = null
     private var task1: Task? = null
-    private var position: Int = -1
+    private var position: Int = NO_POSITION
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -46,12 +52,8 @@ class SwipeHelper(
         val fromTask = viewUtil.adapter.currentList[initialPosition]
         val toTask = viewUtil.adapter.currentList[targetPosition]
 
-//        swap(fromTask, toTask)
         task1 = fromTask
         task2 = toTask
-
-        /*      viewModel.updateTask(fromTask.copy(id = toTask.id))
-              viewModel.updateTask(toTask.copy(id = task1.id))*/
 
         viewUtil.adapter.notifyItemMoved(initialPosition, targetPosition)
 
@@ -59,18 +61,23 @@ class SwipeHelper(
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-        super.onSelectedChanged(viewHolder, actionState)
         if (actionState == ACTION_STATE_DRAG) {
             viewHolder?.itemView?.apply {
                 scaleY = 1.05F
                 scaleX = 1.05F
                 alpha = 0.8F
             }
+        } else {
+            viewHolder?.itemView?.apply {
+                scaleY = 1.0F
+                scaleX = 1.0F
+                alpha = 1.0F
+            }
         }
+        super.onSelectedChanged(viewHolder, actionState)
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        super.clearView(recyclerView, viewHolder)
         viewHolder.itemView.apply {
             scaleY = 1.0F
             scaleX = 1.0F
@@ -80,29 +87,18 @@ class SwipeHelper(
                 swap(task1!!, task2!!)
             }
         }
+        super.clearView(recyclerView, viewHolder)
     }
-
-/*    override fun onMoved(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        fromPos: Int,
-        target: RecyclerView.ViewHolder,
-        toPos: Int,
-        x: Int,
-        y: Int,
-    ) {
-        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-    }*/
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         position = viewHolder.bindingAdapterPosition
         task = viewUtil.adapter.currentList[position]
 
-        if (direction == ItemTouchHelper.LEFT) {
+        if (direction == ItemTouchHelper.START) {
             // Show confirmation dialog to delete task from db
             showConfirmationDialog(position)
 
-        } else {
+        } else if (direction == ItemTouchHelper.END) {
             Snackbar.make(
                 viewUtil.requiredView,
                 "Snoozed",
@@ -116,8 +112,8 @@ class SwipeHelper(
 
     private fun showConfirmationDialog(position: Int) {
         MaterialAlertDialogBuilder(viewUtil.context)
-            .setTitle("Attention")
-            .setMessage("Are you sure you want to delete?")
+            .setTitle("Delete Task")
+            .setMessage("Are you sure you want to delete this task?")
             .setCancelable(false)
             .setNegativeButton("No") { _, _ ->
                 viewUtil.adapter.notifyItemChanged(position)
@@ -130,24 +126,30 @@ class SwipeHelper(
     }
 
     private fun deleteTask() {
-        viewModel.deleteTask(task)
-        Snackbar.make(
-            viewUtil.requiredView,
-            "Task Deleted!",
-            Snackbar.LENGTH_LONG)
-            .setAction("Undo") {
-                undoDelete()
-            }
-            .setAnchorView(
-                viewUtil.anchorView
-            )
-            .show()
-    }
+        viewModel.accept(TasksUiEvent.OnDeleteTask(task))
 
-    private fun undoDelete() {
-        lifecycleScope.launch {
-            viewModel.undoDelete(task)
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is UiEvent.ShowSnackBar -> {
+                            val snackBar =
+                                Snackbar.make(viewUtil.requiredView,
+                                    event.message,
+                                    Snackbar.LENGTH_LONG)
+                                    .setAnchorView(viewUtil.anchorView)
+
+                            if (event.action == "Undo") {
+                                snackBar.setAction(event.action) {
+                                    viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
+                                }.show()
+                            }
+                        }
+                    }
+                }
+            }
         }
+
     }
 
     override fun onChildDraw(
@@ -159,7 +161,7 @@ class SwipeHelper(
         actionState: Int,
         isCurrentlyActive: Boolean,
     ) {
-        // Background color based on swipe direction
+
         when {
             dX < (measurements.width / 3) && dX > 0 -> c.drawColor(colors.snoozeColorDark)
             dX > (measurements.width / 3) && dX > 0 -> c.drawColor(colors.snoozeColor)
@@ -171,7 +173,6 @@ class SwipeHelper(
                 null))
         }
 
-        //2. Printing the icons
         /*val textMargin = resources.getDimension(R.dimen.text_margin)
             .roundToInt()*/
         val textMargin = viewUtil.resources.getDimension(R.dimen.text_margin)
@@ -196,8 +197,11 @@ class SwipeHelper(
             )
         }
 
-        //3. Drawing icon based upon direction swiped
-        if (dX > 0) icons.snoozeIcon?.draw(c) else icons.deleteIcon?.draw(c)
+        if (dX > 0) {
+            icons.snoozeIcon?.draw(c)
+        } else if (dX < 0) {
+            icons.deleteIcon?.draw(c)
+        }
 
         super.onChildDraw(c,
             recyclerView,
@@ -208,9 +212,15 @@ class SwipeHelper(
             isCurrentlyActive)
     }
 
+
     private fun swap(fromTask: Task, toTask: Task) {
-        viewModel.updateTask(fromTask.copy(id = toTask.id))
-        viewModel.updateTask(toTask.copy(id = fromTask.id))
+        viewModel.reorderTasks(fromTask, toTask)
+    }
+
+    companion object {
+        const val NO_SWIPE = 0
+        const val NO_DRAG = 0
+        const val NO_POSITION = -1
     }
 
 }

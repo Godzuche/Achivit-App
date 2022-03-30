@@ -52,8 +52,9 @@
     </style>
 
 
-    <style name="ModalBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+    <style name="ModalBottomSheet" parent="Widget.Material3.BottomSheet.Modal">
         <item name="behavior_saveFlags">all</item>
+        <item name="behavior_fitToContents">true</item>
         <item name="paddingBottomSystemWindowInsets">true</item>
         <item name="paddingLeftSystemWindowInsets">true</item>
         <item name="paddingRightSystemWindowInsets">true</item>
@@ -61,11 +62,11 @@
         <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
 
-    <style name="ModalBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="ModalBottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
     </style>
 
-    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">24dp</item>
     </style>

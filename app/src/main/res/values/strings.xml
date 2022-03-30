@@ -115,5 +115,7 @@
     <string name="create_new_task">Create new task or reminder</string>
     <string name="edit_task">Edit Task</string>
     <string name="delete">Delete</string>
+    <string name="date_time">%1$s, %2$02d:%3$02d</string>
+    <string name="search_task">Search task...</string>
 
 </resources>

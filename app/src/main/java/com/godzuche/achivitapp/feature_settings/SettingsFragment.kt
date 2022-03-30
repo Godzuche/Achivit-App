@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui.settings
+package com.godzuche.achivitapp.feature_settings
 
 import android.os.Bundle
 import android.view.View
@@ -23,21 +23,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        // Notifications pref
         findPreference<Preference>("key_notifications")
             ?.setOnPreferenceClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToActionNotificationsSettings())
                 true
             }
 
-        // Colors pref
         findPreference<Preference>("key_colors")
             ?.setOnPreferenceClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToActionColorsSettings())
                 true
             }
 
-        // Your account pref
         findPreference<Preference>("key_your_account")
             ?.setOnPreferenceClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToAccountPrefFragment())

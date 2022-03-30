@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui.settings
+package com.godzuche.achivitapp.feature_settings
 
 import android.os.Bundle
 import android.view.View

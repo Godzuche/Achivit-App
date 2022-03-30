@@ -11,27 +11,25 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.TaskApplication
-import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
+import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TaskFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TaskViewModel by activityViewModels {
-        TaskViewModelFactory(
-            (activity?.application as TaskApplication).database.taskDao()
-        )
-    }
+    private val viewModel: TaskViewModel by activityViewModels()
 
     private val navigationArgs: TaskFragmentArgs by navArgs()
 
@@ -77,6 +75,12 @@ class TaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.emit(navigationArgs.id)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.uiEvent.
             }
         }
 

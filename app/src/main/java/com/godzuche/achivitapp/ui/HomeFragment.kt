@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.ui
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,35 +13,40 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.TaskApplication
 import com.godzuche.achivitapp.core.util.dp
-import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.FragmentHomeBinding
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
+import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
+import com.godzuche.achivitapp.feature_task.presentation.util.onQueryTextChange
 import com.godzuche.achivitapp.ui.home_frag_util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var adapter: TaskListAdapter
-    private lateinit var task: Task
+    private lateinit var task: TaskEntity
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var swipeHelper: ItemTouchHelper
+    private lateinit var touchHelper: ItemTouchHelper
 
     private val modalBottomSheet = ModalBottomSheet()
     private val filterBottomSheet = FilterBottomSheetDialog()
 
-    private val viewModel: TaskViewModel by activityViewModels {
-        TaskViewModelFactory(
-            (activity?.application as TaskApplication)
-                .database.taskDao()
-        )
-    }
+    private val viewModel: TaskViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,9 +138,13 @@ class HomeFragment : Fragment() {
         val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
 
         val deleteIcon =
-            ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_delete_24, null)
+            ResourcesCompat.getDrawable(resources,
+                R.drawable.ic_baseline_delete_24,
+                null)
         val snoozeIcon =
-            ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_access_time_24, null)
+            ResourcesCompat.getDrawable(resources,
+                R.drawable.ic_baseline_access_time_24,
+                null)
 
         val recyclerViewTaskList = binding.recyclerViewTasksList
 
@@ -144,18 +154,41 @@ class HomeFragment : Fragment() {
         val snoozeColorDark = resources.getColor(android.R.color.holo_orange_dark, null)
 
         adapter = TaskListAdapter {
-            val action = HomeFragmentDirections.actionGlobalTaskFragment(it.id)
+            val action = HomeFragmentDirections.actionGlobalTaskFragment(it.id!!)
             findNavController().navigate(action)
         }
         binding.recyclerViewTasksList.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allTask.collectLatest {
-                    adapter.submitList(it)
-                    /*for (i in it) {
-                        Log.d("Home Fragment", "task ids = ${i.id}")
-                    }*/
+                viewModel.uiState
+                    .map { it.tasksItems }
+                    .collectLatest { tasks ->
+                        adapter.submitList(tasks)
+                    }
+            }
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.uiEvent.collect { event ->
+                        when (event) {
+                            is UiEvent.ShowSnackBar -> {
+                                val snackBar = Snackbar.make(requireView(),
+                                    event.message,
+                                    Snackbar.LENGTH_LONG)
+                                    .setAnchorView(activity?.findViewById(R.id.fab_add))
+
+                                if (event.action == "Undo") {
+                                    snackBar.setAction(event.action) {
+                                        viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
+                                    }.show()
+                                }
+                            }
+                            is UiEvent.Navigate -> {
+                                //
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -171,8 +204,7 @@ class HomeFragment : Fragment() {
             //
         }
 
-        // Define swipe helper here
-        swipeHelper = ItemTouchHelper(SwipeHelper(
+        touchHelper = ItemTouchHelper(SwipeDragHelper(
             RvColors(deleteColor, deleteColorDark, snoozeColor, snoozeColorDark),
             Icons(deleteIcon, snoozeIcon),
             Measurements(height, width),
@@ -181,14 +213,29 @@ class HomeFragment : Fragment() {
                 activity?.findViewById(R.id.fab_add),
                 requireContext(),
                 resources),
-            viewModel, lifecycleScope
+            viewModel, viewLifecycleOwner
         ))
-        swipeHelper.attachToRecyclerView(recyclerViewTaskList)
+
+        touchHelper.attachToRecyclerView(recyclerViewTaskList)
 
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.apply {
+            queryHint = getString(R.string.search_task)
+            onQueryTextChange(binding,
+                { queryText -> viewModel.accept(TasksUiEvent.Search(queryText)) },
+                { queryText -> viewModel.accept(TasksUiEvent.OnSearch(queryText)) }
+            )
+            setOnCloseListener {
+                viewModel.onSearchClosed()
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

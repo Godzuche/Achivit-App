@@ -1,9 +1,7 @@
 package com.godzuche.achivitapp.ui
 
-import android.app.Dialog
-import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
+import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,23 +13,33 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.TaskApplication
-import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
+import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
+@AndroidEntryPoint
 class ModalBottomSheet : BottomSheetDialogFragment() {
+    private var dateSelection: Long = 0L
+    private var formattedDateString = ""
+
+    var mHour = 0
+    var mMinute = 0
 
     private var taskId: Int? = null
-    private val viewModel: TaskViewModel by activityViewModels {
-        TaskViewModelFactory(
-            (activity?.application as TaskApplication)
-                .database.taskDao()
-        )
-    }
+    private val viewModel: TaskViewModel by activityViewModels()
 
     private var _binding: ModalBottomSheetContentBinding? = null
     private val binding get() = _binding!!
@@ -50,6 +58,126 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val isSystem24Hour = is24HourFormat(requireContext())
+        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        val timePicker = MaterialTimePicker.Builder()
+//            .setTimeFormat(clockFormat)
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour((Calendar.getInstance()[Calendar.HOUR]))
+            .setMinute(Calendar.getInstance()[Calendar.MINUTE])
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .setTitleText("Select time")
+            .build()
+
+        // Makes only dates from today forward selectable.
+        val constraintsBuilder =
+            CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now())
+
+        val materialDatePicker = MaterialDatePicker.Builder.datePicker()
+
+        val datePicker = materialDatePicker
+            .setTitleText("Select date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+//                .setCalendarConstraints(constraintsBuilder.build())
+            .build()
+
+        timePicker.apply {
+            addOnCancelListener {
+                //
+            }
+            isCancelable = false
+            addOnNegativeButtonClickListener {
+                activity?.supportFragmentManager?.let { it1 ->
+                    datePicker.show(it1,
+                        "date_picker_tag")
+                }
+            }
+
+            addOnPositiveButtonClickListener {
+                binding.chipGroupTime.removeAllViews()
+                mMinute = this.minute
+
+                mHour = when {
+                    hour == 12 -> hour
+                    hour == 24 -> 24
+                    else -> hour
+                }
+
+                val chip = Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
+                chip.apply {
+                    text = getString(R.string.date_time, formattedDateString,
+                        (hour),
+                        minute)
+                    isCloseIconVisible = true
+                    this.setOnCloseIconClickListener {
+                        binding.chipGroupTime.removeView(this)
+                    }
+                    this.setOnClickListener {
+                        activity?.supportFragmentManager?.let { it1 ->
+                            materialDatePicker.setSelection(dateSelection)
+                                .setTitleText("Select date")
+                                .build()
+                                .show(
+                                    it1,
+                                    "date_picker_tag"
+                                )
+                        }
+                    }
+                }
+
+                chip.setOnContextClickListener {
+                    activity?.supportFragmentManager?.let { it1 ->
+                        materialDatePicker.setSelection(dateSelection)
+                            .setTitleText("Select date")
+                            .build()
+                            .show(
+                                it1,
+                                "date_picker_tag"
+                            )
+                    }
+                    true
+                }
+
+                binding.chipGroupTime.addView(chip)
+
+            }
+        }
+
+        datePicker.apply {
+            addOnPositiveButtonClickListener {
+                // Save the date
+                //E - day name, MMM - month in 3 letters, d for day....Tue Dec 10
+                val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
+                // Calender instance
+                val calender = Calendar.getInstance()
+                dateSelection = this.selection!!
+                formattedDateString = formatter.format(this.selection)
+                // then open time picker
+                activity?.supportFragmentManager?.let { it1 ->
+                    timePicker.show(it1,
+                        "time_picker_tag")
+                }
+            }
+            this.isCancelable = false
+            addOnDismissListener {
+                //
+            }
+            addOnNegativeButtonClickListener {
+                //
+            }
+            addOnCancelListener {
+                //
+            }
+
+        }
+
+        binding.btPickTime.setOnClickListener {
+
+            activity?.supportFragmentManager?.let { it1 -> datePicker.show(it1, "date_picker_tag") }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -130,12 +258,10 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     private fun addNewTask() {
         if (isEntryValid()) {
-            lifecycleScope.launch {
-                viewModel.addNewTask(
-                    binding.etTitle.text.toString(),
-                    binding.etDescription.text.toString()
-                )
-            }
+            viewModel.addNewTask(
+                binding.etTitle.text.toString(),
+                binding.etDescription.text.toString()
+            )
 
             dismiss()
 

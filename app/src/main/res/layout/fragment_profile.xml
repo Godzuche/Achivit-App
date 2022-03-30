@@ -9,13 +9,13 @@
 
     <ImageView
         android:id="@+id/imv_user_profile_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:contentDescription="Profile photo"
         app:layout_constraintBottom_toBottomOf="@id/tv_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_welcome"
-        app:srcCompat="@drawable/avatar__9_" />
+        tools:src="@drawable/avatar__9_" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_welcome"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="God'swill Jonathan"
-        android:textSize="22sp"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         app:layout_constraintBottom_toTopOf="@id/tv_name"
         app:layout_constraintStart_toEndOf="@id/imv_user_profile_icon"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="godzuche@gmail.com"
-        android:textSize="15sp"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
         app:layout_constraintStart_toStartOf="@id/tv_welcome"
         app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
 

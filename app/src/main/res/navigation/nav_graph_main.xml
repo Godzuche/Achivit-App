@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/action_settings"
-        android:name="com.godzuche.achivitapp.ui.settings.SettingsFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@xml/settings">
         <action
@@ -35,13 +35,13 @@
 
     <fragment
         android:id="@+id/action_notifications_settings"
-        android:name="com.godzuche.achivitapp.ui.settings.NotificationsPrefFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.NotificationsPrefFragment"
         android:label="Notifications"
         tools:layout="@xml/notifications_settings" />
 
     <fragment
         android:id="@+id/action_colors_settings"
-        android:name="com.godzuche.achivitapp.ui.settings.ColorPrefFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.ColorPrefFragment"
         android:label="Colors"
         tools:layout="@xml/colors_preference" />
 
@@ -56,7 +56,7 @@
         app:destination="@id/action_settings" />
     <fragment
         android:id="@+id/accountPrefFragment"
-        android:name="com.godzuche.achivitapp.ui.settings.AccountPrefFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.AccountPrefFragment"
         android:label="Your account"
         tools:layout="@xml/account_preferences" />
     <fragment

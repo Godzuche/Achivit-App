@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.godzuche.achivitapp.data.model.Task
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
+import com.godzuche.achivitapp.feature_task.domain.model.Task
 
 class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
     ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
@@ -58,6 +58,7 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
 
     companion object {
         private val TASK_COMPARATOR = object : DiffUtil.ItemCallback<Task>() {
+
             override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
                 return oldItem.id == newItem.id
             }

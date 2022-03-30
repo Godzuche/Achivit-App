@@ -14,17 +14,6 @@
         android:layout_height="match_parent"
         android:paddingTop="8dp">
 
-        <!--      <ImageView
-                  android:id="@+id/bt_collapse"
-                  android:layout_width="32dp"
-                  android:layout_height="32dp"
-                  android:clickable="true"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toTopOf="@id/tv_header"
-                  app:layout_constraintBottom_toBottomOf="@id/tv_header"
-                  app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
-                  android:focusable="true" />-->
-
         <View
             android:id="@+id/view_draggable"
             android:layout_width="36dp"
@@ -114,35 +103,25 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_pick_time"
-            android:layout_width="0dp"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bt_pick_time"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:contentPadding="8dp"
-            app:layout_constraintEnd_toEndOf="@id/il_description"
+            android:layout_marginTop="16dp"
+            android:text="Set time"
+            app:icon="@drawable/ic_baseline_date_range_24"
             app:layout_constraintStart_toStartOf="@id/il_description"
-            app:layout_constraintTop_toBottomOf="@id/il_description">
+            app:layout_constraintTop_toBottomOf="@id/il_description" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/ic_pick_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_access_time_24" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_set_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Set time" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/bt_pick_time"
+            app:layout_constraintStart_toEndOf="@id/bt_pick_time"
+            app:layout_constraintTop_toTopOf="@id/bt_pick_time" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_save"
@@ -153,7 +132,7 @@
             android:text="Save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/il_description"
-            app:layout_constraintTop_toBottomOf="@id/il_description"
+            app:layout_constraintTop_toBottomOf="@id/chip_group_time"
             app:layout_constraintVertical_bias="1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
