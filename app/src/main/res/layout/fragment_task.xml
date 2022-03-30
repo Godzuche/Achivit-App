@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.TaskFragment">
+    tools:context=".feature_task.presentation.ui_elements.TaskFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_task_title"

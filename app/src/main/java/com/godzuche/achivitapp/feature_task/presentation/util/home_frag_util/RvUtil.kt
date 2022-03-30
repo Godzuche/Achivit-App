@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui.home_frag_util
+package com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util
 
 import android.graphics.Canvas
 import android.graphics.Rect

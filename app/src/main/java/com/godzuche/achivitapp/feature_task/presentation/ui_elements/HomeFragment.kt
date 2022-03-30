@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui
+package com.godzuche.achivitapp.feature_task.presentation.ui_elements
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -19,8 +19,8 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
+import com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util.*
 import com.godzuche.achivitapp.feature_task.presentation.util.onQueryTextChange
-import com.godzuche.achivitapp.ui.home_frag_util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup

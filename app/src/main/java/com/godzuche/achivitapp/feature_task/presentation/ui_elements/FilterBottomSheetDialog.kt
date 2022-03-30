@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui
+package com.godzuche.achivitapp.feature_task.presentation.ui_elements
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,11 +18,6 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
     ): View? {
         _binding = FilterModalBottomSheetContentBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onDestroy() {

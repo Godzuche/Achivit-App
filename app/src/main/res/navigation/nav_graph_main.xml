@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/action_home"
-        android:name="com.godzuche.achivitapp.ui.HomeFragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.HomeFragment"
         android:label="Tasks"
         tools:layout="@layout/fragment_home" />
 
@@ -61,7 +61,7 @@
         tools:layout="@xml/account_preferences" />
     <fragment
         android:id="@+id/taskFragment"
-        android:name="com.godzuche.achivitapp.ui.TaskFragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.TaskFragment"
         android:label=""
         tools:layout="@layout/fragment_task">
         <argument
