@@ -52,6 +52,7 @@
             tools:text="An Android Dev related book \n Also cook a meal..." />
 
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_time_date"
             style="@style/Widget.Material3.Chip.Assist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,6 +60,30 @@
             android:text="Tomorrow 15:00"
             app:layout_constraintStart_toStartOf="@id/tv_task_description"
             app:layout_constraintTop_toBottomOf="@id/tv_task_description" />
+
+        <ImageView
+            android:id="@+id/imv_ic_repeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Repeat icon"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/chip_time_date"
+            app:layout_constraintStart_toEndOf="@id/chip_time_date"
+            app:layout_constraintTop_toTopOf="@id/chip_time_date"
+            app:srcCompat="@drawable/ic_baseline_repeat_24" />
+
+        <ImageView
+            android:id="@+id/imv_ic_snooze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Snooze icon"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imv_ic_repeat"
+            app:layout_constraintStart_toEndOf="@id/imv_ic_repeat"
+            app:layout_constraintTop_toTopOf="@id/imv_ic_repeat"
+            app:srcCompat="@drawable/ic_baseline_snooze_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

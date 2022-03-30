@@ -13,7 +13,9 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -21,9 +23,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class TaskFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
@@ -62,6 +66,32 @@ class TaskFragment : Fragment() {
                 viewModel.retrieveTask(id).collect { clickedTask ->
                     task = clickedTask
                     bind(task)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is UiEvent.PopBackStack -> {
+                            findNavController().popBackStack()
+                        }
+                        is UiEvent.ShowSnackBar -> {
+                            val snackBar =
+                                Snackbar.make(requireView(),
+                                    event.message,
+                                    Snackbar.LENGTH_LONG)
+                                    .setAnchorView(activity?.findViewById(R.id.fab_add))
+
+                            if (event.action == "Undo") {
+                                snackBar.setAction(event.action) {
+                                    viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
+                                }.show()
+                            }
+                        }
+                        else -> Unit
+                    }
                 }
             }
         }
@@ -108,13 +138,6 @@ class TaskFragment : Fragment() {
 
     }
 
-/*    override fun onStop() {
-        super.onStop()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.bottomSheetTaskId.emit(-1)
-        }
-    }*/
-
     override fun onResume() {
         super.onResume()
 
@@ -158,33 +181,13 @@ class TaskFragment : Fragment() {
             .setMessage("Are you sure you want to delete this task?")
             .setCancelable(false)
             .setNegativeButton("Cancel") { _, _ -> }
-            .setPositiveButton("Delete") { _, _ ->
-                deleteTask()
-            }
+            .setPositiveButton("Delete") { _, _ -> deleteTask() }
             .show()
-
     }
 
     private fun deleteTask() {
-        findNavController().popBackStack()
-        viewModel.deleteTask(task)
-        Snackbar.make(
-            requireView(),
-            "Task Deleted!",
-            Snackbar.LENGTH_LONG)
-            .setAction("Undo") {
-                undoDelete()
-            }
-            .setAnchorView(
-                activity?.findViewById(R.id.fab_add)
-            )
-            .show()
+        viewModel.accept(TasksUiEvent.OnDeleteTask(task = task, shouldPopBackStack = true))
     }
 
-    private fun undoDelete() {
-        lifecycleScope.launch {
-            viewModel.undoDelete(task)
-        }
-    }
 
 }

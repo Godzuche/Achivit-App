@@ -1,6 +1,5 @@
 package com.godzuche.achivitapp.feature_task.presentation.state_holder
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,6 +11,7 @@ import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.Routes
+import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,7 +49,7 @@ class TaskViewModel @Inject constructor(
     val accept: (TasksUiEvent) -> Unit
 
     private var searchJob: Job? = null
-    fun onSearch(query: String) {
+    private fun onSearch(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
@@ -64,7 +64,7 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun search(query: String) {
+    private fun search(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
@@ -79,11 +79,6 @@ class TaskViewModel @Inject constructor(
     }
 
     init {
-        /*viewModelScope.launch {
-            taskDao.getAllTasks().collect {
-                _allTasks.emit(it)
-            }
-        }*/
         viewModelScope.launch {
             repositoryImpl.getAllTask().collect { resource ->
                 _uiState.update {
@@ -107,10 +102,12 @@ class TaskViewModel @Inject constructor(
                     viewModelScope.launch {
                         deletedTask = action.task
                         repositoryImpl.deleteTask(action.task)
-                        Log.d("ViewModel", "deleted id = ${deletedTask?.id}")
+                        if (action.shouldPopBackStack) {
+                            sendUiEvent(UiEvent.PopBackStack)
+                        }
                         sendUiEvent(UiEvent.ShowSnackBar(
                             "Task deleted!",
-                            "Undo"
+                            SnackBarActions.UNDO
                         ))
                     }
                 }

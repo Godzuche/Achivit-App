@@ -143,7 +143,7 @@ class HomeFragment : Fragment() {
                 null)
         val snoozeIcon =
             ResourcesCompat.getDrawable(resources,
-                R.drawable.ic_baseline_access_time_24,
+                R.drawable.ic_baseline_snooze_24,
                 null)
 
         val recyclerViewTaskList = binding.recyclerViewTasksList
@@ -187,6 +187,7 @@ class HomeFragment : Fragment() {
                             is UiEvent.Navigate -> {
                                 //
                             }
+                            else -> Unit
                         }
                     }
                 }

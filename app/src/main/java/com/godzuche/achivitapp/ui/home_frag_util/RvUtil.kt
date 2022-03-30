@@ -17,6 +17,7 @@ import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewMo
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -24,6 +25,7 @@ import kotlin.math.roundToInt
 
 lateinit var task: Task
 
+@ExperimentalCoroutinesApi
 class SwipeDragHelper(
     private val colors: RvColors,
     private val icons: Icons,
@@ -96,9 +98,16 @@ class SwipeDragHelper(
 
         if (direction == ItemTouchHelper.START) {
             // Show confirmation dialog to delete task from db
-            showConfirmationDialog(position)
+            showDeleteConfirmationDialog(position)
 
         } else if (direction == ItemTouchHelper.END) {
+            /*val snoozeIcon = viewHolder.itemView.findViewById<ImageView>(R.id.imv_ic_snooze)
+            if (!snoozeIcon.isVisible) {
+                snoozeIcon.visibility =
+                    View.VISIBLE
+            }else {
+                snoozeIcon.visibility = View.GONE
+            }*/
             Snackbar.make(
                 viewUtil.requiredView,
                 "Snoozed",
@@ -110,7 +119,7 @@ class SwipeDragHelper(
         }
     }
 
-    private fun showConfirmationDialog(position: Int) {
+    private fun showDeleteConfirmationDialog(position: Int) {
         MaterialAlertDialogBuilder(viewUtil.context)
             .setTitle("Delete Task")
             .setMessage("Are you sure you want to delete this task?")
@@ -145,6 +154,7 @@ class SwipeDragHelper(
                                 }.show()
                             }
                         }
+                        else -> Unit
                     }
                 }
             }
@@ -218,8 +228,8 @@ class SwipeDragHelper(
     }
 
     companion object {
-        const val NO_SWIPE = 0
-        const val NO_DRAG = 0
+        /*        const val NO_SWIPE = 0
+                const val NO_DRAG = 0*/
         const val NO_POSITION = -1
     }
 
