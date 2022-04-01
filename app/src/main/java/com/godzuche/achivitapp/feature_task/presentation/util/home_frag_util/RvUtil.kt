@@ -2,6 +2,7 @@ package com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +14,7 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -31,7 +32,7 @@ class SwipeDragHelper(
     private val icons: Icons,
     private val measurements: Measurements,
     private val viewUtil: ViewUtil,
-    private val viewModel: TaskViewModel,
+    private val viewModel: TasksViewModel,
     private val lifecycleOwner: LifecycleOwner,
 ) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -51,18 +52,42 @@ class SwipeDragHelper(
         val initialPosition = viewHolder.bindingAdapterPosition
         val targetPosition = target.bindingAdapterPosition
 
+
         val fromTask = viewUtil.adapter.currentList[initialPosition]
         val toTask = viewUtil.adapter.currentList[targetPosition]
 
         task1 = fromTask
         task2 = toTask
+        Log.d("OnMove", "fromPos = $task1 : toPos = $task2")
+
+        /*  if (task1 != null) {
+              swap(task1!!, task2!!)
+          }*/
 
         viewUtil.adapter.notifyItemMoved(initialPosition, targetPosition)
 
         return true
     }
 
+    override fun onMoved(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        fromPos: Int,
+        target: RecyclerView.ViewHolder,
+        toPos: Int,
+        x: Int,
+        y: Int,
+    ) {
+        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
+
+        val fromTask = viewUtil.adapter.currentList[fromPos]
+        val toTask = viewUtil.adapter.currentList[toPos]
+        Log.d("OnMoved", "fromPos = $fromTask : toPos = $toTask")
+
+    }
+
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
         if (actionState == ACTION_STATE_DRAG) {
             viewHolder?.itemView?.apply {
                 scaleY = 1.05F
@@ -76,20 +101,16 @@ class SwipeDragHelper(
                 alpha = 1.0F
             }
         }
-        super.onSelectedChanged(viewHolder, actionState)
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
         viewHolder.itemView.apply {
             scaleY = 1.0F
             scaleX = 1.0F
             alpha = 1.0F
 
-            if (task1 != null) {
-                swap(task1!!, task2!!)
-            }
         }
-        super.clearView(recyclerView, viewHolder)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -97,7 +118,6 @@ class SwipeDragHelper(
         task = viewUtil.adapter.currentList[position]
 
         if (direction == ItemTouchHelper.START) {
-            // Show confirmation dialog to delete task from db
             showDeleteConfirmationDialog(position)
 
         } else if (direction == ItemTouchHelper.END) {

@@ -117,5 +117,8 @@
     <string name="delete">Delete</string>
     <string name="date_time">%1$s, %2$02d:%3$02d %4$s</string>
     <string name="search_task">Search task…</string>
+    <string name="date_time_icon">Date/Time icon</string>
+    <string name="update">Update</string>
+    <string name="save">Save</string>
 
 </resources>

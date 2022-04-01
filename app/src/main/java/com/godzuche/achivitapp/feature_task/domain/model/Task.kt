@@ -7,16 +7,18 @@ data class Task(
     val title: String,
     val description: String,
     val completed: Boolean = false,
-/*    val date: Long,
-    val time: Long*/
+    val date: Long,
+    val hours: Int,
+    val minutes: Int,
 ) {
     fun toNewTaskEntity(): TaskEntity {
         return TaskEntity(
             title = title,
             description = description,
-            completed = completed
-/*            date = date,
-            time = time*/
+            completed = completed,
+            date = date,
+            hours = hours,
+            minutes = minutes
         )
     }
 
@@ -25,9 +27,10 @@ data class Task(
             id = id!!,
             title = title,
             description = description,
-            completed = completed
-/*            date = date,
-            time = time*/
+            completed = completed,
+            date = date,
+            hours = hours,
+            minutes = minutes
         )
     }
 }

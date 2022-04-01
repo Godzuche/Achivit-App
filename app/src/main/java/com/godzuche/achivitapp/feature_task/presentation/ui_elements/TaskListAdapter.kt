@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
     ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
@@ -30,6 +33,7 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
     inner class TaskViewHolder(private val binding: ItemTaskListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private lateinit var timeSuffix: String
         var currentItem: Task? = null
 
         init {
@@ -52,6 +56,29 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
         fun bind(task: Task) {
             binding.tvTaskTitle.text = task.title
             binding.tvTaskDescription.text = task.description
+
+            val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
+            val dateSelection = task.date
+            val formattedDateString = formatter.format(dateSelection)
+            val mHour = when {
+                task.hours == 12 -> {
+                    timeSuffix = "PM"
+                    task.hours
+                }
+                task.hours > 12 -> {
+                    timeSuffix = "PM"
+                    task.hours - 12
+                }
+                else -> {
+                    timeSuffix = "AM"
+                    task.hours
+                }
+            }
+
+            binding.chipTimeDate.text = itemView.resources.getString(
+                R.string.date_time, formattedDateString, mHour,
+                task.minutes,
+                timeSuffix)
         }
 
     }

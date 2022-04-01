@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.databinding.FragmentHomeBinding
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
+import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util.*
 import com.godzuche.achivitapp.feature_task.presentation.util.onQueryTextChange
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var adapter: TaskListAdapter
-    private lateinit var task: TaskEntity
+    private lateinit var task: Task
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     private val modalBottomSheet = ModalBottomSheet()
     private val filterBottomSheet = FilterBottomSheetDialog()
 
-    private val viewModel: TaskViewModel by activityViewModels()
+    private val viewModel: TasksViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,6 +156,8 @@ class HomeFragment : Fragment() {
         adapter = TaskListAdapter {
             val action = HomeFragmentDirections.actionGlobalTaskFragment(it.id!!)
             findNavController().navigate(action)
+//            task = it
+//            viewModel.accept(TasksUiEvent.OnTaskClick(it))
         }
         binding.recyclerViewTasksList.adapter = adapter
 

@@ -57,9 +57,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Tomorrow 15:00"
             app:layout_constraintStart_toStartOf="@id/tv_task_description"
-            app:layout_constraintTop_toBottomOf="@id/tv_task_description" />
+            app:layout_constraintTop_toBottomOf="@id/tv_task_description"
+            tools:text="Tomorrow 15:00" />
 
         <ImageView
             android:id="@+id/imv_ic_repeat"

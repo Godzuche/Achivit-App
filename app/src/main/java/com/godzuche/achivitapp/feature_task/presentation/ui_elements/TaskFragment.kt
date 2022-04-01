@@ -14,8 +14,9 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TaskViewModel
+import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupDateTimePicker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -26,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -33,7 +36,7 @@ class TaskFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TaskViewModel by activityViewModels()
+    private val viewModel: TasksViewModel by activityViewModels()
 
     private val navigationArgs: TaskFragmentArgs by navArgs()
 
@@ -66,6 +69,7 @@ class TaskFragment : Fragment() {
                 viewModel.retrieveTask(id).collect { clickedTask ->
                     task = clickedTask
                     bind(task)
+                    setupDateTimePicker(task, binding, viewModel)
                 }
             }
         }
@@ -117,9 +121,40 @@ class TaskFragment : Fragment() {
     }
 
     private fun bind(task: Task) {
+        var timeSuffix: String
+
         binding.apply {
             tvTaskTitle.text = task.title
             tvTaskDescription.text = task.description
+
+            val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
+            // Calender instance
+//            val calender = Calendar.getInstance()
+            val dateSelection = task.date
+            val formattedDateString = formatter.format(dateSelection)
+            val mHour = when {
+                task.hours == 12 -> {
+                    timeSuffix = "PM"
+                    task.hours
+                }
+                task.hours > 12 -> {
+                    timeSuffix = "PM"
+                    task.hours - 12
+                }
+                else -> {
+                    timeSuffix = "AM"
+                    task.hours
+                }
+            }
+
+            binding.chipTime.apply {
+                text = getString(
+                    R.string.date_time, formattedDateString, mHour,
+                    task.minutes,
+                    timeSuffix)
+
+                visibility = View.VISIBLE
+            }
         }
     }
 

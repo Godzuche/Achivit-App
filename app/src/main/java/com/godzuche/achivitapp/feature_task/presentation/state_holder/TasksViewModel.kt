@@ -1,10 +1,8 @@
 package com.godzuche.achivitapp.feature_task.presentation.state_holder
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.util.Resource
-import com.godzuche.achivitapp.feature_task.data.TaskRepositoryImpl
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
@@ -24,7 +22,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TaskViewModel @Inject constructor(
+class TasksViewModel @Inject constructor(
     private val getTask: GetTask,
 //    private val getAllTasks: GetAllTasks,
 //    private val searchTasksByTitle: SearchTasksByTitle,
@@ -79,6 +77,9 @@ class TaskViewModel @Inject constructor(
     }
 
     init {
+        var noScrollPosition: Int = 0
+        var lastScrollPosition: Int = 0
+
         viewModelScope.launch {
             repositoryImpl.getAllTask().collect { resource ->
                 _uiState.update {
@@ -94,6 +95,11 @@ class TaskViewModel @Inject constructor(
                 }
                 is TasksUiEvent.OnSearch -> {
                     onSearch(action.query)
+                }
+                is TasksUiEvent.OnScroll -> {
+                    viewModelScope.launch {
+                        lastScrollPosition = action.currentScrollPosition
+                    }
                 }
                 is TasksUiEvent.OnAddTaskClick -> {
                     sendUiEvent(UiEvent.Navigate(Routes.ADD_TASK))
@@ -128,13 +134,15 @@ class TaskViewModel @Inject constructor(
                     }
                 }
                 is TasksUiEvent.OnTaskClick -> {
-                    sendUiEvent(UiEvent.Navigate(Routes.EDIT_TASK + "?taskId=${action.task.id}"))
+                    sendUiEvent(UiEvent.Navigate(Routes.EDIT_TASK))
                 }
                 else -> Unit
             }
         }
 
     }
+
+//    val TasksUiState.shouldScrollToTop: Boolean get() =
 
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
@@ -148,22 +156,37 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun addNewTask(taskTitle: String, taskDescription: String) {
-        val newTask = getNewTaskEntry(taskTitle, taskDescription)
+    fun addNewTask(
+        taskTitle: String,
+        taskDescription: String,
+        dateSelection: Long,
+        sHour: Int,
+        mMinute: Int,
+    ) {
+        val newTask = getNewTaskEntry(taskTitle, taskDescription, dateSelection, sHour, mMinute)
         insertTask(newTask)
     }
 
-    private fun getNewTaskEntry(taskTitle: String, taskDescription: String): Task {
+    private fun getNewTaskEntry(
+        taskTitle: String,
+        taskDescription: String,
+        dateSelection: Long,
+        sHour: Int,
+        mMinute: Int,
+    ): Task {
         return Task(
             title = taskTitle,
             description = taskDescription,
             /* completed = done*/
+            date = dateSelection,
+            hours = sHour,
+            minutes = mMinute
         )
     }
 
     // Input title validation
-    fun isEntryValid(taskTitle: String): Boolean {
-        return taskTitle.isNotBlank()
+    fun isEntryValid(taskTitle: String, chipCount: Int): Boolean {
+        return taskTitle.isNotBlank() && chipCount > 0
     }
 
     fun retrieveTask(id: Int): Flow<Task> {
@@ -182,8 +205,13 @@ class TaskViewModel @Inject constructor(
         insertTask(task)
     }
 
-    fun updateTask(taskId: Int, taskTitle: String, taskDescription: String) {
-        val updatedTask = getUpdatedTaskEntry(taskId, taskTitle, taskDescription)
+    fun updateTask(
+        taskId: Int, taskTitle: String, taskDescription: String, dateSelection: Long,
+        sHour: Int,
+        mMinute: Int,
+    ) {
+        val updatedTask =
+            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dateSelection, sHour, mMinute)
         updateTask(updatedTask)
     }
 
@@ -191,11 +219,17 @@ class TaskViewModel @Inject constructor(
         taskId: Int,
         taskTitle: String,
         taskDescription: String,
+        dateSelection: Long,
+        sHour: Int,
+        mMinute: Int,
     ): Task {
         return Task(
             id = taskId,
             title = taskTitle,
-            description = taskDescription
+            description = taskDescription,
+            date = dateSelection,
+            hours = sHour,
+            minutes = mMinute
         )
     }
 
@@ -223,11 +257,11 @@ class TaskViewModel @Inject constructor(
 
 }
 
-class TaskViewModelFactory(
+/*class TaskViewModelFactory(
     private val getTask: GetTask,
-    /* private val getAllTasks: GetAllTasks,
+    *//* private val getAllTasks: GetAllTasks,
      private val searchTasksByTitle: SearchTasksByTitle,
-     private val insertTask: InsertTask,*/
+     private val insertTask: InsertTask,*//*
     private val repositoryImpl: TaskRepositoryImpl,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -235,12 +269,12 @@ class TaskViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return TaskViewModel(
                 getTask,
-                /*getAllTasks,
+                *//*getAllTasks,
                 searchTasksByTitle,
-                insertTask,*/
+                insertTask,*//*
                 repositoryImpl) as T
         } else {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
-}
+}*/

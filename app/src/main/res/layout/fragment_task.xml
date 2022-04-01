@@ -37,12 +37,12 @@
         android:id="@+id/imv_ic_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Time icon"
+        android:contentDescription="@string/date_time_icon"
         app:checkedIconVisible="false"
         app:layout_constraintBottom_toBottomOf="@id/chip_time"
         app:layout_constraintStart_toStartOf="@id/tv_task_description"
         app:layout_constraintTop_toTopOf="@id/chip_time"
-        app:srcCompat="@drawable/ic_baseline_access_time_24" />
+        app:srcCompat="@drawable/ic_baseline_date_range_24" />
 
 
     <com.google.android.material.chip.Chip
@@ -54,34 +54,15 @@
         android:layout_marginTop="8dp"
         android:checkable="false"
         android:clickable="false"
-        android:text="Tue, 6 Jul, 15:00"
+        android:visibility="invisible"
         app:checkedIconVisible="false"
         app:layout_constraintStart_toEndOf="@id/imv_ic_time"
-        app:layout_constraintTop_toBottomOf="@id/tv_task_description" />
+        app:layout_constraintTop_toBottomOf="@id/tv_task_description"
+        tools:text="Tue, 6 Jul, 15:00" />
 
     <!--    desc-->
     <!--    Priority-->
     <!--    time/schedule-->
     <!--    add subtask-->
-
-    <!--    <com.google.android.material.button.MaterialButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Edit Task"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="1" />-->
-
-    <!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="50dp"-->
-    <!--        android:text="@string/edit_task"-->
-    <!--        app:fabSize="auto"-->
-    <!--        app:icon="@drawable/ic_baseline_edit_24"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent" />-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
