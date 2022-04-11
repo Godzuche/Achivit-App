@@ -253,7 +253,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                     ) {
                         Toast.makeText(requireContext(), "Task is unchanged!", Toast.LENGTH_SHORT)
                             .show()
-                        return
+
                     } else {
                         if ((chipGroupTime.getChildAt(0) as Chip).text.toString() == formatDateTime(
                                 currentTask.minutes,
@@ -274,17 +274,16 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                                 currentTask.minutes
                             )
 
-                            return
+                        } else {
+                            viewModel.updateTask(
+                                id,
+                                binding.etTitle.text.toString(),
+                                binding.etDescription.text.toString(),
+                                dateSelection,
+                                sHour,
+                                mMinute
+                            )
                         }
-
-                        viewModel.updateTask(
-                            id,
-                            binding.etTitle.text.toString(),
-                            binding.etDescription.text.toString(),
-                            dateSelection,
-                            sHour,
-                            mMinute
-                        )
 
                     }
                 }

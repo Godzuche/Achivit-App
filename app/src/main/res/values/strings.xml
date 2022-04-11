@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">Achivit App</string>
+    <string name="app_name">Achivit</string>
     <string name="home">Home</string>
     <string name="settings">Settings</string>
+    <string name="task_card_transition_name">task_card_%1$s</string>
+    <string name="task_card_detail_transition_name">task_card_detail</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

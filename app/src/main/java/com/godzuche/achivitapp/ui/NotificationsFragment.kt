@@ -8,6 +8,7 @@ import com.godzuche.achivitapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.transition.MaterialFadeThrough
 
 class NotificationsFragment : Fragment() {
 
@@ -15,6 +16,21 @@ class NotificationsFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        enterTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
+        exitTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
+        returnTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
     }
 
     override fun onCreateView(

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/action_home"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.HomeFragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.HomeFragment"
         android:label="Tasks"
         tools:layout="@layout/fragment_home" />
 
@@ -51,17 +51,14 @@
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
 
-    <action
-        android:id="@+id/action_global_action_settings"
-        app:destination="@id/action_settings" />
     <fragment
         android:id="@+id/accountPrefFragment"
         android:name="com.godzuche.achivitapp.feature_settings.AccountPrefFragment"
         android:label="Your account"
         tools:layout="@xml/account_preferences" />
     <fragment
-        android:id="@+id/taskFragment"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.TaskFragment"
+        android:id="@+id/task_fragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskFragment"
         android:label=""
         tools:layout="@layout/fragment_task">
         <argument
@@ -69,13 +66,24 @@
             app:argType="integer" />
     </fragment>
     <action
+        android:id="@+id/action_global_action_settings"
+        app:destination="@id/action_settings" />
+    <action
         android:id="@+id/action_global_taskFragment"
-        app:destination="@id/taskFragment" />
+        app:destination="@id/task_fragment" />
     <action
         android:id="@+id/action_global_action_notifications_settings"
         app:destination="@id/action_notifications_settings" />
     <action
         android:id="@+id/action_global_accountPrefFragment"
         app:destination="@id/accountPrefFragment" />
+    <fragment
+        android:id="@+id/action_search"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.search.SearchFragment"
+        android:label=""
+        tools:layout="@layout/fragment_search" />
+    <action
+        android:id="@+id/action_global_searchFragment"
+        app:destination="@id/action_search" />
 
 </navigation>

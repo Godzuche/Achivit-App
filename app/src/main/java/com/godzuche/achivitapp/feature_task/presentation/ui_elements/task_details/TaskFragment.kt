@@ -1,8 +1,12 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements
+package com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details
 
+import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -15,17 +19,19 @@ import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.ModalBottomSheet
+import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupDateTimePicker
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
+import com.godzuche.achivitapp.feature_task.presentation.util.themeColor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,12 +48,21 @@ class TaskFragment : Fragment() {
 
     private val modalBottomSheet = ModalBottomSheet()
 
-    lateinit var task: Task
+    private var task: Task? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setHasOptionsMenu(true)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(requireContext().themeColor(com.google.android.material.R.attr.colorSurface))
+        }
+
     }
 
     override fun onCreateView(
@@ -61,6 +76,8 @@ class TaskFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        requireView().doOnPreDraw { startPostponedEnterTransition() }
 
         val id = navigationArgs.id
 
@@ -68,27 +85,38 @@ class TaskFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.retrieveTask(id).collect { clickedTask ->
                     task = clickedTask
-                    bind(task)
-                    setupDateTimePicker(task, binding, viewModel)
+                    bind(task!!)
+                    setupDateTimePicker(task!!, binding, viewModel)
                 }
             }
         }
 
+        binding.toolbar.apply {
+            inflateMenu(R.menu.menu_edit_task)
+            setNavigationOnClickListener { findNavController().navigateUp() }
+            setOnMenuItemClickListener { item ->
+                if (item.itemId == R.id.action_delete_task) {
+                    showConfirmationDialog()
+                    true
+                } else false
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiEvent.collect { event ->
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.uiEvent.collectLatest { event ->
                     when (event) {
                         is UiEvent.PopBackStack -> {
                             findNavController().popBackStack()
                         }
                         is UiEvent.ShowSnackBar -> {
                             val snackBar =
-                                Snackbar.make(requireView(),
+                                Snackbar.make(binding.coordinator,
                                     event.message,
                                     Snackbar.LENGTH_LONG)
                                     .setAnchorView(activity?.findViewById(R.id.fab_add))
 
-                            if (event.action == "Undo") {
+                            if (event.action == SnackBarActions.UNDO) {
                                 snackBar.setAction(event.action) {
                                     viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
                                 }.show()
@@ -109,12 +137,6 @@ class TaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.emit(navigationArgs.id)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.uiEvent.
             }
         }
 
@@ -160,15 +182,12 @@ class TaskFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        /*  activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+              ?.visibility = View.GONE*/
 
-        activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
-        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE
-        activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-            ?.visibility = View.GONE
-
-        activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        /*activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.icon =
-            ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_edit_24, activity?.theme)
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_edit_24, activity?.theme)*/
 
 
     }
@@ -176,16 +195,22 @@ class TaskFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+
+        fab?.apply {
+            icon = ResourcesCompat.getDrawable(resources,
+                R.drawable.ic_baseline_edit_24,
+                activity?.theme)
+            if (this.isExtended) {
+                this.shrink()
+            }
+        }
+
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
-
                 if (!modalBottomSheet.isAdded) {
-
-                    activity?.supportFragmentManager?.let { fm ->
-                        modalBottomSheet.show(fm,
-                            ModalBottomSheet.TAG + "_task_fragment")
-                    }
-
+                    modalBottomSheet.show(childFragmentManager,
+                        ModalBottomSheet.TAG + "_task_fragment")
                 }
 
             }
@@ -199,17 +224,6 @@ class TaskFragment : Fragment() {
             ?.setOnClickListener(null)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_edit_task, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.action_delete_task) {
-            showConfirmationDialog()
-            true
-        } else super.onOptionsItemSelected(item)
-    }
-
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete task")
@@ -221,8 +235,10 @@ class TaskFragment : Fragment() {
     }
 
     private fun deleteTask() {
-        viewModel.accept(TasksUiEvent.OnDeleteTask(task = task, shouldPopBackStack = true))
+        task?.let {
+            viewModel.accept(TasksUiEvent.OnDeleteTask(task = it,
+                shouldPopBackStack = true))
+        }
     }
-
 
 }

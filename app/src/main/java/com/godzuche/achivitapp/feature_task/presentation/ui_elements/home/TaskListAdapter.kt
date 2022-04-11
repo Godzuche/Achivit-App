@@ -1,6 +1,7 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements
+package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +12,7 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
+class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
     ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -38,11 +39,15 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
 
         init {
             itemView.setOnClickListener {
-                binding.root.apply {
-                    if (this.isChecked) {
-                        this.isChecked = false
-                    } else {
-                        currentItem?.let { task -> onItemClicked(task) }
+                binding.apply {
+                    root.apply {
+                        if (this.isChecked) {
+                            this.isChecked = false
+                        } else {
+                            currentItem?.let { task ->
+                                onItemClicked(itemCardView, task)
+                            }
+                        }
                     }
                 }
             }
@@ -54,6 +59,10 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
         }
 
         fun bind(task: Task) {
+            binding.itemCardView.transitionName =
+                itemView.resources.getString(R.string.task_card_transition_name,
+                    task.id.toString())
+
             binding.tvTaskTitle.text = task.title
             binding.tvTaskDescription.text = task.description
 

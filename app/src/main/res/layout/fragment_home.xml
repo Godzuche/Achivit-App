@@ -1,26 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".feature_task.presentation.ui_elements.HomeFragment">
+    android:layout_height="match_parent"
+    tools:context=".feature_task.presentation.ui_elements.home.HomeFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        style="@style/Widget.Material3.AppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_main"
+            style="?attr/collapsingToolbarLayoutMediumStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
+            app:collapsedTitleGravity="center_horizontal"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_main"
+                style="@style/Widget.Material3.Toolbar.OnSurface"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:elevation="0dp"
+                app:layout_collapseMode="pin">
+
+            </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/nsv_chips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group"
+                    style="@style/Widget.Material3.ChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:checkedChip="@+id/chip_my_tasks"
+                    app:chipSpacingHorizontal="16dp"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_my_tasks"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Tasks"
+                        app:ensureMinTouchTargetSize="true" />
+
+                    <!--                    <com.google.android.material.chip.Chip
+                                            android:id="@+id/chip_2"
+                                            style="@style/Widget.Material3.Chip.Filter"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="School" />
+
+                                        <com.google.android.material.chip.Chip
+                                            android:id="@+id/chip_3"
+                                            style="@style/Widget.Material3.Chip.Filter"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/poppins"
+                                            android:text="Work"
+                                            app:fontFamily="@font/poppins" />-->
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_add_collection"
+                    style="@style/Widget.Material3.Chip.Assist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="New category"
+                    app:chipIcon="@drawable/ic_baseline_add_24"
+                    app:ensureMinTouchTargetSize="true" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_tasks_list"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingStart="8dp"
+        android:paddingStart="4dp"
         android:paddingTop="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="80dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="84dp"
+        android:scrollbars="none"
+        android:transitionGroup="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:listitem="@layout/item_task_list" />
+
+    <!--should be visible whenever list is empty-->
 
     <!--    <ImageView
             android:id="@+id/image"
@@ -43,4 +134,4 @@
             app:layout_constraintStart_toStartOf="@id/image"
             app:layout_constraintTop_toBottomOf="@id/image" />-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout_main"
@@ -8,112 +8,109 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
-        style="@style/Widget.Material3.AppBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar_main"
-            style="?attr/collapsingToolbarLayoutMediumStyle"
+    <!--
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            style="@style/Widget.Material3.AppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-            app:collapsedTitleGravity="center_horizontal"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar_main"
-                style="@style/Widget.Material3.Toolbar.OnSurface"
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar_main"
+                style="?attr/collapsingToolbarLayoutMediumStyle"
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                android:elevation="0dp"
-                app:layout_collapseMode="pin"
-                app:menu="@menu/menu_top_app_bar">
+                android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
+                app:collapsedTitleGravity="center_horizontal"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            </com.google.android.material.appbar.MaterialToolbar>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar_main"
+                    style="@style/Widget.Material3.Toolbar.OnSurface"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:elevation="0dp"
+                    app:layout_collapseMode="pin"
+                    app:menu="@menu/menu_top_app_bar">
 
-        <HorizontalScrollView
-            android:id="@+id/nsv_chips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                </com.google.android.material.appbar.MaterialToolbar>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <HorizontalScrollView
+                android:id="@+id/nsv_chips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chip_group"
-                    style="@style/Widget.Material3.ChipGroup"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    app:checkedChip="@+id/chip_my_tasks"
-                    app:chipSpacingHorizontal="16dp"
-                    app:selectionRequired="true"
-                    app:singleLine="true"
-                    app:singleSelection="true">
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_my_tasks"
-                        style="@style/Widget.Material3.Chip.Filter"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group"
+                        style="@style/Widget.Material3.ChipGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Tasks"
+                        android:layout_marginStart="16dp"
+                        app:checkedChip="@+id/chip_my_tasks"
+                        app:chipSpacingHorizontal="16dp"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_my_tasks"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Tasks"
+                            app:ensureMinTouchTargetSize="true" />
+
+                        &lt;!&ndash;                    <com.google.android.material.chip.Chip
+                                                android:id="@+id/chip_2"
+                                                style="@style/Widget.Material3.Chip.Filter"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="School" />
+
+                                            <com.google.android.material.chip.Chip
+                                                android:id="@+id/chip_3"
+                                                style="@style/Widget.Material3.Chip.Filter"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:fontFamily="@font/poppins"
+                                                android:text="Work"
+                                                app:fontFamily="@font/poppins" />&ndash;&gt;
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_add_collection"
+                        style="@style/Widget.Material3.Chip.Assist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="New category"
+                        app:chipIcon="@drawable/ic_baseline_add_24"
                         app:ensureMinTouchTargetSize="true" />
 
-                    <!--                    <com.google.android.material.chip.Chip
-                                            android:id="@+id/chip_2"
-                                            style="@style/Widget.Material3.Chip.Filter"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="School" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
-                                        <com.google.android.material.chip.Chip
-                                            android:id="@+id/chip_3"
-                                            style="@style/Widget.Material3.Chip.Filter"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:fontFamily="@font/poppins"
-                                            android:text="Work"
-                                            app:fontFamily="@font/poppins" />-->
+        </com.google.android.material.appbar.AppBarLayout>
+    -->
 
-                </com.google.android.material.chip.ChipGroup>
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_add_collection"
-                    style="@style/Widget.Material3.Chip.Assist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="New category"
-                    app:chipIcon="@drawable/ic_baseline_add_24"
-                    app:ensureMinTouchTargetSize="true" />
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <include
-            android:id="@+id/content_main"
-            layout="@layout/content_main" />
-
-    </androidx.core.widget.NestedScrollView>
+    <include
+        android:id="@+id/content_main"
+        layout="@layout/content_main"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_add"
+        style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -122,7 +119,9 @@
         android:contentDescription="@string/create_new_task"
         android:text="@string/create"
         app:fabSize="auto"
-        app:icon="@drawable/ic_baseline_add_24" />
+        app:icon="@drawable/ic_baseline_add_24"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
@@ -133,7 +132,10 @@
         android:fitsSystemWindows="true"
         app:labelVisibilityMode="labeled"
         app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_insetEdge="bottom"
         app:menu="@menu/menu_bottom_nav" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

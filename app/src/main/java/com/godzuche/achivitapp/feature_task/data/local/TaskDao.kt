@@ -25,7 +25,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY id DESC")
     fun getAllTasks(): Flow<List<TaskEntity>>
 
-    @Query("SELECT * FROM tasks WHERE title LIKE '%' || :title || '%' ORDER BY title ASC")
+    @Query("SELECT * FROM tasks WHERE " +
+            " title LIKE '%' || :title || '%' OR description LIKE '%' || :title || '%'" +
+            "ORDER BY title ASC")
     suspend fun searchTasksByTitle(title: String): List<TaskEntity>
 
 }

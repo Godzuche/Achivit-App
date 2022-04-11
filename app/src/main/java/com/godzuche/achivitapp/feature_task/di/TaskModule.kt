@@ -2,8 +2,8 @@ package com.godzuche.achivitapp.feature_task.di
 
 import android.app.Application
 import androidx.room.Room
-import com.godzuche.achivitapp.feature_task.data.TaskRepositoryImpl
 import com.godzuche.achivitapp.feature_task.data.local.TaskRoomDatabase
+import com.godzuche.achivitapp.feature_task.data.repository.TaskRepositoryImpl
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
 import dagger.Module

@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val getTask: GetTask,
-//    private val getAllTasks: GetAllTasks,
+//    private val getAllTasks: GetTasks,
 //    private val searchTasksByTitle: SearchTasksByTitle,
 //    private val insertTask: InsertTask,
     private val repositoryImpl: TaskRepository,
@@ -58,7 +58,9 @@ class TasksViewModel @Inject constructor(
                         it.copy(tasksItems = result.data!!)
                     }
                 }
-            }.launchIn(this)
+            }.launchIn(viewModelScope)
+            delay(500L)
+            _uiEvent.emit(UiEvent.ScrollToTop)
         }
     }
 
@@ -72,7 +74,8 @@ class TasksViewModel @Inject constructor(
                         it.copy(tasksItems = result.data!!)
                     }
                 }
-            }.launchIn(this)
+            }.launchIn(viewModelScope)
+            _uiEvent.emit(UiEvent.ScrollToTop)
         }
     }
 
@@ -98,19 +101,24 @@ class TasksViewModel @Inject constructor(
                 }
                 is TasksUiEvent.OnScroll -> {
                     viewModelScope.launch {
-                        lastScrollPosition = action.currentScrollPosition
+//                        lastScrollPosition = action.currentScrollPosition
+                        /*_uiState.update {
+                            it.copy(
+                                lastScrolledPosition = action.currentScrollPosition
+                            )
+                        }*/
                     }
                 }
                 is TasksUiEvent.OnAddTaskClick -> {
                     sendUiEvent(UiEvent.Navigate(Routes.ADD_TASK))
                 }
                 is TasksUiEvent.OnDeleteTask -> {
+                    deletedTask = action.task
                     viewModelScope.launch {
-                        deletedTask = action.task
-                        repositoryImpl.deleteTask(action.task)
                         if (action.shouldPopBackStack) {
                             sendUiEvent(UiEvent.PopBackStack)
                         }
+                        repositoryImpl.deleteTask(action.task)
                         sendUiEvent(UiEvent.ShowSnackBar(
                             "Task deleted!",
                             SnackBarActions.UNDO
@@ -165,6 +173,10 @@ class TasksViewModel @Inject constructor(
     ) {
         val newTask = getNewTaskEntry(taskTitle, taskDescription, dateSelection, sHour, mMinute)
         insertTask(newTask)
+        viewModelScope.launch {
+            delay(300L)
+            sendUiEvent(UiEvent.ScrollToTop)
+        }
     }
 
     private fun getNewTaskEntry(
@@ -252,6 +264,10 @@ class TasksViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            delay(500L)
+            _uiEvent.emit(UiEvent.ScrollToTop)
+        }
         return false
     }
 
@@ -259,7 +275,7 @@ class TasksViewModel @Inject constructor(
 
 /*class TaskViewModelFactory(
     private val getTask: GetTask,
-    *//* private val getAllTasks: GetAllTasks,
+    *//* private val getAllTasks: GetTasks,
      private val searchTasksByTitle: SearchTasksByTitle,
      private val insertTask: InsertTask,*//*
     private val repositoryImpl: TaskRepositoryImpl,

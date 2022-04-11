@@ -11,6 +11,7 @@ import com.godzuche.achivitapp.databinding.FragmentProfileBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.transition.MaterialFadeThrough
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
@@ -20,6 +21,21 @@ class ProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        enterTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
+        exitTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
+        returnTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
+        }
     }
 
     override fun onCreateView(

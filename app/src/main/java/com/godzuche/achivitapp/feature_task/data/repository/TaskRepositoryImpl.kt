@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.data
+package com.godzuche.achivitapp.feature_task.data.repository
 
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.feature_task.data.local.TaskDao
@@ -24,6 +24,7 @@ class TaskRepositoryImpl(private val dao: TaskDao) : TaskRepository {
     }
 
     override fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>> = flow {
+//        val dbQuery = appendDbQuery(title)
         val searchedTasks = dao.searchTasksByTitle(title).map { it.toTask() }
         emit(Resource.Success(data = searchedTasks))
     }

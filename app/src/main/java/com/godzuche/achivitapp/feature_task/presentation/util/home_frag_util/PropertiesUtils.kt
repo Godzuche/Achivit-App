@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.TaskListAdapter
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.TaskListAdapter
 
 data class Icons(
     val deleteIcon: Drawable?,

@@ -7,6 +7,6 @@ data class TasksUiState(
     val tasksItems: List<Task> = emptyList(),
     val loading: Boolean = false,
     val userMessage: List<Message> = emptyList(),
-    val lastScrolledPosition: Int = 0,
-    val hasNotScrolledForCurrentSearch: Boolean = false,
+//    val lastScrolledPosition: Int = 0,
+//    val hasNotScrolledForCurrentSearch: Boolean = false,
 )

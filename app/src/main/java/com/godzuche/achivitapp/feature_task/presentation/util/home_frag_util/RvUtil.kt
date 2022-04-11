@@ -15,11 +15,12 @@ import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -159,7 +160,7 @@ class SwipeDragHelper(
 
         lifecycleOwner.lifecycleScope.launch {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiEvent.collect { event ->
+                viewModel.uiEvent.collectLatest { event ->
                     when (event) {
                         is UiEvent.ShowSnackBar -> {
                             val snackBar =
@@ -168,7 +169,7 @@ class SwipeDragHelper(
                                     Snackbar.LENGTH_LONG)
                                     .setAnchorView(viewUtil.anchorView)
 
-                            if (event.action == "Undo") {
+                            if (event.action == SnackBarActions.UNDO) {
                                 snackBar.setAction(event.action) {
                                     viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
                                 }.show()
