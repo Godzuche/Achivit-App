@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
             app:collapsedTitleGravity="center_horizontal"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:title="Tasks">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_main"
@@ -28,7 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:elevation="0dp"
-                app:layout_collapseMode="pin">
+                app:layout_collapseMode="pin"
+                app:title="Tasks">
 
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

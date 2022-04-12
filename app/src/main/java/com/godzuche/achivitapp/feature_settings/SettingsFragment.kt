@@ -1,50 +1,46 @@
 package com.godzuche.achivitapp.feature_settings
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.navigation.fragment.findNavController
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.godzuche.achivitapp.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
+import com.godzuche.achivitapp.databinding.FragmentSettingsBinding
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : Fragment(R.layout.fragment_settings) {
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        // Inflate the layout for this fragment
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.settings, rootKey)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        findPreference<Preference>("key_notifications")
-            ?.setOnPreferenceClickListener {
-                findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToActionNotificationsSettings())
-                true
-            }
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.preferences_container_view) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.toolbar.setupWithNavController(navController)
 
-        findPreference<Preference>("key_colors")
-            ?.setOnPreferenceClickListener {
-                findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToActionColorsSettings())
-                true
-            }
-
-        findPreference<Preference>("key_your_account")
-            ?.setOnPreferenceClickListener {
-                findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToAccountPrefFragment())
-                true
-            }
-
+        /*      if (childFragmentManager.findFragmentById(R.id.preferences_container_view) == null) {
+                  childFragmentManager.commitNow {
+                      replace(R.id.preferences_container_view, SettingsPreferenceFragment())
+                  }
+              }*/
     }
 
-    override fun onStart() {
-        super.onStart()
-        activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
-        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE
-        activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-            ?.visibility = View.GONE
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
+
 }

@@ -90,19 +90,6 @@ class MainActivity : AppCompatActivity() {
         if (isShowCountBadge) badge.number = 100
         else badge.clearNumber()
 
-/*        binding.bottomNavView.setOnItemSelectedListener { item ->
-
-            when (item.itemId) {
-                R.id.action_home -> {
-                    //
-                    true
-                }
-                else -> false
-            }
-//            item.onNavDestinationSelected(findNavController(R.id.nav_host_fragment))
-
-        }*/
-
         binding.bottomNavView.setOnItemReselectedListener { }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->

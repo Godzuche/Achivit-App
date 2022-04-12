@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_settings"
+    app:startDestination="@id/settingsPreferenceFragment">
+
+    <fragment
+        android:id="@+id/settingsPreferenceFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.SettingsPreferenceFragment"
+        android:label="Settings">
+        <action
+            android:id="@+id/action_settingsPreferenceFragment_to_accountPrefFragment"
+            app:destination="@id/accountPrefFragment" />
+        <action
+            android:id="@+id/action_settingsPreferenceFragment_to_action_notifications_settings"
+            app:destination="@id/action_notifications_settings" />
+        <action
+            android:id="@+id/action_settingsPreferenceFragment_to_action_colors_settings"
+            app:destination="@id/action_colors_settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/action_notifications_settings"
+        android:name="com.godzuche.achivitapp.feature_settings.NotificationsPrefFragment"
+        android:label="Notifications"
+        tools:layout="@xml/notifications_settings" />
+    <fragment
+        android:id="@+id/action_colors_settings"
+        android:name="com.godzuche.achivitapp.feature_settings.ColorPrefFragment"
+        android:label="Colors"
+        tools:layout="@xml/colors_preference" />
+    <fragment
+        android:id="@+id/accountPrefFragment"
+        android:name="com.godzuche.achivitapp.feature_settings.AccountPrefFragment"
+        android:label="Your account"
+        tools:layout="@xml/account_preferences" />
+
+</navigation>

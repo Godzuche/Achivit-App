@@ -15,8 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -175,21 +173,22 @@ class HomeFragment : Fragment() {
         postponeEnterTransition()
         requireView().doOnPreDraw { startPostponedEnterTransition() }
 
-        val appBarConfiguration = AppBarConfiguration(
+/*        val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.action_home,
                 R.id.action_notifications,
                 R.id.action_profile,
                 R.id.action_search,
-                R.id.task_fragment
+                R.id.task_fragment,
+                R.id.action_settings
             ),
             fallbackOnNavigateUpListener = { requireActivity().onNavigateUp() }
-        )
+        )*/
         binding.toolbarMain.inflateMenu(R.menu.menu_home)
         binding.toolbarMain.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_settings -> {
-                    findNavController().navigate(R.id.action_global_action_settings)
+                    findNavController().navigate(HomeFragmentDirections.actionActionHomeToActionSettings())
                     true
                 }
                 R.id.action_filter -> {
@@ -216,12 +215,6 @@ class HomeFragment : Fragment() {
                 else -> false
             }
         }
-
-        binding.collapsingToolbarMain.setupWithNavController(
-            binding.toolbarMain,
-            findNavController(),
-        )
-        binding.toolbarMain.setupWithNavController(findNavController(), appBarConfiguration)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
