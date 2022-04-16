@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
-    ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
+    PagingDataAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val binding = ItemTaskListBinding.inflate(
@@ -28,7 +29,9 @@ class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val currentTask = getItem(position)
         holder.currentItem = currentTask
-        holder.bind(currentTask)
+        if (currentTask != null) {
+            holder.bind(currentTask)
+        }
     }
 
     inner class TaskViewHolder(private val binding: ItemTaskListBinding) :

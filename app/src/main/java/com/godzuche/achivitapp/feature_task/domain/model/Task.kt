@@ -3,7 +3,7 @@ package com.godzuche.achivitapp.feature_task.domain.model
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 
 data class Task(
-    val id: Int? = null,
+    val id: Long? = null,
     val title: String,
     val description: String,
     val completed: Boolean = false,

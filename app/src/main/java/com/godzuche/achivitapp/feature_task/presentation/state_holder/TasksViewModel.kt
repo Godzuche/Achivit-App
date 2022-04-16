@@ -2,6 +2,8 @@ package com.godzuche.achivitapp.feature_task.presentation.state_holder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
@@ -38,6 +40,8 @@ class TasksViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(TasksUiState())
     val uiState: StateFlow<TasksUiState> = _uiState.asStateFlow()
+
+    val tasksPagingDataFlow: Flow<PagingData<Task>>
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -83,16 +87,28 @@ class TasksViewModel @Inject constructor(
         var noScrollPosition: Int = 0
         var lastScrollPosition: Int = 0
 
-        viewModelScope.launch {
-            repositoryImpl.getAllTask().collect { resource ->
-                _uiState.update {
-                    it.copy(tasksItems = resource.data!!)
-                }
-            }
-        }
+        /*   viewModelScope.launch {
+               repositoryImpl.getAllTask().collect { resource ->
+                   _uiState.update {
+                       it.copy(tasksItems = resource.data!!)
+                   }
+               }
+           }*/
+
+        tasksPagingDataFlow = repositoryImpl.getAllTask().cachedIn(viewModelScope)
 
         accept = { action ->
             when (action) {
+                is TasksUiEvent.OnDeleteFromTaskDetail -> {
+                    deletedTask = action.deletedTask
+                    viewModelScope.launch {
+                        delay(500L)
+                        sendUiEvent(UiEvent.ShowSnackBar(
+                            message = "Task deleted",
+                            action = SnackBarActions.UNDO
+                        ))
+                    }
+                }
                 is TasksUiEvent.Search -> {
                     search(action.query)
                 }
@@ -115,9 +131,9 @@ class TasksViewModel @Inject constructor(
                 is TasksUiEvent.OnDeleteTask -> {
                     deletedTask = action.task
                     viewModelScope.launch {
-                        if (action.shouldPopBackStack) {
+                        /*if (action.shouldPopBackStack) {
                             sendUiEvent(UiEvent.PopBackStack)
-                        }
+                        }*/
                         repositoryImpl.deleteTask(action.task)
                         sendUiEvent(UiEvent.ShowSnackBar(
                             "Task deleted!",
@@ -201,7 +217,7 @@ class TasksViewModel @Inject constructor(
         return taskTitle.isNotBlank() && chipCount > 0
     }
 
-    fun retrieveTask(id: Int): Flow<Task> {
+    fun retrieveTask(id: Long): Flow<Task> {
         return repositoryImpl.getTask(id).mapLatest {
             it.data!!
         }
@@ -218,7 +234,7 @@ class TasksViewModel @Inject constructor(
     }
 
     fun updateTask(
-        taskId: Int, taskTitle: String, taskDescription: String, dateSelection: Long,
+        taskId: Long, taskTitle: String, taskDescription: String, dateSelection: Long,
         sHour: Int,
         mMinute: Int,
     ) {
@@ -228,7 +244,7 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun getUpdatedTaskEntry(
-        taskId: Int,
+        taskId: Long,
         taskTitle: String,
         taskDescription: String,
         dateSelection: Long,
@@ -256,7 +272,7 @@ class TasksViewModel @Inject constructor(
         updateTask(targetTask.copy(id = draggedTask.id))
     }
 
-    fun onSearchClosed(): Boolean {
+/*    fun onSearchClosed(): Boolean {
         viewModelScope.launch {
             repositoryImpl.getAllTask().collect { resource ->
                 _uiState.update {
@@ -269,7 +285,7 @@ class TasksViewModel @Inject constructor(
             _uiEvent.emit(UiEvent.ScrollToTop)
         }
         return false
-    }
+    }*/
 
 }
 
@@ -281,9 +297,9 @@ class TasksViewModel @Inject constructor(
     private val repositoryImpl: TaskRepositoryImpl,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(TaskDetailViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TaskViewModel(
+            return TaskDetailViewModel(
                 getTask,
                 *//*getAllTasks,
                 searchTasksByTitle,

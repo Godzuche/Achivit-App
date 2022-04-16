@@ -1,14 +1,16 @@
 package com.godzuche.achivitapp.feature_task.domain.repository
 
+import androidx.paging.PagingData
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
 
-    fun getTask(id: Int): Flow<Resource<Task>>
+    fun getTask(id: Long): Flow<Resource<Task>>
 
-    fun getAllTask(): Flow<Resource<List<Task>>>
+    //    fun getAllTask(): Flow<Resource<List<Task>>>
+    fun getAllTask(): Flow<PagingData<Task>>
 
     fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>>
 

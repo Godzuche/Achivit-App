@@ -2,7 +2,6 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,7 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.ui_elements.FilterBottomSheetDialog
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.ModalBottomSheet
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util.*
@@ -42,14 +41,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-//    private lateinit var adapter: TaskListAdapter
-
     private lateinit var task: Task
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -66,7 +62,6 @@ class HomeFragment : Fragment() {
 //        Log.d("Home", "OnCreate")
 
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateView(
@@ -100,18 +95,12 @@ class HomeFragment : Fragment() {
                 resources.getInteger(integer.material_motion_duration_long_1)
                     .toLong()
         }
-
-/*        activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-            ?.visibility = View.VISIBLE*/
-
-
     }
 
     override fun onResume() {
         super.onResume()
 
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
-
         fab?.apply {
             icon = ResourcesCompat.getDrawable(resources,
                 R.drawable.ic_baseline_add_24,
@@ -122,54 +111,59 @@ class HomeFragment : Fragment() {
         }
 
         fab?.setOnClickListener {
-            if (!modalBottomSheet.isAdded) {
+            /*if (!modalBottomSheet.isAdded) {
                 modalBottomSheet.show(childFragmentManager,
                     ModalBottomSheet.TAG)
-            }
+            }*/
+            findNavController().navigate(HomeFragmentDirections.actionGlobalModalBottomSheet(taskId = NOT_SET))
         }
 
         binding.recyclerViewTasksList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                val linearLayoutManager =
-                    (binding.recyclerViewTasksList.layoutManager as LinearLayoutManager)
-                val adapter = recyclerView.adapter as TaskListAdapter
-                if (newState == SCROLL_STATE_IDLE) {
-                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
-                        if (fab?.isExtended == false) fab.extend()
-                    } else if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.currentList.size - 1
-                    ) {
-                        if (fab?.isExtended == false) fab.extend()
-                    }
-                }
+                doOnScrollChanged(recyclerView, newState)
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (dy > 15 && fab?.isExtended == true) fab.shrink()
-                else if (dy < -15 && fab?.isExtended == false) fab.extend()
+                doOnScrolled(dy)
             }
         })
+    }
 
+    private fun doOnScrolled(dy: Int) {
+        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        if (dy > 15 && fab?.isExtended == true) fab.shrink()
+        else if (dy < -15 && fab?.isExtended == false) fab.extend()
+    }
 
+    private fun doOnScrollChanged(recyclerView: RecyclerView, newState: Int) {
+        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        val linearLayoutManager =
+            (binding.recyclerViewTasksList.layoutManager as LinearLayoutManager)
+        val adapter = recyclerView.adapter as TaskListAdapter
+        if (newState == SCROLL_STATE_IDLE) {
+            if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+                if (fab?.isExtended == false) fab.extend()
+            } else if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.snapshot().items.size - 1
+            ) {
+                if (fab?.isExtended == false) fab.extend()
+            }
+        }
     }
 
     override fun onPause() {
         super.onPause()
 
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
-
         fab?.setOnClickListener(null)
-
         binding.recyclerViewTasksList.clearOnScrollListeners()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 //        Log.d("Home", "OnViewCreated")
-
         postponeEnterTransition()
         requireView().doOnPreDraw { startPostponedEnterTransition() }
 
@@ -188,7 +182,16 @@ class HomeFragment : Fragment() {
         binding.toolbarMain.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_settings -> {
-                    findNavController().navigate(HomeFragmentDirections.actionActionHomeToActionSettings())
+                    exitTransition = MaterialSharedAxis(Z, true).apply {
+                        duration =
+                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
+                    }
+                    reenterTransition = MaterialSharedAxis(Z, false).apply {
+                        duration =
+                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
+                    }
+                    val action = HomeFragmentDirections.actionActionHomeToActionSettings()
+                    findNavController().navigate(action)
                     true
                 }
                 R.id.action_filter -> {
@@ -271,7 +274,8 @@ class HomeFragment : Fragment() {
             RvColors(deleteColor, deleteColorDark, snoozeColor, snoozeColorDark),
             Icons(deleteIcon, snoozeIcon),
             Measurements(height, width),
-            ViewUtil(adapter,
+            ViewUtil(binding.recyclerViewTasksList.layoutManager as LinearLayoutManager,
+                adapter,
                 binding.coordinator,
                 activity?.findViewById(R.id.fab_add),
                 requireContext(),
@@ -283,12 +287,13 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState
+                /*viewModel.uiState
                     .map { it.tasksItems }
                     .collectLatest { tasks ->
                         Log.d("Home", "Adapter Submit list size: ${tasks.size}")
                         adapter.submitList(tasks)
-                    }
+                    }*/
+                viewModel.tasksPagingDataFlow.collectLatest { adapter.submitData(it) }
             }
         }
 
@@ -309,8 +314,10 @@ class HomeFragment : Fragment() {
                             }
                         }
                         is UiEvent.ScrollToTop -> {
-                            Log.d("Home", "Scroll to top")
                             binding.recyclerViewTasksList.smoothScrollToPosition(0)
+                        }
+                        is UiEvent.ScrollToBottom -> {
+                            binding.recyclerViewTasksList.smoothScrollToPosition(adapter.snapshot().items.size - 1)
                         }
                         is UiEvent.Navigate -> {
                             //
@@ -335,15 +342,14 @@ class HomeFragment : Fragment() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
-//        Log.d("Home", "OnStop")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 //        Log.d("Home", "OnDestroy")
         _binding = null
+    }
+
+    companion object {
+        const val NOT_SET = -1L
     }
 
 }

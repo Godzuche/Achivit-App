@@ -9,6 +9,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,10 +20,15 @@ import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.ModalBottomSheet
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet
+import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupDateTimePicker
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.getTimeSuffix
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.millisToString
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupOnChipClickDateTimePicker
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.to12HrsFormat
 import com.godzuche.achivitapp.feature_task.presentation.util.themeColor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -30,21 +36,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class TaskFragment : Fragment() {
+class TaskDetailFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TasksViewModel by activityViewModels()
+    private val activityViewModels: TasksViewModel by activityViewModels()
+    private val viewModel: TaskDetailViewModel by viewModels()
 
-    private val navigationArgs: TaskFragmentArgs by navArgs()
+    private val navigationArgs: TaskDetailFragmentArgs by navArgs()
 
     private val modalBottomSheet = ModalBottomSheet()
 
@@ -52,6 +57,9 @@ class TaskFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        viewModel.taskId.value = navigationArgs.id.toLong()
+        val taskId = navigationArgs.id
+        viewModel.accept(TaskUiEvent.OnRetrieveTask(taskId = taskId))
         setHasOptionsMenu(true)
 
         sharedElementEnterTransition = MaterialContainerTransform().apply {
@@ -69,7 +77,6 @@ class TaskFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentTaskBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -78,18 +85,6 @@ class TaskFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         requireView().doOnPreDraw { startPostponedEnterTransition() }
-
-        val id = navigationArgs.id
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.retrieveTask(id).collect { clickedTask ->
-                    task = clickedTask
-                    bind(task!!)
-                    setupDateTimePicker(task!!, binding, viewModel)
-                }
-            }
-        }
 
         binding.toolbar.apply {
             inflateMenu(R.menu.menu_edit_task)
@@ -102,13 +97,36 @@ class TaskFragment : Fragment() {
             }
         }
 
+//        val id = navigationArgs.id
+
+        /*       binding.bindState(
+                   task = clickedTask,
+                   uiState = viewModel.uiState,
+                   uiActions = viewModel.accept
+               )
+       */
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                /*viewModel.retrieveTask(id).collect { clickedTask ->
+                    task = clickedTask
+//                    bind(task!!)
+                    setupDateTimePicker(clickedTask, binding, viewModel)
+                }*/
+                viewModel.detail
+                    .collectLatest {
+                        if (it != null) {
+                            task = it
+                            bind(it)
+                            setupOnChipClickDateTimePicker(it, binding, viewModel)
+                        }
+                    }
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.uiEvent.collectLatest { event ->
                     when (event) {
-                        is UiEvent.PopBackStack -> {
-                            findNavController().popBackStack()
-                        }
                         is UiEvent.ShowSnackBar -> {
                             val snackBar =
                                 Snackbar.make(binding.coordinator,
@@ -118,9 +136,12 @@ class TaskFragment : Fragment() {
 
                             if (event.action == SnackBarActions.UNDO) {
                                 snackBar.setAction(event.action) {
-                                    viewModel.accept(TasksUiEvent.OnUndoDeleteClick)
+                                    viewModel.accept(TaskUiEvent.OnUndoDeleteClick)
                                 }.show()
                             }
+                        }
+                        is UiEvent.PopBackStack -> {
+                            findNavController().popBackStack()
                         }
                         else -> Unit
                     }
@@ -128,7 +149,7 @@ class TaskFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+/*        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetAction.emit("Edit Task")
             }
@@ -138,9 +159,29 @@ class TaskFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.emit(navigationArgs.id)
             }
-        }
+        }*/
 
     }
+
+    private fun FragmentTaskBinding.bindState(
+        task: Task,
+        uiState: StateFlow<TasksUiState>,
+//        pagingData: Flow<PagingData<Task>>,
+        uiActions: (TasksUiEvent) -> Unit,
+    ) {
+
+        bindDetails(uiState = uiState)
+        onUiEvents(uiActions = uiActions)
+    }
+
+    private fun onUiEvents(uiActions: (TasksUiEvent) -> Unit) {
+        //
+    }
+
+    private fun FragmentTaskBinding.bindDetails(uiState: StateFlow<TasksUiState>) {
+        //
+    }
+
 
     private fun bind(task: Task) {
         var timeSuffix: String
@@ -148,25 +189,10 @@ class TaskFragment : Fragment() {
         binding.apply {
             tvTaskTitle.text = task.title
             tvTaskDescription.text = task.description
-
-            val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-            // Calender instance
-//            val calender = Calendar.getInstance()
             val dateSelection = task.date
-            val formattedDateString = formatter.format(dateSelection)
-            val mHour = when {
-                task.hours == 12 -> {
-                    timeSuffix = "PM"
-                    task.hours
-                }
-                task.hours > 12 -> {
-                    timeSuffix = "PM"
-                    task.hours - 12
-                }
-                else -> {
-                    timeSuffix = "AM"
-                    task.hours
-                }
+            val formattedDateString = millisToString(dateSelection)
+            val mHour = to12HrsFormat(task.hours).also {
+                timeSuffix = getTimeSuffix(task.hours)
             }
 
             binding.chipTime.apply {
@@ -208,10 +234,12 @@ class TaskFragment : Fragment() {
 
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener {
-                if (!modalBottomSheet.isAdded) {
+                /*if (!modalBottomSheet.isAdded) {
                     modalBottomSheet.show(childFragmentManager,
                         ModalBottomSheet.TAG + "_task_fragment")
-                }
+                }*/
+                findNavController().navigate(TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
+                    navigationArgs.id))
 
             }
 
@@ -236,8 +264,10 @@ class TaskFragment : Fragment() {
 
     private fun deleteTask() {
         task?.let {
-            viewModel.accept(TasksUiEvent.OnDeleteTask(task = it,
-                shouldPopBackStack = true))
+            viewModel.accept(TaskUiEvent.OnDeleteTask(
+                task = it
+            ))
+            activityViewModels.accept(TasksUiEvent.OnDeleteFromTaskDetail(deletedTask = it))
         }
     }
 

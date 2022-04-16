@@ -54,8 +54,10 @@ class SwipeDragHelper(
         val targetPosition = target.bindingAdapterPosition
 
 
-        val fromTask = viewUtil.adapter.currentList[initialPosition]
-        val toTask = viewUtil.adapter.currentList[targetPosition]
+        /*val fromTask = viewUtil.adapter.currentList[initialPosition]
+        val toTask = viewUtil.adapter.currentList[targetPosition]*/
+        val fromTask = viewUtil.adapter.snapshot().items[initialPosition]
+        val toTask = viewUtil.adapter.snapshot().items[targetPosition]
 
         task1 = fromTask
         task2 = toTask
@@ -81,8 +83,10 @@ class SwipeDragHelper(
     ) {
         super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
 
-        val fromTask = viewUtil.adapter.currentList[fromPos]
-        val toTask = viewUtil.adapter.currentList[toPos]
+        /*val fromTask = viewUtil.adapter.currentList[fromPos]
+        val toTask = viewUtil.adapter.currentList[toPos]*/
+        val fromTask = viewUtil.adapter.snapshot().items[fromPos]
+        val toTask = viewUtil.adapter.snapshot().items[toPos]
         Log.d("OnMoved", "fromPos = $fromTask : toPos = $toTask")
 
     }
@@ -116,8 +120,8 @@ class SwipeDragHelper(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         position = viewHolder.bindingAdapterPosition
-        task = viewUtil.adapter.currentList[position]
-
+//        task = viewUtil.adapter.currentList[position]
+        task = viewUtil.adapter.snapshot().items[position]
         if (direction == ItemTouchHelper.START) {
             showDeleteConfirmationDialog(position)
 

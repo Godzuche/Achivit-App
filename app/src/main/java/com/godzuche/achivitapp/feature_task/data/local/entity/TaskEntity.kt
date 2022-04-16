@@ -9,7 +9,7 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 @Entity(tableName = "tasks")
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0L,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "description")

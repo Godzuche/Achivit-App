@@ -6,6 +6,7 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskDetailViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -22,11 +23,45 @@ object DateTimePickerUtil {
     private var sHour: Int = 0
     private var dateSelection: Long = 0L
 
+    fun millisToString(timeMillis: Long): String {
+        val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
+        return formatter.format(timeMillis)
+    }
+
+    fun to12HrsFormat(hours: Int): Int {
+        return when {
+            hours == 12 -> {
+                hours
+            }
+            hours > 12 -> {
+                hours - 12
+            }
+            else -> {
+                hours
+            }
+        }
+    }
+
+    fun getTimeSuffix(hours: Int): String {
+        val timeSuffix = when {
+            hours == 12 -> {
+                "PM"
+            }
+            hours > 12 -> {
+                "PM"
+            }
+            else -> {
+                "AM"
+            }
+        }
+        return timeSuffix
+    }
+
     @ExperimentalCoroutinesApi
-    fun Fragment.setupDateTimePicker(
+    fun Fragment.setupOnChipClickDateTimePicker(
         task: Task,
         binding: FragmentTaskBinding,
-        viewModel: TasksViewModel,
+        viewModel: TaskDetailViewModel,
     ) {
         val timePicker = MaterialTimePicker.Builder()
             .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -105,8 +140,8 @@ object DateTimePickerUtil {
 
         datePicker.apply {
             addOnPositiveButtonClickListener {
-                val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
                 dateSelection = this.selection!!
+                val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
                 formattedDateString = formatter.format(this.selection)
                 // then open time picker
                 activity?.supportFragmentManager?.let { it1 ->

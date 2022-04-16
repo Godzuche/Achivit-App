@@ -6,6 +6,7 @@ sealed class UiEvent {
 
     //    data class ScrollToTop(val lastScrollPosition: Int) : UiEvent()
     object ScrollToTop : UiEvent()
+    object ScrollToBottom : UiEvent()
     data class ShowSnackBar(
         val message: String,
         val action: String? = null,

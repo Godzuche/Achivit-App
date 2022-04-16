@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.TaskListAdapter
 
 data class Icons(
@@ -24,6 +25,7 @@ data class RvColors(
 )
 
 data class ViewUtil(
+    val layoutManager: LinearLayoutManager,
     val adapter: TaskListAdapter,
     val requiredView: View,
     val anchorView: View?,

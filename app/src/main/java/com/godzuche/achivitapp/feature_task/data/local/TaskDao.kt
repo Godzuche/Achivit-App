@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.feature_task.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
@@ -20,10 +21,13 @@ interface TaskDao {
     suspend fun update(task: TaskEntity)
 
     @Query("SELECT * FROM tasks WHERE id = :id")
-    fun getTask(id: Int): Flow<TaskEntity>
+    fun getTask(id: Long): Flow<TaskEntity>
+/*
+    @Query("SELECT * FROM tasks ORDER BY id DESC")
+    fun getAllTasks(): Flow<List<TaskEntity>>*/
 
     @Query("SELECT * FROM tasks ORDER BY id DESC")
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    fun getAllTasks(): PagingSource<Int, TaskEntity>
 
     @Query("SELECT * FROM tasks WHERE " +
             " title LIKE '%' || :title || '%' OR description LIKE '%' || :title || '%'" +

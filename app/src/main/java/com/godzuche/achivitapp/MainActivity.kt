@@ -66,11 +66,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        val isDarkMode = sharedPref.getBoolean("key_dark_mode", false)
-        if (isDarkMode) AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
-        else AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
-
-//        setSupportActionBar(binding.toolbarMain)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

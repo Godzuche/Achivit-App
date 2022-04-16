@@ -35,12 +35,13 @@
 
     <fragment
         android:id="@+id/task_fragment"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskFragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskDetailFragment"
         android:label=""
         tools:layout="@layout/fragment_task">
         <argument
             android:name="id"
-            app:argType="integer" />
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
     <action
         android:id="@+id/action_global_taskFragment"
@@ -53,6 +54,20 @@
     <action
         android:id="@+id/action_global_searchFragment"
         app:destination="@id/action_search" />
+    <dialog
+        android:id="@+id/modalBottomSheet"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet"
+        android:label="ModalBottomSheet">
+
+        <argument
+            android:name="taskId"
+            android:defaultValue="0L"
+            app:argType="long" />
+
+    </dialog>
+    <action
+        android:id="@+id/action_global_modalBottomSheet"
+        app:destination="@id/modalBottomSheet" />
 
     <!--    <include
             app:graph="@navigation/nav_graph_settings" />-->

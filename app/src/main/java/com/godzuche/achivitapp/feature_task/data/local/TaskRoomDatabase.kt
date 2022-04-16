@@ -9,7 +9,6 @@ abstract class TaskRoomDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao
 
-
     /* companion object {
          @Volatile
          private var INSTANCE: TaskRoomDatabase? = null

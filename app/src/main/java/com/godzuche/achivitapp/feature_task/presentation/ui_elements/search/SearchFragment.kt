@@ -29,13 +29,11 @@ class SearchFragment : Fragment() {
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration =
-                resources.getInteger(integer.material_motion_duration_long_1)
-                    .toLong()
+                resources.getInteger(integer.material_motion_duration_long_1).toLong()
         }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration =
-                resources.getInteger(integer.material_motion_duration_long_1)
-                    .toLong()
+                resources.getInteger(integer.material_motion_duration_long_1).toLong()
         }
     }
 
@@ -60,9 +58,9 @@ class SearchFragment : Fragment() {
                 { queryText -> viewModel.accept(TasksUiEvent.Search(queryText)) },
                 { queryText -> viewModel.accept(TasksUiEvent.OnSearch(queryText)) }
             )
-            setOnCloseListener {
+           /* setOnCloseListener {
                 viewModel.onSearchClosed()
-            }
+            }*/
         }
     }
 

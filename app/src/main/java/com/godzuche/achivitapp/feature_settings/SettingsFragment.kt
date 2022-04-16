@@ -9,10 +9,24 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentSettingsBinding
+import com.google.android.material.transition.MaterialSharedAxis
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1).toLong()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

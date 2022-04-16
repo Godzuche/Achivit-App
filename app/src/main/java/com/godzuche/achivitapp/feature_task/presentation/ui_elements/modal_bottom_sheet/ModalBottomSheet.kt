@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements
+package com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet
 
 import android.os.Bundle
 import android.util.Log
@@ -9,13 +9,16 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.HomeFragment.Companion.NOT_SET
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.formatDateTime
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
@@ -27,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,31 +42,36 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     private var sHour: Int = 0
     private var dateSelection: Long = 0L
     private var formattedDateString = ""
-
     private var mHour = 0
     private var mMinute = 0
+    private var taskId: Long = NOT_SET
 
-    private var taskId: Int? = null
-    private val viewModel: TasksViewModel by activityViewModels()
+    private val viewModel: ModalBottomSheetViewModel by viewModels()
+    private val activityViewModel: TasksViewModel by activityViewModels()
 
     private var _binding: ModalBottomSheetContentBinding? = null
     private val binding get() = _binding!!
+
+    private val navigationArgs: ModalBottomSheetArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val id = navigationArgs.taskId
+        taskId = id
+        viewModel.accept(ModalBottomSheetUiEvent.OnGetBottomSheetAction(taskId = id))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
-        Log.d("ModalBottomSheetDialog Fragment: ", "onCreateView")
-
         _binding = ModalBottomSheetContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 /*        val isSystem24Hour = is24HourFormat(requireContext())
         val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H*/
 
@@ -84,26 +93,17 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
         timePicker.apply {
             addOnCancelListener {
-                activity?.supportFragmentManager?.let { it1 ->
-                    datePicker.show(it1,
-                        "date_picker_tag")
-                }
+                datePicker.show(childFragmentManager, "date_picker_tag")
             }
 //            isCancelable = false
             addOnNegativeButtonClickListener {
-                activity?.supportFragmentManager?.let { it1 ->
-                    datePicker.show(it1,
-                        "date_picker_tag")
-                }
+                datePicker.show(childFragmentManager, "date_picker_tag")
             }
 
             addOnPositiveButtonClickListener {
                 binding.chipGroupTime.removeAllViews()
                 mMinute = minute
                 sHour = hour
-
-                Log.d("Time Picker", "Hours = ${this.hour} | Minutes = ${this.minute}")
-                Log.d("Time Picker", "MHours = $mHour | MMinutes = $mMinute")
 
                 val chip = Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
                 chip.apply {
@@ -128,9 +128,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                         }
                     }*/
                 }
-
                 binding.chipGroupTime.addView(chip)
-
             }
         }
 
@@ -155,75 +153,78 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             addOnNegativeButtonClickListener {
                 //
             }
-
         }
 
         binding.btPickTime.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 -> datePicker.show(it1, "date_picker_tag") }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
+        /*viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.collectLatest {
-                    taskId = it
+                    taskId = it.toLong()
                     taskId?.let { it1 ->
                         bind(it1)
                     }
                 }
             }
-        }
-
+        }*/
+        bind(navigationArgs.taskId)
     }
 
-    private fun bind(taskId: Int) {
+    private fun bind(taskId: Long) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetAction.collectLatest {
-                    binding.tvHeader.text = it
+                viewModel.uiStateFlow.map { it.bottomSheetAction }.collectLatest { action ->
+                    binding.tvHeader.text = action
                 }
             }
         }
 
-        if (taskId != -1) {
-            binding.btSave.setOnClickListener {
-                updateTask()
-            }
+        if (taskId != -1L) {
+            /* binding.btSave.setOnClickListener {
+                 updateTask(taskId)
+             }*/
 //            var task: Task? = null
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.retrieveTask(taskId)
+                    viewModel.uiStateFlow
+                        .map { it.task }
                         .distinctUntilChanged()
-                        .collectLatest { task ->
-                            currentTask = task
-                            binding.apply {
-                                etTitle.setText(task.title)
-                                etDescription.setText(task.description)
-                                btSave.text = getString(R.string.update)
-
-                                val chip =
-                                    Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
-                                chip.apply {
-                                    text = formatDateTime(
-                                        minutes = task.minutes,
-                                        hours = task.hours,
-                                        dateSelection = task.date
-                                    )
-                                    isCloseIconVisible = true
-                                    this.setOnCloseIconClickListener {
-                                        binding.chipGroupTime.removeView(this)
+                        .collectLatest { it ->
+                            it?.let { task ->
+                                currentTask = task
+                                binding.apply {
+                                    btSave.setOnClickListener {
+                                        updateTask(taskId)
                                     }
-                                }
+                                    etTitle.setText(task.title)
+                                    etDescription.setText(task.description)
+                                    btSave.text = getString(R.string.update)
 
-                                binding.chipGroupTime.apply {
-                                    removeAllViews()
-                                    addView(chip, 0)
+                                    val chip =
+                                        Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
+                                    chip.apply {
+                                        text = formatDateTime(
+                                            minutes = task.minutes,
+                                            hours = task.hours,
+                                            dateSelection = task.date
+                                        )
+                                        isCloseIconVisible = true
+                                        this.setOnCloseIconClickListener {
+                                            binding.chipGroupTime.removeView(this)
+                                        }
+                                    }
+
+                                    binding.chipGroupTime.apply {
+                                        removeAllViews()
+                                        addView(chip, 0)
+                                    }
                                 }
                             }
                         }
                 }
             }
-
-        } else if (taskId == -1) {
+        } else if (taskId == -1L) {
             (binding.ilCategory.editText as MaterialAutoCompleteTextView)
                 .setText("My Tasks", false)
             binding.btSave.apply {
@@ -242,58 +243,51 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         )
     }
 
-    private fun updateTask() {
+    private fun updateTask(id: Long) {
         if (isEntryValid()) {
-            taskId?.let { id ->
-                binding.apply {
-                    if (isTaskEqual(currentTask,
-                            etTitle.text.toString(),
-                            etDescription.text.toString(),
-                            (chipGroupTime.getChildAt(0) as Chip).text.toString())
+            binding.apply {
+                if (isTaskEqual(currentTask,
+                        etTitle.text.toString(),
+                        etDescription.text.toString(),
+                        (chipGroupTime.getChildAt(0) as Chip).text.toString())
+                ) {
+                    Toast.makeText(requireContext(), "Task is unchanged!", Toast.LENGTH_SHORT)
+                        .show()
+
+                } else {
+                    if ((chipGroupTime.getChildAt(0) as Chip).text.toString() == formatDateTime(
+                            currentTask.minutes,
+                            currentTask.hours,
+                            currentTask.date)
                     ) {
-                        Toast.makeText(requireContext(), "Task is unchanged!", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(),
+                            "Same date and time",
+                            Toast.LENGTH_SHORT)
                             .show()
 
+                        viewModel.updateTask(
+                            id,
+                            binding.etTitle.text.toString(),
+                            binding.etDescription.text.toString(),
+                            currentTask.date,
+                            currentTask.hours,
+                            currentTask.minutes
+                        )
+
                     } else {
-                        if ((chipGroupTime.getChildAt(0) as Chip).text.toString() == formatDateTime(
-                                currentTask.minutes,
-                                currentTask.hours,
-                                currentTask.date)
-                        ) {
-                            Toast.makeText(requireContext(),
-                                "Same date and time",
-                                Toast.LENGTH_SHORT)
-                                .show()
-
-                            viewModel.updateTask(
-                                id,
-                                binding.etTitle.text.toString(),
-                                binding.etDescription.text.toString(),
-                                currentTask.date,
-                                currentTask.hours,
-                                currentTask.minutes
-                            )
-
-                        } else {
-                            viewModel.updateTask(
-                                id,
-                                binding.etTitle.text.toString(),
-                                binding.etDescription.text.toString(),
-                                dateSelection,
-                                sHour,
-                                mMinute
-                            )
-                        }
-
+                        viewModel.updateTask(
+                            id,
+                            binding.etTitle.text.toString(),
+                            binding.etDescription.text.toString(),
+                            dateSelection,
+                            sHour,
+                            mMinute
+                        )
                     }
                 }
-
             }
-
             dismiss()
-
             resetInputs()
-
         }
     }
 
@@ -310,18 +304,15 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     private fun addNewTask() {
         if (isEntryValid()) {
-            viewModel.addNewTask(
+            activityViewModel.addNewTask(
                 binding.etTitle.text.toString(),
                 binding.etDescription.text.toString(),
                 dateSelection,
                 sHour,
                 mMinute
             )
-
             dismiss()
-
             resetInputs()
-
         }
 
     }
@@ -335,9 +326,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-
-        Log.d("ModalBottomSheetDialog Fragment: ", "onResume")
-
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.list_item_category,
@@ -355,8 +343,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    companion object {
+/*    companion object {
         const val TAG = "ModalBottomSheet"
-    }
+    }*/
 
 }
