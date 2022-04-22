@@ -20,11 +20,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration =
-                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1).toLong()
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
         }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration =
-                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1).toLong()
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                    .toLong()
         }
     }
 

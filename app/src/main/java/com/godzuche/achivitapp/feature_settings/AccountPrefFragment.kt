@@ -14,7 +14,7 @@ class AccountPrefFragment : PreferenceFragmentCompat() {
         super.onStart()
 
         activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
-        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE
+        activity?.findViewById<Chip>(R.id.chip_add_category)?.visibility = View.GONE
         activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.GONE
     }

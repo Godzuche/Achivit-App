@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -116,17 +115,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                     this.setOnCloseIconClickListener {
                         binding.chipGroupTime.removeView(this)
                     }
-                    /*this.setOnClickListener {
-                        activity?.supportFragmentManager?.let { it1 ->
-                            materialDatePicker.setSelection(dateSelection)
-                                .setTitleText("Select date")
-                                .build()
-                                .show(
-                                    it1,
-                                    "date_picker_tag"
-                                )
-                        }
-                    }*/
                 }
                 binding.chipGroupTime.addView(chip)
             }
@@ -138,7 +126,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                 val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
 
                 dateSelection = this.selection!!
-                Log.d("Date Picker", "Date Selection = $dateSelection")
                 formattedDateString = formatter.format(this.selection)
                 // then open time picker
                 activity?.supportFragmentManager?.let { it1 ->
@@ -158,16 +145,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         binding.btPickTime.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 -> datePicker.show(it1, "date_picker_tag") }
         }
-        /*viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetTaskId.collectLatest {
-                    taskId = it.toLong()
-                    taskId?.let { it1 ->
-                        bind(it1)
-                    }
-                }
-            }
-        }*/
+
         bind(navigationArgs.taskId)
     }
 
@@ -181,10 +159,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         }
 
         if (taskId != -1L) {
-            /* binding.btSave.setOnClickListener {
-                 updateTask(taskId)
-             }*/
-//            var task: Task? = null
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.uiStateFlow

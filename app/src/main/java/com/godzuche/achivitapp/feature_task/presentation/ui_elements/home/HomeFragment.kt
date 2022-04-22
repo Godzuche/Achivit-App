@@ -24,12 +24,11 @@ import com.godzuche.achivitapp.databinding.FragmentHomeBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.FilterBottomSheetDialog
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util.*
 import com.google.android.material.R.integer
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -52,15 +51,13 @@ class HomeFragment : Fragment() {
 
     private lateinit var touchHelper: ItemTouchHelper
 
-    private val modalBottomSheet = ModalBottomSheet()
-    private val filterBottomSheet = FilterBottomSheetDialog()
+    //    private val modalBottomSheet = ModalBottomSheet()
+//    private val filterBottomSheet = FilterBottomSheetDialog()
 
     private val viewModel: TasksViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        Log.d("Home", "OnCreate")
-
         setHasOptionsMenu(true)
     }
 
@@ -69,8 +66,6 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-//        Log.d("Home", "OnCreateView")
-
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         _binding = FragmentHomeBinding.bind(view)
         return binding.root
@@ -78,8 +73,6 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-//        Log.d("Home", "OnStart")
-
         enterTransition = MaterialFadeThrough().apply {
             duration =
                 resources.getInteger(integer.material_motion_duration_long_1)
@@ -99,7 +92,6 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         fab?.apply {
             icon = ResourcesCompat.getDrawable(resources,
@@ -111,10 +103,6 @@ class HomeFragment : Fragment() {
         }
 
         fab?.setOnClickListener {
-            /*if (!modalBottomSheet.isAdded) {
-                modalBottomSheet.show(childFragmentManager,
-                    ModalBottomSheet.TAG)
-            }*/
             findNavController().navigate(HomeFragmentDirections.actionGlobalModalBottomSheet(taskId = NOT_SET))
         }
 
@@ -154,7 +142,6 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         fab?.setOnClickListener(null)
         binding.recyclerViewTasksList.clearOnScrollListeners()
@@ -163,7 +150,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        Log.d("Home", "OnViewCreated")
         postponeEnterTransition()
         requireView().doOnPreDraw { startPostponedEnterTransition() }
 
@@ -195,11 +181,8 @@ class HomeFragment : Fragment() {
                     true
                 }
                 R.id.action_filter -> {
-                    if (!filterBottomSheet.isAdded) {
-                        filterBottomSheet.show(
-                            childFragmentManager, FilterBottomSheetDialog.TAG
-                        )
-                    }
+                    val action = HomeFragmentDirections.actionGlobalFilterBottomSheetDialog()
+                    findNavController().navigate(action)
                     true
                 }
                 R.id.action_search -> {
@@ -339,12 +322,14 @@ class HomeFragment : Fragment() {
         chipGroup?.setOnCheckedChangeListener { group, checkedId ->
             //
         }
+        activity?.findViewById<Chip>(R.id.chip_add_category)?.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionGlobalAddTaskCategoryFragment())
+        }
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-//        Log.d("Home", "OnDestroy")
         _binding = null
     }
 

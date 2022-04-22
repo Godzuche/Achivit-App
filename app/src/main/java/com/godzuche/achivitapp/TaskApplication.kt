@@ -8,7 +8,8 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class TaskApplication : Application() {
-
+    //    private val applicationScope = CoroutineScope(SupervisorJob())
+//    private val applicationScope = CoroutineScope(Dispatchers.Default)
     override fun onCreate() {
         super.onCreate()
         setUpDarkModePreference()

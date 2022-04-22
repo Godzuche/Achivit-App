@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
-import com.godzuche.achivitapp.feature_task.presentation.ui_state.TaskUiState
-import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

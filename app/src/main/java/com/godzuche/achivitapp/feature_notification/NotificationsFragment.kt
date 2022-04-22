@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.ui
+package com.godzuche.achivitapp.feature_notification
 
 import android.os.Bundle
 import android.view.LayoutInflater

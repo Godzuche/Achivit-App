@@ -58,9 +58,9 @@ class SearchFragment : Fragment() {
                 { queryText -> viewModel.accept(TasksUiEvent.Search(queryText)) },
                 { queryText -> viewModel.accept(TasksUiEvent.OnSearch(queryText)) }
             )
-           /* setOnCloseListener {
-                viewModel.onSearchClosed()
-            }*/
+            /* setOnCloseListener {
+                 viewModel.onSearchClosed()
+             }*/
         }
     }
 

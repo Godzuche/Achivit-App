@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/action_notifications"
-        android:name="com.godzuche.achivitapp.ui.NotificationsFragment"
+        android:name="com.godzuche.achivitapp.feature_notification.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
 
@@ -67,7 +67,23 @@
     </dialog>
     <action
         android:id="@+id/action_global_modalBottomSheet"
-        app:destination="@id/modalBottomSheet" />
+        app:destination="@id/modalBottomSheet"
+        app:launchSingleTop="true" />
+    <dialog
+        android:id="@+id/filterBottomSheetDialog"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.FilterBottomSheetDialog"
+        android:label="FilterBottomSheetDialog" />
+    <action
+        android:id="@+id/action_global_filterBottomSheetDialog"
+        app:destination="@id/filterBottomSheetDialog"
+        app:launchSingleTop="true" />
+    <dialog
+        android:id="@+id/addTaskCategoryFragment"
+        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.AddTaskCategoryFragment"
+        android:label="AddTaskCategoryFragment" />
+    <action
+        android:id="@+id/action_global_addTaskCategoryFragment"
+        app:destination="@id/addTaskCategoryFragment" />
 
     <!--    <include
             app:graph="@navigation/nav_graph_settings" />-->
