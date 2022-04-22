@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 
 
 @Entity(tableName = "tasks")
@@ -22,8 +23,8 @@ data class TaskEntity(
     val hours: Int,
     @ColumnInfo(name = "minutes")
     val minutes: Int,
-//    @ColumnInfo(name = "status")
-//    val status: Status
+    @ColumnInfo(name = "status")
+    val status: TaskStatus = TaskStatus.TODO,
 ) {
 
     /*    data class Status(
