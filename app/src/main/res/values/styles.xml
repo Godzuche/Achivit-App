@@ -78,7 +78,6 @@
 
     <style name="Widget.App.Chip.Input" parent="Widget.Material3.Chip.Assist">
         <item name="checkedIconVisible">false</item>
-        <item name="shapeAppearanceOverlay">@null</item>
         <item name="closeIconVisible">true</item>
     </style>
 

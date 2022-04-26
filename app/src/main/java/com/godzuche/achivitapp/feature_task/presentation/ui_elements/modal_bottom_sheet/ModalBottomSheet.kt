@@ -22,7 +22,6 @@ import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.Dat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,11 +65,13 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?,
     ): View? {
         _binding = ModalBottomSheetContentBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 /*        val isSystem24Hour = is24HourFormat(requireContext())
         val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H*/
 
@@ -199,8 +200,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         } else if (taskId == -1L) {
-            (binding.ilCategory.editText as MaterialAutoCompleteTextView)
-                .setText("My Tasks", false)
+            /*(binding.ilCategory.editText as MaterialAutoCompleteTextView)
+                .setText("My Tasks", false)*/
             binding.btSave.apply {
                 text = getString(R.string.save)
                 setOnClickListener {
@@ -300,15 +301,49 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.list_item_category,
-//            resources.getStringArray(R.array.drop_down_categories)
-            listOf("My Tasks")
-        )
 
-        (binding.ilCategory.editText as? AutoCompleteTextView)
-            ?.setAdapter(adapter)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.categories.collectLatest { categoryList ->
+
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.list_item_category,
+                    categoryList
+                )
+
+                val exposedDropDown = binding.ilCategory.editText as? AutoCompleteTextView
+
+                exposedDropDown?.apply {
+                    setAdapter(adapter)
+                    if (categoryList.isNotEmpty()) {
+                        val initialSelection = adapter.getItem(0).toString()
+                        setText(initialSelection, false)
+                    }
+                }
+            }
+
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.collections.collectLatest { collectionList ->
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.list_item_category,
+                    collectionList
+                )
+                val exposedDropDown = binding.ilCollection.editText as? AutoCompleteTextView
+
+                exposedDropDown?.apply {
+                    setAdapter(adapter)
+                    if (collectionList.isNotEmpty()) {
+                        val initialSelection = adapter.getItem(0).toString()
+                        setText(initialSelection, false)
+                    }
+                }
+
+
+            }
+        }
 
     }
 

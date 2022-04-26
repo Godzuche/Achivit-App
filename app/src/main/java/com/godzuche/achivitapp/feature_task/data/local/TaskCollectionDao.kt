@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskCollectionDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(collection: TaskCollectionEntity)
 
     @Update
@@ -15,9 +15,12 @@ interface TaskCollectionDao {
     @Delete
     suspend fun deleteCollection(collection: TaskCollectionEntity)
 
-    @Query("SELECT * FROM task_categories ORDER BY id")
-    fun getAllCategory(): Flow<List<TaskCollectionEntity>>
+    @Query("SELECT * FROM task_collections ORDER BY collectionId")
+    fun getAllCollection(): Flow<List<TaskCollectionEntity>>
 
-    @Query("SELECT * FROM task_categories WHERE id = :id")
-    fun getCategory(id: Long): Flow<TaskCollectionEntity>
+    @Query("SELECT * FROM task_collections WHERE collectionId = :id")
+    fun getCollection(id: Long): Flow<TaskCollectionEntity>
+
+    @Query("DELETE FROM task_collections")
+    suspend fun deleteAll()
 }

@@ -2,14 +2,17 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bott
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -25,6 +28,32 @@ class ModalBottomSheetViewModel @Inject constructor(
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
 //    val uiEvent = _uiEvent.asSharedFlow()
+
+    val categories = repository.getAllCategory()
+        .map {
+            it.map { category ->
+                category.title
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+    val collections = repository.getAllCollection()
+        .map {
+            it.map { collection ->
+                collection.title
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+
+    private val collection: TaskCollectionEntity? = null
+    private val filterStatus = TaskStatus.NONE
 
     val accept: (ModalBottomSheetUiEvent) -> Unit
 

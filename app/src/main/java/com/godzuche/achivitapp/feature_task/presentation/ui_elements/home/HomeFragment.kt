@@ -24,12 +24,12 @@ import com.godzuche.achivitapp.databinding.FragmentHomeBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.home_frag_util.*
 import com.google.android.material.R.integer
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
@@ -311,21 +311,33 @@ class HomeFragment : Fragment() {
             }
         }
 
-
-        val chipGroup = activity?.findViewById<ChipGroup>(R.id.chip_group)
-        when (chipGroup?.checkedChipId) {
-            R.id.chip_my_tasks -> {
-//                getTaskCollections()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.categories.collectLatest { categoryList ->
+                    val chipGroup = binding.chipGroup
+                    chipGroup.removeAllViews()
+                    chipGroup.clearCheck()
+                    // I will restore checked chip from the viewModel by using onCheckedChangedListener
+                    categoryList.forEachIndexed { index, title ->
+                        val chip = layoutInflater.inflate(
+                            R.layout.single_chip_layout,
+                            chipGroup,
+                            false) as Chip
+                        chip.text = title
+                        chip.id = index
+                        chipGroup.addView(chip)
+                        /*     if (binding.chipGroup.checkedChipId == View.NO_ID) {
+                                 binding.chipGroup.check(binding.chipGroup[0].id)
+                             }*/
+                    }
+                }
             }
         }
 
-        chipGroup?.setOnCheckedChangeListener { group, checkedId ->
-            //
+        binding.chipAddCategory.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionGlobalAddTaskCategoryFragment(
+                DialogTitle.CATEGORY))
         }
-        activity?.findViewById<Chip>(R.id.chip_add_category)?.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionGlobalAddTaskCategoryFragment())
-        }
-
     }
 
     override fun onDestroy() {

@@ -15,28 +15,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_category"
-        style="@style/Widget.Material3.ChipGroup"
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:id="@+id/nsv_chips_category"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:checkedChip="@+id/chip_my_tasks"
-        app:chipSpacingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp"
+        android:scrollbars="none"
         app:layout_constraintStart_toStartOf="@id/tv_category"
-        app:layout_constraintTop_toBottomOf="@id/tv_category"
-        app:selectionRequired="true"
-        app:singleLine="true"
-        app:singleSelection="true">
+        app:layout_constraintTop_toBottomOf="@id/tv_category">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_my_tasks"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_category"
+            style="@style/Widget.Material3.ChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Tasks"
-            app:ensureMinTouchTargetSize="true" />
+            app:chipSpacingHorizontal="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true"/>
 
-    </com.google.android.material.chip.ChipGroup>
+            <!--        <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_my_tasks"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Tasks"
+                        app:ensureMinTouchTargetSize="true" />-->
+
+    </HorizontalScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ic_button_add_category"
@@ -73,7 +81,7 @@
         android:layout_marginVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chip_group_category" />
+        app:layout_constraintTop_toBottomOf="@id/nsv_chips_category" />
 
 
     <com.google.android.material.textview.MaterialTextView
@@ -86,27 +94,28 @@
         app:layout_constraintStart_toStartOf="@id/tv_category"
         app:layout_constraintTop_toBottomOf="@id/divider_0" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group1"
-        style="@style/Widget.Material3.ChipGroup"
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:id="@+id/hsv_chips_collection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:checkedChip="@+id/chip_all"
-        app:chipSpacingHorizontal="16dp"
-        app:chipSpacingVertical="8dp"
+        android:clipToPadding="false"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp"
+        android:scrollbars="none"
         app:layout_constraintStart_toStartOf="@id/tv_collections"
-        app:layout_constraintTop_toBottomOf="@id/tv_collections"
-        app:selectionRequired="true">
+        app:layout_constraintTop_toBottomOf="@id/tv_collections">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_all"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_collections"
+            style="@style/Widget.Material3.ChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All Tasks"
-            app:ensureMinTouchTargetSize="true" />
+            app:chipSpacingHorizontal="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
 
-    </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ic_button_add_collection"
@@ -143,7 +152,7 @@
         android:layout_marginVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chip_group1" />
+        app:layout_constraintTop_toBottomOf="@id/hsv_chips_collection" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_status"
@@ -156,7 +165,7 @@
         app:layout_constraintTop_toBottomOf="@id/divider_1" />
 
     <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group2"
+        android:id="@+id/chip_group_status"
         style="@style/Widget.Material3.ChipGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

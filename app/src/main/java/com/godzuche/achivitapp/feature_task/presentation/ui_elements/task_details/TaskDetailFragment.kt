@@ -23,7 +23,6 @@ import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewM
 import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
-import com.godzuche.achivitapp.feature_task.presentation.util.TaskUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.getTimeSuffix
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.millisToString
@@ -204,18 +203,6 @@ class TaskDetailFragment : Fragment() {
                 visibility = View.VISIBLE
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        /*  activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-              ?.visibility = View.GONE*/
-
-        /*activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
-            ?.icon =
-            ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_edit_24, activity?.theme)*/
-
-
     }
 
     override fun onResume() {

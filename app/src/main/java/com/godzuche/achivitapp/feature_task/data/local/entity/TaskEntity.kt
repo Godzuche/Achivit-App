@@ -15,8 +15,8 @@ data class TaskEntity(
     val title: String,
     @ColumnInfo(name = "description")
     val description: String,
-    @ColumnInfo(name = "completed")
-    val completed: Boolean = false,
+/*    @ColumnInfo(name = "completed")
+    val completed: Boolean = false,*/
     @ColumnInfo(name = "date")
     val date: Long,
     @ColumnInfo(name = "hours")
@@ -35,10 +35,11 @@ data class TaskEntity(
             id = id,
             title = title,
             description = description,
-            completed = completed,
+//            completed = completed,
             date = date,
             hours = hours,
-            minutes = minutes
+            minutes = minutes,
+            status = status
         )
     }
 }
