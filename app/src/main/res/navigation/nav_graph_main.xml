@@ -36,7 +36,6 @@
     <fragment
         android:id="@+id/task_fragment"
         android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskDetailFragment"
-        android:label=""
         tools:layout="@layout/fragment_task">
         <argument
             android:name="id"

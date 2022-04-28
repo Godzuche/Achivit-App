@@ -6,5 +6,5 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEnti
 data class TaskFilter(
     val category: TaskCategoryEntity? = null,
     val collection: TaskCollectionEntity? = null,
-    val status: TaskStatus = TaskStatus.NONE
+    val status: TaskStatus = TaskStatus.NONE,
 )

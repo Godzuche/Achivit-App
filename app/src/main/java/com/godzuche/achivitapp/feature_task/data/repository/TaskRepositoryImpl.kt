@@ -1,6 +1,5 @@
 package com.godzuche.achivitapp.feature_task.data.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -10,6 +9,7 @@ import com.godzuche.achivitapp.feature_task.data.local.TaskCategoryDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskCollectionDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskDao
 import com.godzuche.achivitapp.feature_task.data.local.entity.Category
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
@@ -88,6 +88,14 @@ class TaskRepositoryImpl(
 
     override fun getCategory(id: Long): Flow<Category> {
         return categoryDao.getCategory(id).map { it.toCategory() }
+    }
+
+    override fun getCategoryEntity(id: Long): Flow<TaskCategoryEntity> {
+        return categoryDao.getCategory(id)
+    }
+
+    override fun getLastInsertedTask(): Flow<Task> {
+        return taskDao.getLastInsertedTask().map { it.first().toTask() }
     }
 
     override fun getAllCategory(): Flow<List<Category>> {

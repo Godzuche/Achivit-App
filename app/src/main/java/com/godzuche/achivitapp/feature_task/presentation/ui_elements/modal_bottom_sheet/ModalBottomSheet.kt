@@ -127,6 +127,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                 val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
 
                 dateSelection = this.selection!!
+
                 formattedDateString = formatter.format(this.selection)
                 // then open time picker
                 activity?.supportFragmentManager?.let { it1 ->

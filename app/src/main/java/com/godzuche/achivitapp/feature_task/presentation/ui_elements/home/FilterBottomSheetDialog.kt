@@ -1,15 +1,25 @@
 package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FilterModalBottomSheetContentBinding
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FilterBottomSheetDialog : BottomSheetDialogFragment() {
@@ -69,6 +79,19 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                         }
                     }
                 }
+                launch {
+                    viewModel.checkedCategoryChip.collectLatest {
+                        chipGroupCategory.check(it.categoryId.toInt())
+                        Log.d("Category", "Collected category id: ${it.categoryId}")
+                    }
+                }
+                launch {
+                    chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
+                        viewModel.setCheckedCategoryChip(checkedId = checkedId).also {
+                            Log.d("Category", "checked changed id: $checkedId")
+                        }
+                    }
+                }
             }
         }
         icButtonAddCategory.setOnClickListener {
@@ -81,6 +104,16 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                 DialogTitle.COLLECTION)
             )
         }
+        icButtonDeleteCategory.setOnClickListener {
+//            viewModel.deleteCategory()
+        }
+
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("Category", "OnStop called")
     }
 
     override fun onDestroy() {

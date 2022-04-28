@@ -335,7 +335,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.chipAddCategory.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionGlobalAddTaskCategoryFragment(
+            findNavController().navigate(HomeFragmentDirections.actionGlobalAddCategoryCollectionFragment(
                 DialogTitle.CATEGORY))
         }
     }

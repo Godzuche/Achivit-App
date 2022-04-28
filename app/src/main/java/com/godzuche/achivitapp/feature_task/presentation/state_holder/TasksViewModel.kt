@@ -1,7 +1,13 @@
 package com.godzuche.achivitapp.feature_task.presentation.state_holder
 
+import android.app.AlarmManager
+import android.app.Application
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -16,24 +22,35 @@ import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
+import com.godzuche.achivitapp.feature_task.receivers.DueTaskAlarmReceiver
+import com.godzuche.achivitapp.feature_task.receivers.setReminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class TasksViewModel @Inject constructor(
+    private val app: Application,
     private val getTask: GetTask,
 //    private val getAllTasks: GetTasks,
 //    private val searchTasksByTitle: SearchTasksByTitle,
 //    private val insertTask: InsertTask,
     private val repository: TaskRepository,
-) : ViewModel() {
+) : AndroidViewModel(app) {
+
+    private val _checkedCategoryChip: MutableStateFlow<TaskCategoryEntity> = MutableStateFlow(
+        TaskCategoryEntity(
+            categoryId = 0L,
+            title = "My Tasks"
+        ))
+    val checkedCategoryChip = _checkedCategoryChip.asStateFlow()
 
     val bottomSheetAction = MutableStateFlow<String>("")
     val bottomSheetTaskId = MutableStateFlow<Int>(-1)
@@ -230,6 +247,18 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val alarmIntent = Intent(app, DueTaskAlarmReceiver::class.java)
+    val alarmPendingIntent = PendingIntent.getBroadcast(
+        getApplication(),
+        0,
+        alarmIntent,
+        0
+    )
+    val notificationManager =
+        app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+
     fun addNewTask(
         taskTitle: String,
         taskDescription: String,
@@ -237,8 +266,45 @@ class TasksViewModel @Inject constructor(
         sHour: Int,
         mMinute: Int,
     ) {
+        val cal = Calendar.getInstance()
+        cal.time = Date(dateSelection)
+        val year = cal[Calendar.YEAR]
+        val month = cal[Calendar.MONTH]
+        val day = cal[Calendar.DAY_OF_MONTH]
+
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.MINUTE, mMinute)
+            set(Calendar.HOUR_OF_DAY, sHour)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
         val newTask = getNewTaskEntry(taskTitle, taskDescription, dateSelection, sHour, mMinute)
         insertTask(newTask)
+/*        AlarmManagerCompat.setExactAndAllowWhileIdle(
+            alarmManager,
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            alarmPendingIntent
+        ).also {
+            Log.d("Reminder", "ViewModel Set at $sHour : $mMinute")
+        }*/
+        viewModelScope.launch {
+            delay(300L)
+            repository.getLastInsertedTask().collectLatest { task ->
+                task.id?.let {
+                    setReminder(app,
+                        getApplication(),
+                        it,
+                        calendar.timeInMillis,
+                        task.title,
+                        task.description)
+                    Log.d("Reminder", "ViewModel Set at $sHour : $mMinute")
+                }
+            }
+        }
         viewModelScope.launch {
             delay(300L)
             sendUiEvent(UiEvent.ScrollToTop)
@@ -320,6 +386,15 @@ class TasksViewModel @Inject constructor(
     fun reorderTasks(draggedTask: Task, targetTask: Task) {
         updateTask(draggedTask.copy(id = targetTask.id))
         updateTask(targetTask.copy(id = draggedTask.id))
+    }
+
+    fun setCheckedCategoryChip(checkedId: Int) {
+        viewModelScope.launch {
+            repository.getCategoryEntity(checkedId.toLong()).collectLatest { category ->
+                Log.d("Category", "ViewModel collected checked chip: ${category.title}")
+                _checkedCategoryChip.emit(category)
+            }
+        }
     }
 
 /*    fun onSearchClosed(): Boolean {
