@@ -5,6 +5,7 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -40,6 +41,15 @@ class AddCategoryCollectionFragment : DialogFragment() {
             .create()
         val binding = FragmentAddTaskCategoryBinding.inflate(dialog.layoutInflater)
 
+        when (navigationArgs.dialogTitle) {
+            DialogTitle.CATEGORY -> {
+                binding.ilDropDown.visibility = View.GONE
+            }
+            DialogTitle.COLLECTION -> {
+                binding.ilDropDown.visibility = View.VISIBLE
+            }
+        }
+
         binding.bind()
 
         return dialog.apply {
@@ -57,7 +67,7 @@ class AddCategoryCollectionFragment : DialogFragment() {
                         close()
                     }
                     DialogTitle.COLLECTION -> {
-                        viewModel.addNewCollection(title = title)
+//                        viewModel.addNewCollection(title = title)
                         close()
                     }
                 }

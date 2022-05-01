@@ -2,15 +2,14 @@ package com.godzuche.achivitapp.feature_task.domain.repository
 
 import androidx.paging.PagingData
 import com.godzuche.achivitapp.core.util.Resource
-import com.godzuche.achivitapp.feature_task.data.local.entity.Category
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
 
-    fun getTask(id: Long): Flow<Resource<Task>>
+    fun getTask(id: Int): Flow<Resource<Task>>
 
     //    fun getAllTask(): Flow<Resource<List<Task>>>
     fun getAllTask(): Flow<PagingData<Task>>
@@ -28,16 +27,17 @@ interface TaskRepository {
     suspend fun updateTask(task: Task)
 
     //
-    fun getCategory(id: Long): Flow<Category>
-    fun getCategoryEntity(id: Long): Flow<TaskCategoryEntity>
-    fun getAllCategory(): Flow<List<Category>>
-    suspend fun insertCategory(category: Category)
-    suspend fun updateCategory(category: Category)
+    fun getCategory(title: String): Flow<TaskCategoryEntity>
+
+    //    fun getCategoryEntity(id: Int): Flow<TaskCategoryEntity>
+    fun getAllCategory(): Flow<List<TaskCategoryEntity>>
+    suspend fun insertCategory(category: TaskCategoryEntity)
+    suspend fun updateCategory(category: TaskCategoryEntity)
 
     //
-    fun getCollection(id: Long): Flow<TaskCollection>
-    fun getAllCollection(): Flow<List<TaskCollection>>
-    suspend fun insertCollection(collection: TaskCollection)
-    suspend fun updateCollection(collection: TaskCollection)
+    fun getCollection(title: String): Flow<TaskCollectionEntity>
+    fun getAllCollection(): Flow<List<TaskCollectionEntity>>
+    suspend fun insertCollection(collection: TaskCollectionEntity)
+    suspend fun updateCollection(collection: TaskCollectionEntity)
 
 }

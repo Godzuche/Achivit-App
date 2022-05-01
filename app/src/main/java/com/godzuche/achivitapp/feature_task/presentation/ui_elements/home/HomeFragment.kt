@@ -346,7 +346,7 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        const val NOT_SET = -1L
+        const val NOT_SET = -1
     }
 
 }

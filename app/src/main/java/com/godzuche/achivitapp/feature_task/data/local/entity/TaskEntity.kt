@@ -7,24 +7,26 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 
 
-@Entity(tableName = "tasks")
+@Entity(tableName = "task_table")
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    val id: Int = 0,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "description")
     val description: String,
 /*    @ColumnInfo(name = "completed")
     val completed: Boolean = false,*/
-    @ColumnInfo(name = "date")
-    val date: Long,
-    @ColumnInfo(name = "hours")
-    val hours: Int,
-    @ColumnInfo(name = "minutes")
-    val minutes: Int,
+    /*@ColumnInfo(name = "isPriority")
+    val isPriority: Boolean = false,*/
+    @ColumnInfo(name = "created")
+    val created: Long = 0L,
+    @ColumnInfo(name = "due_date")
+    val dueDate: Long,
     @ColumnInfo(name = "status")
     val status: TaskStatus = TaskStatus.TODO,
+    @ColumnInfo(name = "collection_title")
+    val collectionTitle: String,
 ) {
 
     /*    data class Status(
@@ -35,11 +37,10 @@ data class TaskEntity(
             id = id,
             title = title,
             description = description,
-//            completed = completed,
-            date = date,
-            hours = hours,
-            minutes = minutes,
-            status = status
+            created = created,
+            dueDate = dueDate,
+            status = status,
+            collectionTitle = collectionTitle
         )
     }
 }

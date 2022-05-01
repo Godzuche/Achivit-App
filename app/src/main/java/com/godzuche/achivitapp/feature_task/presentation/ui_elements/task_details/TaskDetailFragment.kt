@@ -24,10 +24,8 @@ import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_botto
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.getTimeSuffix
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.millisToString
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupOnChipClickDateTimePicker
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.to12HrsFormat
 import com.godzuche.achivitapp.feature_task.presentation.util.themeColor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -106,48 +104,45 @@ class TaskDetailFragment : Fragment() {
        */
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                /*viewModel.retrieveTask(id).collect { clickedTask ->
+                launch { /*viewModel.retrieveTask(id).collect { clickedTask ->
                     task = clickedTask
 //                    bind(task!!)
                     setupDateTimePicker(clickedTask, binding, viewModel)
                 }*/
-                viewModel.detail
-                    .collectLatest {
-                        if (it != null) {
-                            task = it
-                            bind(it)
-                            setupOnChipClickDateTimePicker(it, binding, viewModel)
-                        }
-                    }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.uiEvent.collectLatest { event ->
-                    when (event) {
-                        is UiEvent.ShowSnackBar -> {
-                            val snackBar =
-                                Snackbar.make(binding.coordinator,
-                                    event.message,
-                                    Snackbar.LENGTH_LONG)
-                                    .setAnchorView(activity?.findViewById(R.id.fab_add))
-
-                            if (event.action == SnackBarActions.UNDO) {
-                                snackBar.setAction(event.action) {
-                                    viewModel.accept(TaskUiEvent.OnUndoDeleteClick)
-                                }.show()
+                    viewModel.detail
+                        .collectLatest {
+                            if (it != null) {
+                                task = it
+                                bind(it)
+                                setupOnChipClickDateTimePicker(it, binding, viewModel)
                             }
                         }
-                        is UiEvent.PopBackStack -> {
-                            findNavController().popBackStack()
+                }
+                launch {
+                    viewModel.uiEvent.collectLatest { event ->
+                        when (event) {
+                            is UiEvent.ShowSnackBar -> {
+                                val snackBar =
+                                    Snackbar.make(binding.coordinator,
+                                        event.message,
+                                        Snackbar.LENGTH_LONG)
+                                        .setAnchorView(activity?.findViewById(R.id.fab_add))
+
+                                if (event.action == SnackBarActions.UNDO) {
+                                    snackBar.setAction(event.action) {
+                                        viewModel.accept(TaskUiEvent.OnUndoDeleteClick)
+                                    }.show()
+                                }
+                            }
+                            is UiEvent.PopBackStack -> {
+                                findNavController().popBackStack()
+                            }
+                            else -> Unit
                         }
-                        else -> Unit
                     }
                 }
             }
         }
-
 /*        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetAction.emit("Edit Task")
@@ -183,25 +178,19 @@ class TaskDetailFragment : Fragment() {
 
 
     private fun bind(task: Task) {
-        var timeSuffix: String
-
         binding.apply {
             tvTaskTitle.text = task.title
             tvTaskDescription.text = task.description
-            val dateSelection = task.date
-            val formattedDateString = millisToString(dateSelection)
-            val mHour = to12HrsFormat(task.hours).also {
-                timeSuffix = getTimeSuffix(task.hours)
-            }
 
-            binding.chipTime.apply {
-                text = getString(
-                    R.string.date_time, formattedDateString, mHour,
-                    task.minutes,
-                    timeSuffix)
-
+            val taskDueDate = task.dueDate
+            chipTime.apply {
+                text = convertMillisToString(taskDueDate)
                 visibility = View.VISIBLE
             }
+
+            val createdDate = task.created
+            tvCreatedDate.text =
+                createdDate?.let { getString(R.string.created, convertMillisToString(createdDate)) }
         }
     }
 

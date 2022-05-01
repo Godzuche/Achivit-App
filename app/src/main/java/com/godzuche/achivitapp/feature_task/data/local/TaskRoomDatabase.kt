@@ -15,23 +15,4 @@ abstract class TaskRoomDatabase : RoomDatabase() {
     abstract val categoryDao: TaskCategoryDao
     abstract val collectionDao: TaskCollectionDao
 
-    /* companion object {
-         @Volatile
-         private var INSTANCE: TaskRoomDatabase? = null
-
-         fun getDatabase(context: Context): TaskRoomDatabase {
-             return INSTANCE ?: synchronized(this) {
-                 val instance = Room.databaseBuilder(
-                     context,
-                     TaskRoomDatabase::class.java,
-                     "task_database"
-                 )
-                     .fallbackToDestructiveMigration()
-                     .build()
-                 INSTANCE = instance
-                 return instance
-             }
-         }
-     }
- */
 }

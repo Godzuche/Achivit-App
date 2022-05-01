@@ -17,7 +17,6 @@ import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -80,10 +79,10 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                     }
                 }
                 launch {
-                    viewModel.checkedCategoryChip.collectLatest {
+                    /*viewModel.checkedCategoryChip.collectLatest {
                         chipGroupCategory.check(it.categoryId.toInt())
                         Log.d("Category", "Collected category id: ${it.categoryId}")
-                    }
+                    }*/
                 }
                 launch {
                     chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->

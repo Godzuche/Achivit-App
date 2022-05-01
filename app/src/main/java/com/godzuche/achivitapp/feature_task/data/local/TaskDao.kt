@@ -11,10 +11,10 @@ interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(task: TaskEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun reInsert(task: TaskEntity)
 
-    @Query("SELECT * FROM tasks ORDER BY id DESC")
+    @Query("SELECT * FROM task_table ORDER BY id DESC")
     fun getLastInsertedTask(): Flow<List<TaskEntity>>
 
     @Delete
@@ -23,16 +23,13 @@ interface TaskDao {
     @Update
     suspend fun update(task: TaskEntity)
 
-    @Query("SELECT * FROM tasks WHERE id = :id")
-    fun getTask(id: Long): Flow<TaskEntity>
-/*
-    @Query("SELECT * FROM tasks ORDER BY id DESC")
-    fun getAllTasks(): Flow<List<TaskEntity>>*/
+    @Query("SELECT * FROM task_table WHERE id = :id")
+    fun getTask(id: Int): Flow<TaskEntity>
 
-    @Query("SELECT * FROM tasks ORDER BY id DESC")
+    @Query("SELECT * FROM task_table ORDER BY id DESC")
     fun getAllTasks(): PagingSource<Int, TaskEntity>
 
-    @Query("SELECT * FROM tasks WHERE " +
+    @Query("SELECT * FROM task_table WHERE " +
             " title LIKE '%' || :title || '%' OR description LIKE '%' || :title || '%'" +
             "ORDER BY title ASC")
     suspend fun searchTasksByTitle(title: String): List<TaskEntity>

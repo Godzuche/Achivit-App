@@ -18,7 +18,7 @@ class TaskDetailViewModel @Inject constructor(
     private val repositoryImpl: TaskRepository,
 ) : ViewModel() {
 
-    private val taskId = MutableStateFlow(-1L)
+    private val taskId = MutableStateFlow(-1)
 
 /*
     private var _uiState: MutableStateFlow<TaskUiState>
@@ -44,7 +44,7 @@ class TaskDetailViewModel @Inject constructor(
             when (action) {
                 is TaskUiEvent.OnRetrieveTask -> {
 //                    retrieveTask(action.taskId)
-                    viewModelScope.launch { taskId.emit(action.taskId.toLong()) }
+                    viewModelScope.launch { taskId.emit(action.taskId) }
                 }
                 is TaskUiEvent.OnDeleteTask -> {
                     deletedTask = action.task
@@ -90,30 +90,30 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     fun updateTask(
-        taskId: Long, taskTitle: String, taskDescription: String, dateSelection: Long,
-        sHour: Int,
-        mMinute: Int,
+        taskId: Int,
+        taskTitle: String,
+        taskDescription: String,
+        dueDate: Long,
+        collectionTitle: String,
     ) {
         val updatedTask =
-            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dateSelection, sHour, mMinute)
+            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dueDate, collectionTitle)
         updateTask(updatedTask)
     }
 
     private fun getUpdatedTaskEntry(
-        taskId: Long,
+        taskId: Int,
         taskTitle: String,
         taskDescription: String,
-        dateSelection: Long,
-        sHour: Int,
-        mMinute: Int,
+        dueDate: Long,
+        collectionTitle: String,
     ): Task {
         return Task(
             id = taskId,
             title = taskTitle,
             description = taskDescription,
-            date = dateSelection,
-            hours = sHour,
-            minutes = mMinute
+            dueDate = dueDate,
+            collectionTitle = collectionTitle
         )
     }
 

@@ -6,18 +6,22 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "task_collections")
 data class TaskCollectionEntity(
-    @PrimaryKey(autoGenerate = true)
-    val collectionId: Long = 0L,
+/*    @PrimaryKey(autoGenerate = true)
+    val collectionId: Int = 0,*/
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "title")
     val title: String,
-) {
-    fun toCollection(): TaskCollection {
-        return TaskCollection(title = title)
-    }
-}
 
+    @ColumnInfo(name = "category_title")
+    val categoryTitle: String,
+) {
+/*    fun toCollection(): TaskCollection {
+        return TaskCollection(title = title)
+    }*/
+}
+/*
 data class TaskCollection(
-    val id: Long? = null,
+    val id: Int? = null,
     val title: String,
 ) {
     fun toNewTaskCollectionEntity(): TaskCollectionEntity {
@@ -30,4 +34,4 @@ data class TaskCollection(
             title = title
         )
     }
-}
+}*/

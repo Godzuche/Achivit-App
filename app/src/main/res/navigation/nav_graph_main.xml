@@ -39,8 +39,8 @@
         tools:layout="@layout/fragment_task">
         <argument
             android:name="id"
-            android:defaultValue="0L"
-            app:argType="long" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <action
         android:id="@+id/action_global_taskFragment"
@@ -60,8 +60,8 @@
 
         <argument
             android:name="taskId"
-            android:defaultValue="0L"
-            app:argType="long" />
+            android:defaultValue="-1"
+            app:argType="integer" />
 
     </dialog>
     <action

@@ -26,7 +26,7 @@ class DueTaskAlarmReceiver() : BroadcastReceiver() {
 
         val bundle = intent?.extras
         bundle?.apply {
-            val taskId = getLong(KEY_TASK_ID)
+            val taskId = getInt(KEY_TASK_ID)
             val taskTitle = getString(KEY_TITLE)
             val taskDesc = getString(KEY_DESC)
             CoroutineScope(Dispatchers.IO).launch {
@@ -41,7 +41,8 @@ class DueTaskAlarmReceiver() : BroadcastReceiver() {
                 makeTaskDueNotification(context!!, taskId = taskId, taskTitle = taskTitle, taskDesc)
             }
 
-            Log.d("Reminder", "Receiver received title: $taskTitle with id: $taskId, description: $taskDesc")
+            Log.d("Reminder",
+                "Receiver received title: $taskTitle with id: $taskId, description: $taskDesc")
 //                    Log.d("Reminder", "Receiver received at due: ${it.hours} : ${it.minutes}")
 
 

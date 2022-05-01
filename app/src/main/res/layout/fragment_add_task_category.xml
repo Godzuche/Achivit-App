@@ -8,15 +8,35 @@
     android:paddingVertical="32dp">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/il_drop_down"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Category*"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/et_drop_down"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/il_category"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:hint="Title"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/il_drop_down">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_category"

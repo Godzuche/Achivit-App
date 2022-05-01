@@ -24,7 +24,7 @@ import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_ID
 
 fun makeTaskDueNotification(
     context: Context, /*task: Task*/
-    taskId: Long,
+    taskId: Int,
     taskTitle: String,
     taskDescription: String,
 ) {
@@ -74,15 +74,14 @@ fun makeTaskDueNotification(
 }
 
 fun setReminder(
-    app: Application,
     getApp: Application,
-    taskId: Long,
+    taskId: Int,
     taskDueDate: Long,
     title: String,
     description: String,
 ) {
     val extras = Bundle().apply {
-        putLong(KEY_TASK_ID, taskId)
+        putInt(KEY_TASK_ID, taskId)
         putString(KEY_TITLE, title)
         putString(KEY_DESC, description)
     }
@@ -93,7 +92,7 @@ fun setReminder(
     }
     val alarmPendingIntent = PendingIntent.getBroadcast(
         context,
-        taskId.toInt() + 1,
+        taskId + 1,
         alarmIntent,
         PendingIntent.FLAG_UPDATE_CURRENT
     )

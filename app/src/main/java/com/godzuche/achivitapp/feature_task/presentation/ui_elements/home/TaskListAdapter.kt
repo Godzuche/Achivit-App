@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
-import java.text.SimpleDateFormat
-import java.util.*
+import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 
 class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
     PagingDataAdapter<Task, TaskListAdapter.TaskViewHolder>(TASK_COMPARATOR) {
@@ -68,28 +67,8 @@ class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
             binding.tvTaskTitle.text = task.title
             binding.tvTaskDescription.text = task.description
 
-            val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-            val dateSelection = task.date
-            val formattedDateString = formatter.format(dateSelection)
-            val mHour = when {
-                task.hours == 12 -> {
-                    timeSuffix = "PM"
-                    task.hours
-                }
-                task.hours > 12 -> {
-                    timeSuffix = "PM"
-                    task.hours - 12
-                }
-                else -> {
-                    timeSuffix = "AM"
-                    task.hours
-                }
-            }
-
-            binding.chipTimeDate.text = itemView.resources.getString(
-                R.string.date_time, formattedDateString, mHour,
-                task.minutes,
-                timeSuffix)
+            val taskDueDate = task.dueDate
+            binding.chipTimeDate.text = convertMillisToString(taskDueDate)
         }
 
     }

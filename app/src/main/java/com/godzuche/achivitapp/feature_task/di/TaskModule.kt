@@ -2,7 +2,7 @@ package com.godzuche.achivitapp.feature_task.di
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
+import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -33,12 +33,13 @@ object TaskModule {
     }
 
     private val categoryContentValues = ContentValues().apply {
-        put("categoryId", 0L)
+//        put("categoryId", 0L)
         put("title", "My Tasks")
     }
     private val collectionContentValues = ContentValues().apply {
-        put("collectionId", 0L)
+//        put("collectionId", 0L)
         put("title", "All Tasks")
+        put("category_title", "My Tasks")
     }
 
     @Provides
@@ -50,14 +51,14 @@ object TaskModule {
         return Room.databaseBuilder(
             context,
             TaskRoomDatabase::class.java,
-            "task_db"
+            "task.db"
         ).fallbackToDestructiveMigration()
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     scope.launch {
-                        db.insert("task_categories", CONFLICT_IGNORE, categoryContentValues)
-                        db.insert("task_collections", CONFLICT_IGNORE, collectionContentValues)
+                        db.insert("task_categories", CONFLICT_REPLACE, categoryContentValues)
+                        db.insert("task_collections", CONFLICT_REPLACE, collectionContentValues)
 
                     }
                 }

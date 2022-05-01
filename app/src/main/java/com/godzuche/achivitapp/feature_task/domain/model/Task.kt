@@ -4,24 +4,24 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 
 data class Task(
-    val id: Long? = null,
+    val id: Int? = null,
     val title: String,
     val description: String,
 //    val completed: Boolean = false,
-    val date: Long,
-    val hours: Int,
-    val minutes: Int,
+    // val isPriority: Boolean = false
+    val created: Long? = null,
+    val dueDate: Long,
     val status: TaskStatus = TaskStatus.TODO,
+    val collectionTitle: String,
 ) {
     fun toNewTaskEntity(): TaskEntity {
         return TaskEntity(
             title = title,
             description = description,
-//            completed = completed,
-            date = date,
-            hours = hours,
-            minutes = minutes,
-            status = status
+            created = created!!,
+            dueDate = dueDate,
+            status = status,
+            collectionTitle = collectionTitle
         )
     }
 
@@ -30,11 +30,9 @@ data class Task(
             id = id!!,
             title = title,
             description = description,
-//            completed = completed,
-            date = date,
-            hours = hours,
-            minutes = minutes,
-            status = status
+            dueDate = dueDate,
+            status = status,
+            collectionTitle = collectionTitle
         )
     }
 }

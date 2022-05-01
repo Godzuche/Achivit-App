@@ -20,7 +20,7 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val repository: TaskRepository,
 ) : ViewModel() {
 
-    private val taskId = MutableStateFlow(-1L)
+    private val taskId = MutableStateFlow(-1)
     private val _task = MutableStateFlow<Task?>(null)
     val task = _task.asStateFlow()
 
@@ -58,7 +58,7 @@ class ModalBottomSheetViewModel @Inject constructor(
     val accept: (ModalBottomSheetUiEvent) -> Unit
 
     private val bottomSheetAction = taskId.transformLatest { taskId ->
-        if (taskId == -1L) {
+        if (taskId == -1) {
             _task.emit(null)
             emit("Add Task")
         } else {
@@ -67,7 +67,7 @@ class ModalBottomSheetViewModel @Inject constructor(
         }
     }/*.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "")*/
 
-    private fun retrieveTask(id: Long) {
+    private fun retrieveTask(id: Int) {
         viewModelScope.launch {
             repository.getTask(id)
                 .map { it.data }
@@ -106,30 +106,30 @@ class ModalBottomSheetViewModel @Inject constructor(
     }
 
     fun updateTask(
-        taskId: Long, taskTitle: String, taskDescription: String, dateSelection: Long,
-        sHour: Int,
-        mMinute: Int,
+        taskId: Int,
+        taskTitle: String,
+        taskDescription: String,
+        dueDate: Long,
+        collectionTitle: String,
     ) {
         val updatedTask =
-            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dateSelection, sHour, mMinute)
+            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dueDate, collectionTitle)
         updateTask(updatedTask)
     }
 
     private fun getUpdatedTaskEntry(
-        taskId: Long,
+        taskId: Int,
         taskTitle: String,
         taskDescription: String,
-        dateSelection: Long,
-        sHour: Int,
-        mMinute: Int,
+        dueDate: Long,
+        collectionTitle: String,
     ): Task {
         return Task(
             id = taskId,
             title = taskTitle,
             description = taskDescription,
-            date = dateSelection,
-            hours = sHour,
-            minutes = mMinute
+            dueDate = dueDate,
+            collectionTitle = collectionTitle
         )
     }
 
@@ -139,5 +139,12 @@ class ModalBottomSheetViewModel @Inject constructor(
         }
     }
 
+    fun getCollectionCategory(collectionTitle: String, onGetCategoryTitle: ((String) -> Unit)) {
+        viewModelScope.launch {
+            repository.getCollection(collectionTitle).collectLatest {
+                onGetCategoryTitle(it.categoryTitle)
+            }
+        }
+    }
 
 }

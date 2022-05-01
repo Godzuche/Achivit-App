@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetTask @Inject constructor(
     private val repository: TaskRepository,
 ) {
-    operator fun invoke(id: Long): Flow<Resource<Task>> {
+    operator fun invoke(id: Int): Flow<Resource<Task>> {
         return repository.getTask(id)
     }
 }

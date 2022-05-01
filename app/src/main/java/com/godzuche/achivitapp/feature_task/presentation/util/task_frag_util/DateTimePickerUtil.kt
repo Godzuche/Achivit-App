@@ -1,12 +1,9 @@
 package com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util
 
-import android.content.res.Resources
 import androidx.fragment.app.Fragment
-import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskDetailViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -16,44 +13,21 @@ import java.util.*
 
 object DateTimePickerUtil {
 
-    private var formattedDateString = ""
-    private var mHour = 0
     private var mMinute = 0
-    private var sHour: Int = 0
+    private var mHour = 0
+    private var mYear = 0
+    private var mMonth = 0
+    private var mDayOfMonth = 0
     private var dateSelection: Long = 0L
 
-    fun millisToString(timeMillis: Long): String {
-        val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-        return formatter.format(timeMillis)
-    }
+    private val mCalendar = Calendar.getInstance()
 
-    fun to12HrsFormat(hours: Int): Int {
-        return when {
-            hours == 12 -> {
-                hours
-            }
-            hours > 12 -> {
-                hours - 12
-            }
-            else -> {
-                hours
-            }
-        }
-    }
-
-    fun getTimeSuffix(hours: Int): String {
-        val timeSuffix = when {
-            hours == 12 -> {
-                "PM"
-            }
-            hours > 12 -> {
-                "PM"
-            }
-            else -> {
-                "AM"
-            }
-        }
-        return timeSuffix
+    fun convertMillisToString(timeMillis: Long): String {
+        val calender = Calendar.getInstance()
+        calender.timeInMillis = timeMillis
+        val date = calender.time
+        val sdf = SimpleDateFormat("E, MMM d, h:mm a", Locale.getDefault())
+        return sdf.format(date)
     }
 
     @ExperimentalCoroutinesApi
@@ -62,19 +36,47 @@ object DateTimePickerUtil {
         binding: FragmentTaskBinding,
         viewModel: TaskDetailViewModel,
     ) {
+        val cal = Calendar.getInstance()
+        cal.time = Date(task.dueDate)
+        val year = cal[Calendar.YEAR]
+        val month = cal[Calendar.MONTH]
+        val day = cal[Calendar.DAY_OF_MONTH]
+        val hour = cal[Calendar.MINUTE]
+        val minute = cal[Calendar.MINUTE]
+        val second = cal[Calendar.SECOND]
+        val millis = cal[Calendar.MILLISECOND]
+
+        /*       val dueDate = Calendar.getInstance().apply {
+                   set(Calendar.YEAR, year)
+                   set(Calendar.MONTH, month)
+                   set(Calendar.DAY_OF_MONTH, day)
+                   set(Calendar.MINUTE, mMinute)
+                   set(Calendar.HOUR_OF_DAY, sHour)
+                   set(Calendar.SECOND, 0)
+                   set(Calendar.MILLISECOND, 0)
+               }.timeInMillis*/
+
+        // bind time
         val timePicker = MaterialTimePicker.Builder()
             .setTimeFormat(TimeFormat.CLOCK_12H)
-            .setHour(task.hours)
-            .setMinute(task.minutes)
+            .setHour(hour)
+            .setMinute(minute)
             .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
             .setTitleText("Select time")
             .build()
 
         val materialDatePicker = MaterialDatePicker.Builder.datePicker()
 
+        val taskDateSelection = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, day)
+        }.timeInMillis
+
+        // bind date
         val datePicker = materialDatePicker
             .setTitleText("Select date")
-            .setSelection(task.date)
+            .setSelection(taskDateSelection)
             .build()
 
         timePicker.apply {
@@ -93,32 +95,20 @@ object DateTimePickerUtil {
             }
 
             addOnPositiveButtonClickListener {
-
                 mMinute = this.minute
-                sHour = this.hour
-
-                val timeSuffix: String
-
-                mHour = when {
-                    hour == 12 -> {
-                        timeSuffix = "PM"
-                        hour
-                    }
-                    hour > 12 -> {
-                        timeSuffix = "PM"
-                        hour - 12
-                    }
-                    else -> {
-                        timeSuffix = "AM"
-                        hour
-                    }
-                }
+                mHour = this.hour
+                val taskDueDate = mCalendar.apply {
+                    set(Calendar.YEAR, mYear)
+                    set(Calendar.MONTH, mMonth)
+                    set(Calendar.DAY_OF_MONTH, mDayOfMonth)
+                    set(Calendar.HOUR_OF_DAY, mHour)
+                    set(Calendar.MINUTE, mMinute)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.timeInMillis
 
                 binding.chipTime.apply {
-                    text = getString(R.string.date_time, formattedDateString,
-                        mHour,
-                        mMinute,
-                        timeSuffix)
+                    text = convertMillisToString(taskDueDate)
                 }
 
                 task.apply {
@@ -127,9 +117,8 @@ object DateTimePickerUtil {
                             id,
                             this.title,
                             this.description,
-                            dateSelection,
-                            sHour,
-                            mMinute
+                            taskDueDate,
+                            this.collectionTitle
                         )
                     }
                 }
@@ -140,9 +129,12 @@ object DateTimePickerUtil {
         datePicker.apply {
             addOnPositiveButtonClickListener {
                 dateSelection = this.selection!!
-                val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-                formattedDateString = formatter.format(this.selection)
-                // then open time picker
+                val calend = Calendar.getInstance()
+                calend.timeInMillis = dateSelection
+                mYear = calend[Calendar.YEAR]
+                mMonth = calend[Calendar.MONTH]
+                mDayOfMonth = calend[Calendar.DAY_OF_MONTH]
+
                 activity?.supportFragmentManager?.let { it1 ->
                     timePicker.show(it1,
                         "time_picker_tag")
@@ -161,65 +153,6 @@ object DateTimePickerUtil {
         binding.chipTime.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 -> datePicker.show(it1, "date_picker_tag") }
         }
-
-    }
-
-    fun formatTaskDateTime(task: Task): String {
-        val timeSuffix: String
-        val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-        val dateSelection = task.date
-        val formattedDateString = formatter.format(dateSelection)
-        val mHour = when {
-            task.hours == 12 -> {
-                timeSuffix = "PM"
-                task.hours
-            }
-            task.hours > 12 -> {
-                timeSuffix = "PM"
-                task.hours - 12
-            }
-            else -> {
-                timeSuffix = "AM"
-                task.hours
-            }
-        }
-
-        return Resources.getSystem().getString(R.string.date_time,
-            formattedDateString,
-            mHour,
-            task.minutes,
-            timeSuffix)
-
-    }
-
-    fun BottomSheetDialogFragment.formatDateTime(
-        minutes: Int,
-        hours: Int,
-        dateSelection: Long,
-    ): String {
-        val formatter = SimpleDateFormat("E, MMM d", Locale.getDefault())
-        val formattedDateString = formatter.format(dateSelection)
-        val timeSuffix: String
-        val mHour = when {
-            hours == 12 -> {
-                timeSuffix = "PM"
-                hours
-            }
-            hours > 12 -> {
-                timeSuffix = "PM"
-                hours - 12
-            }
-            else -> {
-                timeSuffix = "AM"
-                hours
-            }
-        }
-
-        return resources.getString(R.string.date_time,
-            formattedDateString,
-            mHour,
-            minutes,
-            timeSuffix)
 
     }
 

@@ -98,6 +98,18 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_task_description"
                     tools:text="Tue, 6 Jul, 15:00" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_created_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    app:layout_constraintEnd_toEndOf="@id/tv_task_description"
+                    app:layout_constraintStart_toStartOf="@id/chip_time"
+                    app:layout_constraintTop_toBottomOf="@id/chip_time"
+                    tools:text="Created May 1 2022, 8:17 PM" />
+
                 <!--    desc-->
                 <!--    Priority-->
                 <!--    time/schedule-->

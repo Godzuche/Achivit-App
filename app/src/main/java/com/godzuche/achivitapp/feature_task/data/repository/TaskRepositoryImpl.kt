@@ -4,15 +4,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.feature_task.data.local.TaskCategoryDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskCollectionDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskDao
-import com.godzuche.achivitapp.feature_task.data.local.entity.Category
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -24,7 +27,7 @@ class TaskRepositoryImpl(
     private val collectionDao: TaskCollectionDao,
 ) : TaskRepository {
 
-    override fun getTask(id: Long): Flow<Resource<Task>> = flow {
+    override fun getTask(id: Int): Flow<Resource<Task>> = flow {
         taskDao.getTask(id).collect {
             emit(Resource.Success(data = it.toTask()))
         }
@@ -86,47 +89,73 @@ class TaskRepositoryImpl(
         taskDao.update(task.toTaskEntity())
     }
 
-    override fun getCategory(id: Long): Flow<Category> {
-        return categoryDao.getCategory(id).map { it.toCategory() }
+    override fun getCategory(title: String): Flow<TaskCategoryEntity> {
+        return categoryDao.getCategory(title)
     }
 
-    override fun getCategoryEntity(id: Long): Flow<TaskCategoryEntity> {
+/*    override fun getCategoryEntity(id: Int): Flow<TaskCategoryEntity> {
         return categoryDao.getCategory(id)
-    }
+    }*/
 
     override fun getLastInsertedTask(): Flow<Task> {
         return taskDao.getLastInsertedTask().map { it.first().toTask() }
     }
 
-    override fun getAllCategory(): Flow<List<Category>> {
-        return categoryDao.getAllCategory().map { categories ->
-            categories.map { it.toCategory() }
+    override fun getAllCategory(): Flow<List<TaskCategoryEntity>> {
+        return categoryDao.getAllCategory()
+    }
+
+    override suspend fun insertCategory(category: TaskCategoryEntity) {
+        categoryDao.insert(category)
+    }
+
+    override suspend fun updateCategory(category: TaskCategoryEntity) {
+        categoryDao.update(category)
+    }
+
+    override fun getCollection(title: String): Flow<TaskCollectionEntity> {
+        return collectionDao.getCollection(title)
+    }
+
+    override fun getAllCollection(): Flow<List<TaskCollectionEntity>> {
+        return collectionDao.getAllCollection()
+    }
+
+    override suspend fun insertCollection(collection: TaskCollectionEntity) {
+        return collectionDao.insert(collection)
+    }
+
+    override suspend fun updateCollection(collection: TaskCollectionEntity) {
+        return collectionDao.update(collection)
+    }
+
+    private fun getFilteredQuery(filter: TaskFilter): SupportSQLiteQuery {
+        val query = StringBuilder()
+
+        val categoryFilter = filter.category?.title
+        val collectionFilter = filter.collection?.title
+        when (filter.status) {
+            TaskStatus.NONE -> {
+                query.append("SELECT * FROM task_categories WHERE title = categoryFilter" +
+                        "AND task_collections = collectionFilter" +
+                        "AND sta"
+                )
+            }
+            TaskStatus.TODO -> {
+                //
+            }
+            TaskStatus.IN_PROGRESS -> {
+                //
+            }
+            TaskStatus.RUNNING_LATE -> {
+                //
+            }
+            TaskStatus.COMPLETED_TASKS -> {
+                //
+            }
         }
+
+        return SimpleSQLiteQuery(query.toString())
     }
 
-    override suspend fun insertCategory(category: Category) {
-        categoryDao.insert(category.toNewTaskCategoryEntity())
-    }
-
-    override suspend fun updateCategory(category: Category) {
-        categoryDao.update(category.toTaskCategoryEntity())
-    }
-
-    override fun getCollection(id: Long): Flow<TaskCollection> {
-        return collectionDao.getCollection(id).map { it.toCollection() }
-    }
-
-    override fun getAllCollection(): Flow<List<TaskCollection>> {
-        return collectionDao.getAllCollection().map { collections ->
-            collections.map { it.toCollection() }
-        }
-    }
-
-    override suspend fun insertCollection(collection: TaskCollection) {
-        return collectionDao.insert(collection.toNewTaskCollectionEntity())
-    }
-
-    override suspend fun updateCollection(collection: TaskCollection) {
-        return collectionDao.update(collection.toTaskCollectionEntity())
-    }
 }
