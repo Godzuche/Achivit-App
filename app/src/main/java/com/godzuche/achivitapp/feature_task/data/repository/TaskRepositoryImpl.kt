@@ -12,6 +12,7 @@ import com.godzuche.achivitapp.feature_task.data.local.TaskCollectionDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskDao
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
+import com.godzuche.achivitapp.feature_task.data.local.relations.CategoryWithCollections
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
@@ -93,10 +94,6 @@ class TaskRepositoryImpl(
         return categoryDao.getCategory(title)
     }
 
-/*    override fun getCategoryEntity(id: Int): Flow<TaskCategoryEntity> {
-        return categoryDao.getCategory(id)
-    }*/
-
     override fun getLastInsertedTask(): Flow<Task> {
         return taskDao.getLastInsertedTask().map { it.first().toTask() }
     }
@@ -111,6 +108,10 @@ class TaskRepositoryImpl(
 
     override suspend fun updateCategory(category: TaskCategoryEntity) {
         categoryDao.update(category)
+    }
+
+    override fun getCategoryWithCollectionByTitle(categoryTitle: String): Flow<List<CategoryWithCollections>> {
+        return categoryDao.getCategoryWithCollectionByTitle(categoryTitle)
     }
 
     override fun getCollection(title: String): Flow<TaskCollectionEntity> {

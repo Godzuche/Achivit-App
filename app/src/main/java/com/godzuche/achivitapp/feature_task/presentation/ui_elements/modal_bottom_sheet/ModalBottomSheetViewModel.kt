@@ -78,8 +78,13 @@ class ModalBottomSheetViewModel @Inject constructor(
         }
     }
 
-    fun isEntryValid(taskTitle: String, chipCount: Int): Boolean {
-        return taskTitle.isNotBlank() && chipCount > 0
+    fun isEntryValid(
+        category: String,
+        collection: String,
+        taskTitle: String,
+        chipCount: Int,
+    ): Boolean {
+        return category.isNotBlank() && collection.isNotBlank() && taskTitle.isNotBlank() && chipCount > 0
     }
 
     init {
@@ -143,6 +148,16 @@ class ModalBottomSheetViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getCollection(collectionTitle).collectLatest {
                 onGetCategoryTitle(it.categoryTitle)
+            }
+        }
+    }
+
+    fun getCategoryCollections(categoryTitle: String, onGetCollections: (List<String>) -> Unit) {
+        viewModelScope.launch {
+            repository.getCategoryWithCollectionByTitle(categoryTitle).map { list ->
+                list.map { category ->
+                    onGetCollections(category.collections.map { it.title })
+                }
             }
         }
     }

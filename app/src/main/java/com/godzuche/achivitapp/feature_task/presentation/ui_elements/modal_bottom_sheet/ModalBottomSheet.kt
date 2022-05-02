@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -187,10 +186,28 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                                         updateTask(taskId)
                                     }
                                     val collectionsExposedDropDown =
-                                        binding.ilCollection.editText as? MaterialAutoCompleteTextView
-                                    binding.ilCategory.visibility = View.INVISIBLE
+                                        binding.ilCollection.editText as MaterialAutoCompleteTextView
+                                    val categoriesExposedDropDown =
+                                        binding.ilCategory.editText as? MaterialAutoCompleteTextView
+                                    binding.ilCategory.visibility = View.VISIBLE
                                     viewModel.getCollectionCategory(task.collectionTitle) {
-                                        collectionsExposedDropDown?.setText(it)
+                                        categoriesExposedDropDown?.setText(it)
+                                        viewModel.getCategoryCollections(it) { collectionList ->
+                                            val adapter = ArrayAdapter(
+                                                requireContext(),
+                                                R.layout.list_item_category,
+                                                collectionList
+                                            )
+                                            collectionsExposedDropDown.apply {
+                                                setAdapter(adapter)
+                                                /* if (collectionList.isNotEmpty()) {
+                                                     val initialSelection =
+                                                         adapter.getItem(0).toString()
+                                                     setText(initialSelection, false)
+                                                 }*/
+                                                setText(task.collectionTitle, false)
+                                            }
+                                        }
                                     }
                                     etCollection.setText(task.collectionTitle)
                                     etTitle.setText(task.title)
@@ -230,7 +247,11 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun isEntryValid(): Boolean {
+        val categoryText = binding.ilCategory.editText?.text
+        val collectionText = binding.ilCollection.editText?.text
         return viewModel.isEntryValid(
+            categoryText.toString(),
+            collectionText.toString(),
             binding.etTitle.text.toString(),
             binding.chipGroupTime.childCount
         )
@@ -292,16 +313,32 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun addNewTask() {
+        val categoryDropDown = binding.ilCategory.editText as? MaterialAutoCompleteTextView
+        val collectionDropDown = binding.ilCollection.editText as? MaterialAutoCompleteTextView
         if (isEntryValid()) {
             activityViewModel.addNewTask(
-                binding.etCategory.text.toString(),
-                binding.etCollection.text.toString(),
+                categoryDropDown?.text.toString(),
+                collectionDropDown?.text.toString(),
                 binding.etTitle.text.toString(),
                 binding.etDescription.text.toString(),
                 mCalendar.timeInMillis
             )
             dismiss()
             resetInputs()
+        } else {
+            binding.ilCategory.error =
+                if (categoryDropDown?.text.isNullOrBlank()) "Please select a category"
+                else null
+            binding.ilCollection.error =
+                if (collectionDropDown?.text.isNullOrBlank()) "Please select a collection"
+                else null
+            binding.ilTitle.error =
+                if (binding.ilTitle.editText?.text.isNullOrBlank()) "Please enter a title"
+                else null
+            if (binding.chipGroupTime.childCount <= 0) {
+                Toast.makeText(requireContext(), "Please set due date and time", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
 
     }
@@ -324,13 +361,14 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                         R.layout.list_item_category,
                         categoryList
                     )
-                    val exposedDropDown = binding.ilCategory.editText as? AutoCompleteTextView
+                    val exposedDropDown =
+                        binding.ilCategory.editText as? MaterialAutoCompleteTextView
                     exposedDropDown?.apply {
-                        setAdapter(adapter)
-                        /*if (categoryList.isNotEmpty()) {
+                        if (categoryList.isNotEmpty() && taskId == NOT_SET) {
                             val initialSelection = adapter.getItem(0).toString()
                             setText(initialSelection, false)
-                        }*/
+                        }
+                        setAdapter(adapter)
                     }
                 }
             }
@@ -338,17 +376,18 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             launch {
                 viewModel.collections.collectLatest { collectionList ->
                     val adapter = ArrayAdapter(
-                        requireContext(),
+                        binding.ilCollection.context,
                         R.layout.list_item_category,
                         collectionList
                     )
-                    val exposedDropDown = binding.ilCollection.editText as? AutoCompleteTextView
-                    exposedDropDown?.apply {
+                    val exposedDropDown =
+                        binding.ilCollection.editText as MaterialAutoCompleteTextView
+                    exposedDropDown.apply {
+                        if (collectionList.isNotEmpty() && taskId == NOT_SET) {
+                            val initialSelection = adapter.getItem(0).toString()
+                            setText(initialSelection, false)
+                        }
                         setAdapter(adapter)
-                        /* if (collectionList.isNotEmpty()) {
-                             val initialSelection = adapter.getItem(0).toString()
-                             setText(initialSelection, false)
-                         }*/
                     }
                 }
             }

@@ -6,16 +6,25 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentAddTaskCategoryBinding
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AddCategoryCollectionFragment : DialogFragment() {
@@ -47,6 +56,26 @@ class AddCategoryCollectionFragment : DialogFragment() {
             }
             DialogTitle.COLLECTION -> {
                 binding.ilDropDown.visibility = View.VISIBLE
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                        viewModel.categories.collectLatest { categoryList ->
+                            val adapter = ArrayAdapter(
+                                requireContext(),
+                                R.layout.list_item_category,
+                                categoryList
+                            )
+                            val exposedDropDown =
+                                binding.ilDropDown.editText as? AutoCompleteTextView
+                            exposedDropDown?.apply {
+                                setAdapter(adapter)
+                                /*if (categoryList.isNotEmpty()) {
+                                    val initialSelection = adapter.getItem(0).toString()
+                                    setText(initialSelection, false)
+                                }*/
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -60,23 +89,37 @@ class AddCategoryCollectionFragment : DialogFragment() {
     private fun FragmentAddTaskCategoryBinding.bind() {
         btSave.setOnClickListener {
             val title: String = ilCategory.editText?.text.toString()
-            if (isEntryValid(title)) {
+            val exposedDropDown = ilDropDown.editText as? MaterialAutoCompleteTextView
+            val categoryTitle = exposedDropDown?.text.toString()
+            if (this.isEntryValid(title, categoryTitle)) {
                 when (navigationArgs.dialogTitle) {
                     DialogTitle.CATEGORY -> {
                         viewModel.addNewCategory(title = title)
                         close()
                     }
                     DialogTitle.COLLECTION -> {
-//                        viewModel.addNewCollection(title = title)
+                        viewModel.addNewCollection(title = title, categoryTitle = categoryTitle)
                         close()
                     }
                 }
+            } else {
+                ilCategory.error = if (ilCategory.editText?.text.isNullOrBlank()) {
+                    "Please enter a title"
+                } else null
+                ilDropDown.error = if (ilDropDown.editText?.text.isNullOrBlank()) {
+                    "Please select a category"
+                } else null
             }
         }
     }
 
-    private fun isEntryValid(title: String): Boolean {
-        return title.isNotBlank()
+    private fun FragmentAddTaskCategoryBinding.isEntryValid(
+        title: String,
+        categoryTitle: String,
+    ): Boolean {
+        return if (ilDropDown.isVisible) {
+            title.isNotBlank() && categoryTitle.isNotBlank()
+        } else title.isNotBlank()
     }
 
     private fun close() {

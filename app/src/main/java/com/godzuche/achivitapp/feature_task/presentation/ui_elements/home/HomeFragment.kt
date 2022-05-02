@@ -2,6 +2,7 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,6 +69,63 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         _binding = FragmentHomeBinding.bind(view)
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                launch {
+//                    viewModel.categories.collectLatest { categoryList ->
+//                        val chipGroup = binding.chipGroup
+//                        chipGroup.removeAllViews()
+////                        chipGroup.clearCheck()
+//                        // I will restore checked chip from the viewModel by using onCheckedChangedListener
+//                        categoryList.forEachIndexed { index, title ->
+//                            val chip = layoutInflater.inflate(
+//                                R.layout.single_chip_layout,
+//                                chipGroup,
+//                                false) as Chip
+//                            chip.text = title
+//                            chip.id = index
+//                            chipGroup.addView(chip)
+//
+//                            /*if (binding.chipGroup.size >= 0 && binding.chipGroup.checkedChipId == View.NO_ID) {
+//                                binding.chipGroup.check(binding.chipGroup[0].id)
+//                            }*/
+//
+//                            if (index == (categoryList.size - 1)) {
+//                                /*launch {
+//                                    viewModel.checkedChipId.collectLatest {
+//                                        if (it == View.NO_ID) {
+//                                            chipGroup.check(0)
+//                                        } else {
+//                                            chipGroup.check(it)
+//                                        }
+//                                    }
+//                                }*/
+//                                launch {
+//                                    viewModel.checkedChipId.collectLatest {
+//                                        Log.d("Chip", "Collected chip id: $it")
+//                                        binding.chipGroup.clearCheck()
+//                                        binding.chipGroup.check(it)
+//                                    }
+//                                }
+//                            }
+////                            Log.d("Chip", "Dynamic id: ${chip.id}")
+//                        }
+////                        viewModel.checkedChipId.emit(chipGroup.checkedChipId)
+//                    }
+//                }
+//             /*   launch {
+//                    delay(400)
+//                    viewModel.checkedChipId.collectLatest {
+//                        Log.d("Chip", "Collected chip id: $it")
+//                        binding.chipGroup.clearCheck()
+//                        binding.chipGroup.check(it)
+//                    }
+//                }*/
+//            }
+//        }
+
+
         return binding.root
     }
 
@@ -313,22 +371,30 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.categories.collectLatest { categoryList ->
-                    val chipGroup = binding.chipGroup
-                    chipGroup.removeAllViews()
-                    chipGroup.clearCheck()
-                    // I will restore checked chip from the viewModel by using onCheckedChangedListener
-                    categoryList.forEachIndexed { index, title ->
-                        val chip = layoutInflater.inflate(
-                            R.layout.single_chip_layout,
-                            chipGroup,
-                            false) as Chip
-                        chip.text = title
-                        chip.id = index
-                        chipGroup.addView(chip)
-                        /*     if (binding.chipGroup.checkedChipId == View.NO_ID) {
-                                 binding.chipGroup.check(binding.chipGroup[0].id)
-                             }*/
+                launch {
+                    viewModel.categories.collectLatest { categoryList ->
+                        val chipGroup = binding.chipGroup
+                        chipGroup.removeAllViews()
+//                        chipGroup.clearCheck()
+                        categoryList.forEachIndexed { index, title ->
+                            val chip = layoutInflater.inflate(
+                                R.layout.single_chip_layout,
+                                chipGroup,
+                                false) as Chip
+                            chip.text = title
+                            chip.id = index
+                            chipGroup.addView(chip)
+                            if (index == (categoryList.size - 1)) {
+                                launch {
+                                    viewModel.checkedChipId.collectLatest {
+                                        Log.d("Chip", "Collected chip id: $it")
+                                        binding.chipGroup.clearCheck()
+                                        binding.chipGroup.check(it)
+                                    }
+                                }
+                            }
+                            Log.d("Chip", "Dynamic id: ${chip.id}")
+                        }
                     }
                 }
             }
@@ -338,6 +404,12 @@ class HomeFragment : Fragment() {
             findNavController().navigate(HomeFragmentDirections.actionGlobalAddCategoryCollectionFragment(
                 DialogTitle.CATEGORY))
         }
+
+        binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.setCheckedCategoryChip(checkedId)
+            Log.d("Chip", "Checked change id: $checkedId")
+        }
+
     }
 
     override fun onDestroy() {

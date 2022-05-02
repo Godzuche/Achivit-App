@@ -37,6 +37,8 @@ class TasksViewModel @Inject constructor(
     private val repository: TaskRepository,
 ) : AndroidViewModel(app) {
 
+    val checkedChipId = MutableStateFlow<Int>(0)
+
     private var created = 0L
 /*    private val _checkedCategoryChip: MutableStateFlow<TaskCategoryEntity> = MutableStateFlow(
         TaskCategoryEntity(
@@ -55,6 +57,7 @@ class TasksViewModel @Inject constructor(
     val uiState: StateFlow<TasksUiState> = _uiState.asStateFlow()
 
     val tasksPagingDataFlow: Flow<PagingData<Task>>
+        get() = repository.getAllTask().cachedIn(viewModelScope)
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -160,14 +163,14 @@ class TasksViewModel @Inject constructor(
                }
            }*/
 
-        tasksPagingDataFlow = repository.getAllTask().cachedIn(viewModelScope)
+//        tasksPagingDataFlow = repository.getAllTask().cachedIn(viewModelScope)
 
         accept = { action ->
             when (action) {
                 is TasksUiEvent.OnDeleteFromTaskDetail -> {
                     deletedTask = action.deletedTask
                     viewModelScope.launch {
-                        delay(500L)
+                        delay(400L)
                         sendUiEvent(UiEvent.ShowSnackBar(
                             message = "Task deleted",
                             action = SnackBarActions.UNDO
@@ -380,10 +383,7 @@ class TasksViewModel @Inject constructor(
 
     fun setCheckedCategoryChip(checkedId: Int) {
         viewModelScope.launch {
-            /*repository.getCategory(checkedId).collectLatest { category ->
-                Log.d("Category", "ViewModel collected checked chip: ${category.title}")
-                _checkedCategoryChip.emit(category)
-            }*/
+            checkedChipId.emit(checkedId)
         }
     }
 

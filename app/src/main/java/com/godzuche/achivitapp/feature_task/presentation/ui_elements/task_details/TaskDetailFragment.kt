@@ -176,7 +176,6 @@ class TaskDetailFragment : Fragment() {
         //
     }
 
-
     private fun bind(task: Task) {
         binding.apply {
             tvTaskTitle.text = task.title

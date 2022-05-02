@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
+import com.godzuche.achivitapp.feature_task.data.local.relations.CategoryWithCollections
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import kotlinx.coroutines.flow.Flow
 
@@ -33,6 +34,7 @@ interface TaskRepository {
     fun getAllCategory(): Flow<List<TaskCategoryEntity>>
     suspend fun insertCategory(category: TaskCategoryEntity)
     suspend fun updateCategory(category: TaskCategoryEntity)
+    fun getCategoryWithCollectionByTitle(categoryTitle: String): Flow<List<CategoryWithCollections>>
 
     //
     fun getCollection(title: String): Flow<TaskCollectionEntity>
