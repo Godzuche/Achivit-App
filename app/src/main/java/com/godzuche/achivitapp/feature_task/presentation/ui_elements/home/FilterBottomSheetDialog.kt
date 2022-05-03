@@ -6,11 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FilterModalBottomSheetContentBinding
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FilterBottomSheetDialog : BottomSheetDialogFragment() {
@@ -51,11 +59,20 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                             chip.text = title
                             chip.id = index
                             chipGroup.addView(chip)
+                            if (index == (categoryList.size - 1)) {
+                                launch {
+                                    viewModel.checkedChipId.collectLatest {
+                                        Log.d("Chip", "Collected chip id: $it")
+                                        chipGroup.clearCheck()
+                                        chipGroup.check(it)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 launch {
-                    viewModel.collections.collectLatest { collectionList ->
+                    viewModel.categoryCollections.collectLatest { collectionList ->
                         val chipGroup = chipGroupCollections
                         chipGroup.removeAllViews()
                         collectionList.forEachIndexed { index, title ->
@@ -81,6 +98,9 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                         viewModel.setCheckedCategoryChip(checkedId = checkedId).also {
                             Log.d("Category", "checked changed id: $checkedId")
                         }
+                        viewModel.getCategoryCollections((group.getChildAt(checkedId) as? Chip)?.text.toString())
+                        Log.d("Category",
+                            "checked category text : ${(group.getChildAt(checkedId) as? Chip)?.text.toString()}")
                     }
                 }
             }
@@ -98,8 +118,9 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
         icButtonDeleteCategory.setOnClickListener {
 //            viewModel.deleteCategory()
         }
-
-
+        icButtonDeleteCollection.setOnClickListener {
+            // viewModel.deleteCollection()
+        }
     }
 
     override fun onStop() {

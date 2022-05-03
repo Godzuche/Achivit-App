@@ -11,6 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint

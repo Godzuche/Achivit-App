@@ -64,6 +64,20 @@ class TasksViewModel @Inject constructor(
 
     private var deletedTask: Task? = null
 
+    val categoryCollections: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+
+    fun getCategoryCollections(categoryTitle: String) {
+        viewModelScope.launch {
+            repository.getCategoryWithCollectionByTitle(categoryTitle)
+                .collectLatest { listOfCategoryWithCollection ->
+                    listOfCategoryWithCollection.map { categoryWithCollections ->
+                        val collectionList = categoryWithCollections.collections.map { it.title }
+                        categoryCollections.emit(collectionList)
+                    }
+                }
+        }
+    }
+
     val categories = repository.getAllCategory()
         .map {
             it.map { category ->
