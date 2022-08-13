@@ -4,9 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -14,6 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
+import com.godzuche.achivitapp.feature_settings.setDarkMode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,21 +28,18 @@ class MainActivity : AppCompatActivity() {
             ?.first()
 
     private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { p0, p1 ->
-            when (p1) {
+        SharedPreferences.OnSharedPreferenceChangeListener { pref, prefKey ->
+            when (prefKey) {
                 "key_dark_mode" -> {
-                    val isDarkModeEnabled = p0?.getBoolean(p1, false)
-                    if (isDarkModeEnabled == true) {
-                        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
-                    }
+                    val defaultValue = resources.getStringArray(R.array.entry_value_theme)[0]
+                    val darkMode = pref?.getString(prefKey, defaultValue)
+                    setDarkMode(darkMode)
                 }
                 "key_notification_badge" -> {
                     val badgeDrawable =
                         binding.bottomNavView.getBadge(R.id.action_notifications)
 //                 Resets any badge number so that a numberless badge will be displayed.
-                    val newValue = p0?.getBoolean(p1, true)
+                    val newValue = pref?.getBoolean(prefKey, true)
                     if (newValue == false) {
                         badgeDrawable?.clearNumber()
                     } else {

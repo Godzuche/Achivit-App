@@ -6,30 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "task_categories")
 data class TaskCategoryEntity(
-/*    @PrimaryKey(autoGenerate = true)
-    val categoryId: Int = 0,*/
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "title")
     val title: String,
-) {
-/*    fun toCategory(): Category {
-        return Category(title = title)
-    }*/
-}
-/*
-
-data class Category(
-    val id: Int? = null,
-    val title: String,
-) {
-    fun toNewTaskCategoryEntity(): TaskCategoryEntity {
-        return TaskCategoryEntity(title = title)
-    }
-
-    fun toTaskCategoryEntity(): TaskCategoryEntity {
-        return TaskCategoryEntity(
-            categoryId = id!!,
-            title = title
-        )
-    }
-}*/
+)

@@ -33,11 +33,9 @@ object TaskModule {
     }
 
     private val categoryContentValues = ContentValues().apply {
-//        put("categoryId", 0L)
         put("title", "My Tasks")
     }
     private val collectionContentValues = ContentValues().apply {
-//        put("collectionId", 0L)
         put("title", "All Tasks")
         put("category_title", "My Tasks")
     }

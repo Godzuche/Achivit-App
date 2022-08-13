@@ -16,4 +16,17 @@
         <item><font color='#FF0000'>"Red"</font></item>
         <item><font color='#00FF00'>"Green"</font></item>
     </string-array>
+
+    <!-- theme entries array -->
+    <string-array name="entries_theme">
+        <item>Light mode</item>
+        <item>Dark mode</item>
+        <item>Use device settings</item>
+    </string-array>
+    <!-- theme entry values array -->
+    <string-array name="entry_value_theme">
+        <item>light_mode</item>
+        <item>dark_mode</item>
+        <item>system_default</item>
+    </string-array>
 </resources>

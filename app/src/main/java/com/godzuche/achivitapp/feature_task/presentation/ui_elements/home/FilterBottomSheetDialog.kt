@@ -20,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class FilterBottomSheetDialog : BottomSheetDialogFragment() {
     private val viewModel: TasksViewModel by activityViewModels()
@@ -88,12 +89,6 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                     }
                 }
                 launch {
-                    /*viewModel.checkedCategoryChip.collectLatest {
-                        chipGroupCategory.check(it.categoryId.toInt())
-                        Log.d("Category", "Collected category id: ${it.categoryId}")
-                    }*/
-                }
-                launch {
                     chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
                         viewModel.setCheckedCategoryChip(checkedId = checkedId).also {
                             Log.d("Category", "checked changed id: $checkedId")
@@ -123,18 +118,13 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.d("Category", "OnStop called")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
-    companion object {
+/*    companion object {
         const val TAG = "Filter ModalBottomSheet"
-    }
+    }*/
 
 }

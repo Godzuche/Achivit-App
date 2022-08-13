@@ -17,10 +17,7 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 class TaskRepositoryImpl(
     private val taskDao: TaskDao,
@@ -33,19 +30,6 @@ class TaskRepositoryImpl(
             emit(Resource.Success(data = it.toTask()))
         }
     }
-
-/*    override fun getAllTask(): Flow<Resource<List<Task>>> = flow {
-        taskDao.getAllTasks().collect { tasks ->
-            val allTasks = tasks.map { it.toTask() }
-            emit(Resource.Success(data = allTasks))
-        }
-    }*/
-    /*override fun getAllTask(): Flow<Resource<List<Task>>> = flow {
-        taskDao.getAllTasks().collect { tasks ->
-            val allTasks = tasks.map { it.toTask() }
-            emit(Resource.Success(data = allTasks))
-        }
-    }*/
 
     override fun getAllTask(): Flow<PagingData<Task>> {
         val pagingSourceFactory = {
@@ -64,7 +48,7 @@ class TaskRepositoryImpl(
                 pagingData.map {
                     it.toTask()
                 }
-            }
+            }.distinctUntilChanged()
 
     }
 
@@ -88,6 +72,12 @@ class TaskRepositoryImpl(
 
     override suspend fun updateTask(task: Task) {
         taskDao.update(task.toTaskEntity())
+    }
+
+    override suspend fun updateTaskStatus(taskId: Int, status: TaskStatus) {
+        getTask(taskId).collect {
+            it.data?.let { task -> updateTask(task.copy(status = status)) }
+        }
     }
 
     override fun getCategory(title: String): Flow<TaskCategoryEntity> {
@@ -139,7 +129,7 @@ class TaskRepositoryImpl(
             TaskStatus.NONE -> {
                 query.append("SELECT * FROM task_categories WHERE title = categoryFilter" +
                         "AND task_collections = collectionFilter" +
-                        "AND sta"
+                        "AND status = filter.status"
                 )
             }
             TaskStatus.TODO -> {

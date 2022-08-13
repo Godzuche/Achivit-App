@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 
 class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
@@ -20,7 +21,6 @@ class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
             parent,
             false
         )
-
         return TaskViewHolder(binding)
     }
 
@@ -35,7 +35,6 @@ class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
     inner class TaskViewHolder(private val binding: ItemTaskListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private lateinit var timeSuffix: String
         var currentItem: Task? = null
 
         init {
@@ -53,22 +52,23 @@ class TaskListAdapter(private val onItemClicked: (View, Task) -> Unit) :
                 }
             }
 
-            /*binding.root.setOnLongClickListener {
-                binding.root.isChecked = !binding.root.isChecked
-                true
-            }*/
         }
 
         fun bind(task: Task) {
-            binding.itemCardView.transitionName =
-                itemView.resources.getString(R.string.task_card_transition_name,
-                    task.id.toString())
+            binding.apply {
+                itemCardView.transitionName =
+                    itemView.resources.getString(R.string.task_card_transition_name,
+                        task.id.toString())
 
-            binding.tvTaskTitle.text = task.title
-            binding.tvTaskDescription.text = task.description
+                //TODO: Let the user check the CheckBox instead
+                checkBox.isChecked = (task.status == TaskStatus.IN_PROGRESS)
 
-            val taskDueDate = task.dueDate
-            binding.chipTimeDate.text = convertMillisToString(taskDueDate)
+                tvTaskTitle.text = task.title
+                tvTaskDescription.text = task.description
+
+                val taskDueDate = task.dueDate
+                chipTimeDate.text = convertMillisToString(taskDueDate)
+            }
         }
 
     }

@@ -22,6 +22,8 @@
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_baseline_notifications_none_24.xml" value="0.1485" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_chevron_start.xml" value="0.102" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_home.xml" value="0.1515" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.149" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.149" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_notifications.xml" value="0.1515" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/ic_profile.xml" value="0.1515" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/drawable/search_view_background.xml" value="0.1" />
@@ -42,7 +44,7 @@
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_search.xml" value="0.25" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_settings.xml" value="0.1" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/fragment_task.xml" value="0.21" />
-        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/item_task_list.xml" value="0.18" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/item_task_list.xml" value="0.25" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/list_item_category.xml" value="0.22" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/modal_bottom_sheet_content.xml" value="0.2" />
         <entry key="..\:/Users/Administrator/AndroidStudioProjects/AchivitApp/app/src/main/res/layout/pref_space.xml" value="0.19270833333333334" />

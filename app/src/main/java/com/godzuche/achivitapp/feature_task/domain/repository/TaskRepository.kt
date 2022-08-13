@@ -6,6 +6,7 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.data.local.relations.CategoryWithCollections
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
@@ -27,16 +28,14 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
-    //
-    fun getCategory(title: String): Flow<TaskCategoryEntity>
+    suspend fun updateTaskStatus(taskId: Int, status: TaskStatus)
 
-    //    fun getCategoryEntity(id: Int): Flow<TaskCategoryEntity>
+    fun getCategory(title: String): Flow<TaskCategoryEntity>
     fun getAllCategory(): Flow<List<TaskCategoryEntity>>
     suspend fun insertCategory(category: TaskCategoryEntity)
     suspend fun updateCategory(category: TaskCategoryEntity)
     fun getCategoryWithCollectionByTitle(categoryTitle: String): Flow<List<CategoryWithCollections>>
 
-    //
     fun getCollection(title: String): Flow<TaskCollectionEntity>
     fun getAllCollection(): Flow<List<TaskCollectionEntity>>
     suspend fun insertCollection(collection: TaskCollectionEntity)

@@ -52,7 +52,7 @@ fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
         .createPendingIntent()
 
     val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.drawable.ic_baseline_check_box_24)
         .setContentTitle(NOTIFICATION_TITLE)
         .setContentText("You have ${tasks.size} tasks of high priority for today")
         .setContentIntent(pendingIntent)

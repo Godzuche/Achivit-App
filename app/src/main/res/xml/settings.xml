@@ -15,12 +15,15 @@
 
     <PreferenceCategory android:title="Display">
 
-        <SwitchPreferenceCompat
+        <ListPreference
+            android:entries="@array/entries_theme"
             android:icon="@drawable/device_theme"
             android:key="key_dark_mode"
             android:summary="Turn on/off dark mode."
             android:title="Dark mode"
-            app:defaultValue="false" />
+            app:entryValues="@array/entry_value_theme"
+            app:defaultValue="light_mode"
+            app:useSimpleSummaryProvider="true" />
 
         <Preference
             android:icon="@drawable/ic_baseline_color_lens_24"

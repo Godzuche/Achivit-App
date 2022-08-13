@@ -190,9 +190,9 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                                     val categoriesExposedDropDown =
                                         binding.ilCategory.editText as? MaterialAutoCompleteTextView
                                     binding.ilCategory.visibility = View.INVISIBLE
-                                    viewModel.getCollectionCategory(task.collectionTitle) {
-                                        categoriesExposedDropDown?.setText(it)
-                                        viewModel.getCategoryCollections(it) { collectionList ->
+                                    viewModel.getCollectionCategory(task.collectionTitle) { category ->
+                                        categoriesExposedDropDown?.setText(category)
+                                        viewModel.getCategoryCollections(category) { collectionList ->
                                             val adapter = ArrayAdapter(
                                                 requireContext(),
                                                 R.layout.list_item_category,

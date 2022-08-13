@@ -17,13 +17,11 @@ import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
 import com.godzuche.achivitapp.feature_task.receivers.setReminder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 
 @ExperimentalCoroutinesApi
@@ -40,12 +38,6 @@ class TasksViewModel @Inject constructor(
     val checkedChipId = MutableStateFlow<Int>(0)
 
     private var created = 0L
-/*    private val _checkedCategoryChip: MutableStateFlow<TaskCategoryEntity> = MutableStateFlow(
-        TaskCategoryEntity(
-            categoryId = 0,
-            title = "My Tasks"
-        ))
-    val checkedCategoryChip = _checkedCategoryChip.asStateFlow()*/
 
     val bottomSheetAction = MutableStateFlow("")
     val bottomSheetTaskId = MutableStateFlow(-1)
@@ -67,7 +59,7 @@ class TasksViewModel @Inject constructor(
     val categoryCollections: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
 
     fun getCategoryCollections(categoryTitle: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getCategoryWithCollectionByTitle(categoryTitle)
                 .collectLatest { listOfCategoryWithCollection ->
                     listOfCategoryWithCollection.map { categoryWithCollections ->
@@ -118,7 +110,7 @@ class TasksViewModel @Inject constructor(
     }
 
     fun addNewCategory(title: String) {
-        viewModelScope.launch { repository.insertCategory(TaskCategoryEntity(title = title)) }
+        viewModelScope.launch(Dispatchers.IO) { repository.insertCategory(TaskCategoryEntity(title = title)) }
     }
 
     fun addNewCollection(title: String, categoryTitle: String) {
@@ -136,7 +128,7 @@ class TasksViewModel @Inject constructor(
     private fun onSearch(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(500L)
             repository.searchTasksByTitle(query).onEach { result ->
                 if (result is Resource.Success) {
@@ -153,7 +145,7 @@ class TasksViewModel @Inject constructor(
     private fun search(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             repository.searchTasksByTitle(query).onEach { result ->
                 if (result is Resource.Success) {
                     _uiState.update {
@@ -176,8 +168,6 @@ class TasksViewModel @Inject constructor(
                    }
                }
            }*/
-
-//        tasksPagingDataFlow = repository.getAllTask().cachedIn(viewModelScope)
 
         accept = { action ->
             when (action) {
@@ -247,8 +237,6 @@ class TasksViewModel @Inject constructor(
         }
 
     }
-
-//    val TasksUiState.shouldScrollToTop: Boolean get() =
 
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {

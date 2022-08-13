@@ -2,6 +2,7 @@ package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
@@ -50,9 +52,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var touchHelper: ItemTouchHelper
-
-    //    private val modalBottomSheet = ModalBottomSheet()
-//    private val filterBottomSheet = FilterBottomSheetDialog()
 
     private val viewModel: TasksViewModel by activityViewModels()
 
@@ -270,7 +269,8 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.tasksPagingDataFlow.collectLatest { adapter.submitData(it) }
+                viewModel.tasksPagingDataFlow.distinctUntilChanged()
+                    .collectLatest { adapter.submitData(it) }
             }
         }
 
@@ -342,7 +342,7 @@ class HomeFragment : Fragment() {
 
         binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.setCheckedCategoryChip(checkedId)
-//            Log.d("Chip", "Checked change id: $checkedId")
+            Log.d("Chip", "Checked change id: $checkedId")
         }
 
     }

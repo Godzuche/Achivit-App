@@ -4,19 +4,26 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_DESC
 import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TASK_ID
 import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TITLE
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DueTaskAlarmReceiver() : BroadcastReceiver() {
-    //    private var task: Task? = null
-/*    @Inject
-    lateinit var repo: TaskRepository*/
+    private val scope = CoroutineScope(SupervisorJob())
+
+    @Inject
+    lateinit var repo: TaskRepository
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("Reminder", "Receiver called")
+
+//        val pendingResult: PendingResult = goAsync()
 
         val bundle = intent?.extras
         bundle?.apply {
@@ -32,33 +39,45 @@ class DueTaskAlarmReceiver() : BroadcastReceiver() {
             }*/
 
             if (taskTitle != null && taskDesc != null) {
-                makeTaskDueNotification(context!!, taskId = taskId, taskTitle = taskTitle, taskDesc)
+                makeTaskDueNotification(
+                    context!!,
+                    taskId = taskId,
+                    taskTitle = taskTitle,
+                    taskDesc
+                )
+                /*makeTaskDueNotification(context!!, taskId = taskId, taskTitle = taskTitle, taskDesc)
+                CoroutineScope(Dispatchers.IO).launch {
+                    *//*repo.getTask(taskId).collect {
+                        it.data?.let { task ->
+                            repo.updateTask(task.copy(status = TaskStatus.IN_PROGRESS))
+                        }
+                    }*//*
+                    repo.updateTaskStatus(taskId = taskId, status = TaskStatus.IN_PROGRESS)
+                }*/
+                /*scope.launch {
+                    try {
+                        makeTaskDueNotification(
+                            context!!,
+                            taskId = taskId,
+                            taskTitle = taskTitle,
+                            taskDesc
+                        )
+                        repo.updateTaskStatus(taskId = taskId, status = TaskStatus.IN_PROGRESS)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }*/
             }
 
-            Log.d("Reminder",
-                "Receiver received title: $taskTitle with id: $taskId, description: $taskDesc")
-//                    Log.d("Reminder", "Receiver received at due: ${it.hours} : ${it.minutes}")
-
+            Log.d(
+                "Reminder",
+                "Receiver received title: $taskTitle with id: $taskId, description: $taskDesc"
+            )
 
         }
     }
 
-    /*CoroutineScope(Dispatchers.IO).launch {
-        if (taskId != null) {
-            repository.getTask(taskId).collect {
-                task = it.data!!
-
-                // Todo: Create a dao function to toggle task complete status
-
-            }
-        }
-    }*/
-    /*  task?.let {
-          if (context != null) {
-              makeTaskDueNotification(context, it)
-              Log.d("Reminder", "Receiver received at due: ${it.hours} : ${it.minutes}")
-
-          }
-      }*/
-//    }
+    companion object {
+        private const val TAG = "DueTaskAlarmReceiver"
+    }
 }

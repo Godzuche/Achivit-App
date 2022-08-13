@@ -23,13 +23,12 @@ import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_ID
 
 
 fun makeTaskDueNotification(
-    context: Context, /*task: Task*/
+    context: Context,
     taskId: Int,
     taskTitle: String,
     taskDescription: String,
 ) {
-
-    //make notification channel
+    // Create notification channel
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val id = NOTIFICATION_CHANNEL_ID
         val name = NOTIFICATION_CHANNEL_NAME
@@ -37,6 +36,7 @@ fun makeTaskDueNotification(
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(id, name, importance).apply {
             description = channelDescription
+            enableVibration(true)
         }
 
         val notificationManager =
@@ -45,7 +45,6 @@ fun makeTaskDueNotification(
     }
 
     val args = TaskDetailFragmentArgs(id = taskId).toBundle()
-//    val args = task.id?.let { TaskDetailFragmentArgs(it).toBundle() }
 
     val pendingIntent = NavDeepLinkBuilder(context)
         .setGraph(R.navigation.nav_graph_main)
@@ -54,15 +53,14 @@ fun makeTaskDueNotification(
         .createPendingIntent()
 
     val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.drawable.ic_baseline_check_box_24)
         .setContentTitle(Constants.NOTIFICATION_TITLE)
         .setContentText("\"${taskTitle}\" is active now")
-//        .setContentText("\"${task.title}\" is active now")
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setDefaults(DEFAULT_ALL)
         .setColor(com.google.android.material.R.attr.colorPrimary)
-        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+        .setCategory(NotificationCompat.CATEGORY_ALARM)
         .setVibrate(LongArray(0))
 
         .setAutoCancel(true)
@@ -94,7 +92,7 @@ fun setReminder(
         context,
         taskId + 1,
         alarmIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
 
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
