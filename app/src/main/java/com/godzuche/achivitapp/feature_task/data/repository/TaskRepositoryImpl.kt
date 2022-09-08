@@ -17,7 +17,11 @@ import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 class TaskRepositoryImpl(
     private val taskDao: TaskDao,
@@ -29,6 +33,11 @@ class TaskRepositoryImpl(
         taskDao.getTask(id).collect {
             emit(Resource.Success(data = it.toTask()))
         }
+    }
+
+    override fun getTaskOnce(id: Int): Task {
+        Timber.d("Reminder", "getTaskOnce() called in repo")
+        return taskDao.getTaskOnce(id).toTask()
     }
 
     override fun getAllTask(): Flow<PagingData<Task>> {
@@ -62,6 +71,9 @@ class TaskRepositoryImpl(
         taskDao.insert(task.toNewTaskEntity())
     }
 
+    override suspend fun insertAndGetTask(task: Task): Int =
+        taskDao.insertAndGetId(task.toNewTaskEntity()).toInt()
+
     override suspend fun reInsertTask(task: Task) {
         taskDao.reInsert(task.toTaskEntity())
     }
@@ -71,14 +83,16 @@ class TaskRepositoryImpl(
     }
 
     override suspend fun updateTask(task: Task) {
+        Timber.tag("Reminder").d("updateTask called in repo")
         taskDao.update(task.toTaskEntity())
     }
 
-    override suspend fun updateTaskStatus(taskId: Int, status: TaskStatus) {
-        getTask(taskId).collect {
+/*    override suspend fun updateTaskStatus(taskId: Int, status: TaskStatus) {
+        getTask(taskId).distinctUntilChanged().collect() {
+            Timber.tag("Reminder").d("updateTaskStatus called in repo")
             it.data?.let { task -> updateTask(task.copy(status = status)) }
         }
-    }
+    }*/
 
     override fun getCategory(title: String): Flow<TaskCategoryEntity> {
         return categoryDao.getCategory(title)

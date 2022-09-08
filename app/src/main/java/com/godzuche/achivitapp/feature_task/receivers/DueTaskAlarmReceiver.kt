@@ -3,76 +3,45 @@ package com.godzuche.achivitapp.feature_task.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_DESC
+import androidx.work.*
 import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TASK_ID
-import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TITLE
+import com.godzuche.achivitapp.feature_task.worker.DueTaskWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class DueTaskAlarmReceiver() : BroadcastReceiver() {
     private val scope = CoroutineScope(SupervisorJob())
 
-    @Inject
-    lateinit var repo: TaskRepository
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("Reminder", "Receiver called")
+        Timber.tag("Reminder").d("Receiver called")
 
 //        val pendingResult: PendingResult = goAsync()
 
         val bundle = intent?.extras
         bundle?.apply {
             val taskId = getInt(KEY_TASK_ID)
-            val taskTitle = getString(KEY_TITLE)
-            val taskDesc = getString(KEY_DESC)
-            /*CoroutineScope(Dispatchers.IO).launch {
-                repo.getTask(taskId).collectLatest {
-                    val task = it.data
-                    Log.d("Reminder",
-                        "DI repo getTaskById title: ${task?.title} and id: ${task?.id}")
-                }
-            }*/
-
-            if (taskTitle != null && taskDesc != null) {
-                makeTaskDueNotification(
-                    context!!,
-                    taskId = taskId,
-                    taskTitle = taskTitle,
-                    taskDesc
+            val dueTaskRequest = OneTimeWorkRequestBuilder<DueTaskWorker>()
+//                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setInputData(
+                    workDataOf(
+                        "taskId" to taskId
+                    )
                 )
-                /*makeTaskDueNotification(context!!, taskId = taskId, taskTitle = taskTitle, taskDesc)
-                CoroutineScope(Dispatchers.IO).launch {
-                    *//*repo.getTask(taskId).collect {
-                        it.data?.let { task ->
-                            repo.updateTask(task.copy(status = TaskStatus.IN_PROGRESS))
-                        }
-                    }*//*
-                    repo.updateTaskStatus(taskId = taskId, status = TaskStatus.IN_PROGRESS)
-                }*/
-                /*scope.launch {
-                    try {
-                        makeTaskDueNotification(
-                            context!!,
-                            taskId = taskId,
-                            taskTitle = taskTitle,
-                            taskDesc
-                        )
-                        repo.updateTaskStatus(taskId = taskId, status = TaskStatus.IN_PROGRESS)
-                    } finally {
-                        pendingResult.finish()
-                    }
-                }*/
-            }
-
-            Log.d(
-                "Reminder",
-                "Receiver received title: $taskTitle with id: $taskId, description: $taskDesc"
-            )
+                .addTag("due_task")
+                .build()
+            val workManager = context?.let { WorkManager.getInstance(it) }
+           /* workManager.enqueueUniqueWork(
+                DueTaskWorker.TAG,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                dueTaskRequest
+            )*/
+            workManager?.enqueue(dueTaskRequest)
+            Timber.tag("Reminder")
+                .d("Receiver received title: " + " with id: " + taskId)
 
         }
     }

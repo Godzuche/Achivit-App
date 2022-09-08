@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.feature_task.presentation.state_holder
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -19,9 +18,9 @@ import com.godzuche.achivitapp.feature_task.receivers.setReminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 
 @ExperimentalCoroutinesApi
@@ -245,10 +244,20 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun insertTask(task: Task) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.insertTask(task)
         }
     }
+
+/*
+    private suspend fun insertAndGetId(task: Task): Int {
+        var id: Int? = null
+        val deferred = viewModelScope.async(Dispatchers.IO) {
+            repository.insertAndGetTask(task).collect()
+        }
+        return deferred.await()
+    }
+*/
 
     fun addNewTask(
         categoryTitle: String,
@@ -268,11 +277,22 @@ class TasksViewModel @Inject constructor(
             dueDate = dueDate,
             collectionTitle
         )
-        insertTask(newTask)
-
-        viewModelScope.launch {
+//        insertTask(newTask)
+//        insertAndGetId(newTask)
+        viewModelScope.launch(Dispatchers.IO) {
+            val insertedTaskId = repository.insertAndGetTask(newTask)
+            setReminder(
+                getApplication(),
+                insertedTaskId,
+                dueDate,/*
+                    task.title,
+                    task.description*/
+            )
+            Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
+        }
+        /*viewModelScope.launch(Dispatchers.IO) {
             delay(300L)
-            repository.getLastInsertedTask().collectLatest { task ->
+            repository.getLastInsertedTask().distinctUntilChanged().collectLatest { task ->
                 task.id?.let {
                     setReminder(
                         getApplication(),
@@ -281,10 +301,10 @@ class TasksViewModel @Inject constructor(
                         task.title,
                         task.description
                     )
-                    Log.d("Reminder", "ViewModel Set at $dueDate")
+                    Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
                 }
             }
-        }
+        }*/
         viewModelScope.launch {
             delay(300L)
             sendUiEvent(UiEvent.ScrollToTop)

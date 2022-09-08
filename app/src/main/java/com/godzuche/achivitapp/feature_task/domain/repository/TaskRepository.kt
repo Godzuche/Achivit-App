@@ -13,12 +13,16 @@ interface TaskRepository {
 
     fun getTask(id: Int): Flow<Resource<Task>>
 
+    fun getTaskOnce(id: Int): Task
+
     //    fun getAllTask(): Flow<Resource<List<Task>>>
     fun getAllTask(): Flow<PagingData<Task>>
 
     fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>>
 
     suspend fun insertTask(task: Task)
+
+    suspend fun insertAndGetTask(task: Task): Int
 
     fun getLastInsertedTask(): Flow<Task>
 
@@ -28,7 +32,7 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
-    suspend fun updateTaskStatus(taskId: Int, status: TaskStatus)
+//    suspend fun updateTaskStatus(taskId: Int, status: TaskStatus)
 
     fun getCategory(title: String): Flow<TaskCategoryEntity>
     fun getAllCategory(): Flow<List<TaskCategoryEntity>>

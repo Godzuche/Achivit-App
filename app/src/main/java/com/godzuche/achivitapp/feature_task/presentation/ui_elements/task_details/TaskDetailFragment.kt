@@ -57,7 +57,6 @@ class TaskDetailFragment : Fragment() {
 //        viewModel.taskId.value = navigationArgs.id.toLong()
         val taskId = navigationArgs.id
         viewModel.accept(TaskUiEvent.OnRetrieveTask(taskId = taskId))
-        setHasOptionsMenu(true)
 
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment
@@ -80,6 +79,7 @@ class TaskDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         postponeEnterTransition()
         requireView().doOnPreDraw { startPostponedEnterTransition() }
 
@@ -143,17 +143,6 @@ class TaskDetailFragment : Fragment() {
                 }
             }
         }
-/*        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetAction.emit("Edit Task")
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetTaskId.emit(navigationArgs.id)
-            }
-        }*/
 
     }
 
@@ -229,8 +218,8 @@ class TaskDetailFragment : Fragment() {
 
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete task")
-            .setMessage("Are you sure you want to delete this task?")
+            .setTitle(getString(R.string.delete_task))
+            .setMessage(getString(R.string.task_delete_confirmation))
             .setCancelable(false)
             .setNegativeButton("Cancel") { _, _ -> }
             .setPositiveButton("Delete") { _, _ -> deleteTask() }

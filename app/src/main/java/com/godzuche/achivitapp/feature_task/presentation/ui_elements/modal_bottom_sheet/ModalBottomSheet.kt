@@ -164,10 +164,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     private fun bind(taskId: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
                     viewModel.uiStateFlow.map { it.bottomSheetAction }.collectLatest { action ->
                         binding.tvHeader.text = action
-                    }
                 }
             }
         }

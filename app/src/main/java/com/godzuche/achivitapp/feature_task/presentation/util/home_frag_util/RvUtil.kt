@@ -25,8 +25,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
-lateinit var task: Task
-
 @ExperimentalCoroutinesApi
 class SwipeDragHelper(
     private val colors: RvColors,
@@ -39,6 +37,8 @@ class SwipeDragHelper(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN,
     ItemTouchHelper.START or ItemTouchHelper.END
 ) {
+    lateinit var task: Task
+
     private var task2: Task? = null
     private var task1: Task? = null
     private var position: Int = NO_POSITION

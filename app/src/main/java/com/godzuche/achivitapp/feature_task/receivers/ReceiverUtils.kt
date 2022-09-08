@@ -20,15 +20,9 @@ import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_CHA
 import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_CHANNEL_ID
 import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_CHANNEL_NAME
 import com.godzuche.achivitapp.feature_task.receivers.Constants.NOTIFICATION_ID
+import timber.log.Timber
 
-
-fun makeTaskDueNotification(
-    context: Context,
-    taskId: Int,
-    taskTitle: String,
-    taskDescription: String,
-) {
-    // Create notification channel
+fun Context.createNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val id = NOTIFICATION_CHANNEL_ID
         val name = NOTIFICATION_CHANNEL_NAME
@@ -40,10 +34,17 @@ fun makeTaskDueNotification(
         }
 
         val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
-
+}
+fun makeTaskDueNotification(
+    context: Context,
+    taskId: Int,
+    taskTitle: String,
+    taskDescription: String,
+) {
+    context.createNotificationChannel()
     val args = TaskDetailFragmentArgs(id = taskId).toBundle()
 
     val pendingIntent = NavDeepLinkBuilder(context)
@@ -75,25 +76,34 @@ fun setReminder(
     getApp: Application,
     taskId: Int,
     taskDueDate: Long,
-    title: String,
-    description: String,
+    /*title: String,
+    description: String,*/
 ) {
     val extras = Bundle().apply {
         putInt(KEY_TASK_ID, taskId)
-        putString(KEY_TITLE, title)
-        putString(KEY_DESC, description)
+       /* putString(KEY_TITLE, title)
+        putString(KEY_DESC, description)*/
     }
 
     val context = getApp.applicationContext
     val alarmIntent = Intent(context, DueTaskAlarmReceiver::class.java).apply {
         putExtras(extras)
     }
-    val alarmPendingIntent = PendingIntent.getBroadcast(
-        context,
-        taskId + 1,
-        alarmIntent,
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
+    val alarmPendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        PendingIntent.getBroadcast(
+            context,
+            taskId + 1,
+            alarmIntent,
+            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    } else {
+        PendingIntent.getBroadcast(
+            context,
+            taskId + 1,
+            alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
 
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -103,6 +113,6 @@ fun setReminder(
         taskDueDate,
         alarmPendingIntent
     ).also {
-        Log.d("Reminder", "ReceiverUtils Set at due: $taskDueDate, title: $title, id: $taskId")
+        Timber.tag("Reminder").d("ReceiverUtils Set at due: " + taskDueDate + ",  id: " + taskId)
     }
 }

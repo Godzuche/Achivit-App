@@ -11,6 +11,9 @@ interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(task: TaskEntity)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAndGetId(task: TaskEntity): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun reInsert(task: TaskEntity)
 
@@ -25,6 +28,9 @@ interface TaskDao {
 
     @Query("SELECT * FROM task_table WHERE id = :id")
     fun getTask(id: Int): Flow<TaskEntity>
+
+    @Query("SELECT * FROM task_table WHERE id = :id")
+    fun getTaskOnce(id: Int): TaskEntity
 
     @Query("SELECT * FROM task_table ORDER BY id DESC")
     fun getAllTasks(): PagingSource<Int, TaskEntity>
