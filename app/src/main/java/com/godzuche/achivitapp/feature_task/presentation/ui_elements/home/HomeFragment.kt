@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -119,13 +120,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun doOnScrolled(dy: Int) {
-        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        /*val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         if (dy > 15 && fab?.isExtended == true) fab.shrink()
-        else if (dy < -15 && fab?.isExtended == false) fab.extend()
+        else if (dy < -15 && fab?.isExtended == false) fab.extend()*/
     }
 
     private fun doOnScrollChanged(recyclerView: RecyclerView, newState: Int) {
-        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        /*val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         val linearLayoutManager =
             (binding.recyclerViewTasksList.layoutManager as LinearLayoutManager)
         val adapter = recyclerView.adapter as TaskListAdapter
@@ -136,7 +137,7 @@ class HomeFragment : Fragment() {
             ) {
                 if (fab?.isExtended == false) fab.extend()
             }
-        }
+        }*/
     }
 
     override fun onPause() {

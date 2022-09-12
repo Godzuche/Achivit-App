@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1069040736569",
+    "project_id": "achivit-1cf0c",
+    "storage_bucket": "achivit-1cf0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069040736569:android:e5b8c05fb04d6a757f30e8",
+        "android_client_info": {
+          "package_name": "com.godzuche.achivitapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069040736569-12vp3tbjrhuk1hfmepn7ng1nuhtr3np0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigfPYGdcsJOoTwYiMGecXDtDAHulrqNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069040736569-12vp3tbjrhuk1hfmepn7ng1nuhtr3np0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

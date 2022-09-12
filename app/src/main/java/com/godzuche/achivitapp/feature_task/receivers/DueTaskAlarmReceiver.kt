@@ -7,14 +7,10 @@ import androidx.work.*
 import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TASK_ID
 import com.godzuche.achivitapp.feature_task.worker.DueTaskWorker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 
 @AndroidEntryPoint
 class DueTaskAlarmReceiver() : BroadcastReceiver() {
-    private val scope = CoroutineScope(SupervisorJob())
-
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.tag("Reminder").d("Receiver called")
@@ -25,7 +21,7 @@ class DueTaskAlarmReceiver() : BroadcastReceiver() {
         bundle?.apply {
             val taskId = getInt(KEY_TASK_ID)
             val dueTaskRequest = OneTimeWorkRequestBuilder<DueTaskWorker>()
-//                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(
                     workDataOf(
                         "taskId" to taskId
@@ -33,16 +29,17 @@ class DueTaskAlarmReceiver() : BroadcastReceiver() {
                 )
                 .addTag("due_task")
                 .build()
-            val workManager = context?.let { WorkManager.getInstance(it) }
-           /* workManager.enqueueUniqueWork(
-                DueTaskWorker.TAG,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                dueTaskRequest
-            )*/
-            workManager?.enqueue(dueTaskRequest)
-            Timber.tag("Reminder")
-                .d("Receiver received title: " + " with id: " + taskId)
 
+            val workManager = context?.let { WorkManager.getInstance(it) }
+            workManager?.enqueueUniqueWork(
+                DueTaskWorker.TAG + taskId.toString(),
+                ExistingWorkPolicy.REPLACE,
+                dueTaskRequest
+            )
+            /*  workManager?.enqueue(dueTaskRequest)
+              Timber.tag("Reminder")
+                  .d("Receiver received title: " + " with id: " + taskId)
+  */
         }
     }
 

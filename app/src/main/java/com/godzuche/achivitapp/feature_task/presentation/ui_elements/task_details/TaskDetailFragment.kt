@@ -20,7 +20,6 @@ import com.godzuche.achivitapp.databinding.FragmentTaskBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.presentation.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
@@ -47,8 +46,6 @@ class TaskDetailFragment : Fragment() {
     private val viewModel: TaskDetailViewModel by viewModels()
 
     private val navigationArgs: TaskDetailFragmentArgs by navArgs()
-
-    private val modalBottomSheet = ModalBottomSheet()
 
     private var task: Task? = null
 
@@ -123,9 +120,11 @@ class TaskDetailFragment : Fragment() {
                         when (event) {
                             is UiEvent.ShowSnackBar -> {
                                 val snackBar =
-                                    Snackbar.make(binding.coordinator,
+                                    Snackbar.make(
+                                        binding.coordinator,
                                         event.message,
-                                        Snackbar.LENGTH_LONG)
+                                        Snackbar.LENGTH_LONG
+                                    )
                                         .setAnchorView(activity?.findViewById(R.id.fab_add))
 
                                 if (event.action == SnackBarActions.UNDO) {
@@ -188,24 +187,24 @@ class TaskDetailFragment : Fragment() {
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
 
         fab?.apply {
-            icon = ResourcesCompat.getDrawable(resources,
+            icon = ResourcesCompat.getDrawable(
+                resources,
                 R.drawable.ic_baseline_edit_24,
-                activity?.theme)
+                activity?.theme
+            )
             if (this.isExtended) {
                 this.shrink()
             }
         }
 
-        activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
-            ?.setOnClickListener {
-                /*if (!modalBottomSheet.isAdded) {
-                    modalBottomSheet.show(childFragmentManager,
-                        ModalBottomSheet.TAG + "_task_fragment")
-                }*/
-                findNavController().navigate(TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
-                    navigationArgs.id))
+        fab?.setOnClickListener {
+            findNavController().navigate(
+                TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
+                    navigationArgs.id
+                )
+            )
 
-            }
+        }
 
     }
 
@@ -228,9 +227,11 @@ class TaskDetailFragment : Fragment() {
 
     private fun deleteTask() {
         task?.let {
-            viewModel.accept(TaskUiEvent.OnDeleteTask(
-                task = it
-            ))
+            viewModel.accept(
+                TaskUiEvent.OnDeleteTask(
+                    task = it
+                )
+            )
             activityViewModels.accept(TasksUiEvent.OnDeleteFromTaskDetail(deletedTask = it))
         }
     }

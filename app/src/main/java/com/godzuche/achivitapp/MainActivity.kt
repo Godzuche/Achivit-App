@@ -21,11 +21,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
-    private val currentNavigationFragment: Fragment?
+/*    private val currentNavigationFragment: Fragment?
         get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
             ?.childFragmentManager
             ?.fragments
-            ?.first()
+            ?.first()*/
 
     private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { pref, prefKey ->
@@ -95,6 +95,12 @@ class MainActivity : AppCompatActivity() {
                     if (!binding.fabAdd.isShown) {
                         binding.fabAdd.show()
                     }
+                }
+                R.id.action_notifications -> {
+                    binding.bottomNavView.visibility = View.VISIBLE
+                }
+                R.id.action_profile -> {
+                    binding.bottomNavView.visibility = View.VISIBLE
                 }
                 else -> {
                     binding.fabAdd.hide()

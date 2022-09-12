@@ -58,33 +58,7 @@
                     app:chipSpacingHorizontal="16dp"
                     app:selectionRequired="true"
                     app:singleLine="true"
-                    app:singleSelection="true">
-
-                    <!-- <com.google.android.material.chip.Chip
-                         android:id="@+id/chip_my_tasks"
-                         style="@style/Widget.Material3.Chip.Filter"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:text="My Tasks"
-                         app:ensureMinTouchTargetSize="true" />-->
-
-                    <!--                    <com.google.android.material.chip.Chip
-                                            android:id="@+id/chip_2"
-                                            style="@style/Widget.Material3.Chip.Filter"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="School" />
-
-                                        <com.google.android.material.chip.Chip
-                                            android:id="@+id/chip_3"
-                                            style="@style/Widget.Material3.Chip.Filter"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:fontFamily="@font/poppins"
-                                            android:text="Work"
-                                            app:fontFamily="@font/poppins" />-->
-
-                </com.google.android.material.chip.ChipGroup>
+                    app:singleSelection="true" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_add_category"
