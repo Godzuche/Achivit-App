@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.godzuche.achivitapp">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -29,7 +30,7 @@
         </activity>
 
         <receiver
-            android:name=".feature_task.receivers.DueTaskAlarmReceiver"
+            android:name=".feature_home.receivers.DueTaskAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 

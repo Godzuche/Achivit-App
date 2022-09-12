@@ -4,8 +4,9 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.preference.PreferenceManager
 import androidx.work.Configuration
+import com.godzuche.achivitapp.feature_notification.createDailyTaskNotificationChannel
+import com.godzuche.achivitapp.feature_notification.createDueTaskNotificationChannel
 import com.godzuche.achivitapp.feature_settings.setDarkMode
-import com.godzuche.achivitapp.feature_task.receivers.createNotificationChannel
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,7 +35,8 @@ class TaskApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        createDueTaskNotificationChannel()
+        createDailyTaskNotificationChannel()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

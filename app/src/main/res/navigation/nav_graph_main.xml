@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/action_home"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.HomeFragment"
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.home.HomeFragment"
         android:label="Tasks"
         tools:layout="@layout/fragment_home">
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/action_profile"
-        android:name="com.godzuche.achivitapp.ui.ProfileFragment"
+        android:name="com.godzuche.achivitapp.feature_profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/task_fragment"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_details.TaskDetailFragment"
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.task_details.TaskDetailFragment"
         tools:layout="@layout/fragment_task">
         <argument
             android:name="id"
@@ -47,7 +47,7 @@
         app:destination="@id/task_fragment" />
     <fragment
         android:id="@+id/action_search"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.search.SearchFragment"
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.search.SearchFragment"
         android:label=""
         tools:layout="@layout/fragment_search" />
     <action
@@ -55,7 +55,7 @@
         app:destination="@id/action_search" />
     <dialog
         android:id="@+id/modalBottomSheet"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet"
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheet"
         android:label="ModalBottomSheet">
 
         <argument
@@ -70,7 +70,7 @@
         app:launchSingleTop="true" />
     <dialog
         android:id="@+id/filterBottomSheetDialog"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.FilterBottomSheetDialog"
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.home.FilterBottomSheetDialog"
         android:label="FilterBottomSheetDialog" />
     <action
         android:id="@+id/action_global_filterBottomSheetDialog"
@@ -78,7 +78,7 @@
         app:launchSingleTop="true" />
     <dialog
         android:id="@+id/addTaskCategoryFragment"
-        android:name="com.godzuche.achivitapp.feature_task.presentation.ui_elements.home.AddCategoryCollectionFragment">
+        android:name="com.godzuche.achivitapp.feature_home.presentation.ui_elements.home.AddCategoryCollectionFragment">
         <argument
             android:name="dialogTitle"
             app:argType="string" />

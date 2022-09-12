@@ -1,15 +1,20 @@
-package com.godzuche.achivitapp.feature_notification
+package com.godzuche.achivitapp.feature_profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.godzuche.achivitapp.databinding.FragmentNotificationsBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.databinding.FragmentProfileBinding
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.MaterialFadeThrough
 
-class NotificationsFragment : Fragment() {
-    private var _binding: FragmentNotificationsBinding? = null
+class ProfileFragment : Fragment() {
+    private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,22 +42,27 @@ class NotificationsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onStart() {
         super.onStart()
-/*        activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
-        activity?.findViewById<Chip>(R.id.chip_add_collection)?.visibility = View.GONE*/
+        activity?.findViewById<ChipGroup>(R.id.chip_group)?.visibility = View.GONE
+        activity?.findViewById<Chip>(R.id.chip_add_category)?.visibility = View.GONE
         /*activity?.findViewById<BottomNavigationView>(R.id.bottom_nav_view)
             ?.visibility = View.VISIBLE*/
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Glide.with(requireView())
+            .load(R.drawable.avatar__9_)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .centerCrop()
+            .into(binding.imvUserProfileIcon)
     }
 
 /*    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -62,7 +72,7 @@ class NotificationsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-//                findNavController().navigate(NotificationsFragmentDirections.actionGlobalActionNotificationsSettings())
+//                findNavController().navigate(ProfileFragmentDirections.actionGlobalAccountPrefFragment())
                 true
             }
             else -> super.onOptionsItemSelected(item)

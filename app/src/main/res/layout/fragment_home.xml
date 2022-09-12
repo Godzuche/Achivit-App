@@ -5,7 +5,8 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature_task.presentation.ui_elements.home.HomeFragment">
+    android:fitsSystemWindows="true"
+    tools:context=".feature_home.presentation.ui_elements.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
