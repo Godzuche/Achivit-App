@@ -97,9 +97,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.action_notifications -> {
                     binding.bottomNavView.visibility = View.VISIBLE
+                    binding.fabAdd.hide()
                 }
                 R.id.action_profile -> {
                     binding.bottomNavView.visibility = View.VISIBLE
+                    binding.fabAdd.hide()
                 }
                 else -> {
                     binding.fabAdd.hide()
