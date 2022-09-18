@@ -1,14 +1,10 @@
 package com.godzuche.achivitapp.feature_home.data.local.entity
 
-import android.icu.util.Calendar
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.godzuche.achivitapp.feature_home.domain.model.Task
 import com.godzuche.achivitapp.feature_home.presentation.util.TaskStatus
-
-
-val timeNow by lazy { Calendar.getInstance().timeInMillis }
 
 @Entity(tableName = "task_table")
 data class TaskEntity(
@@ -18,10 +14,8 @@ data class TaskEntity(
     val title: String,
     @ColumnInfo(name = "description")
     val description: String,
-/*    @ColumnInfo(name = "completed")
-    val completed: Boolean = false,*/
-    /*@ColumnInfo(name = "isPriority")
-    val isPriority: Boolean = false,*/
+    @ColumnInfo(name = "completed")
+    val isCompleted: Boolean = false,
     @ColumnInfo(name = "created")
     val created: Long = 0L,
     @ColumnInfo(name = "due_date")
@@ -47,6 +41,7 @@ data class TaskEntity(
             id = id,
             title = title,
             description = description,
+            isCompleted = isCompleted,
             created = created,
             dueDate = dueDate,
 //            status = taskStatus,

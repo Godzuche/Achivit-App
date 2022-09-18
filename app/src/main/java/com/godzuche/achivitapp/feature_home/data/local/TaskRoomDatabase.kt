@@ -8,7 +8,7 @@ import com.godzuche.achivitapp.feature_home.data.local.entity.TaskEntity
 
 @Database(
     entities = [TaskCategoryEntity::class, TaskCollectionEntity::class, TaskEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TaskRoomDatabase : RoomDatabase() {

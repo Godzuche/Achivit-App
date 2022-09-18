@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -21,13 +22,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.databinding.FragmentHomeBinding
-import com.godzuche.achivitapp.feature_home.domain.model.Task
 import com.godzuche.achivitapp.feature_home.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_home.presentation.util.DialogTitle
 import com.godzuche.achivitapp.feature_home.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_home.presentation.util.UiEvent
 import com.godzuche.achivitapp.feature_home.presentation.util.home_frag_util.*
 import com.google.android.material.R.integer
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -38,14 +40,12 @@ import com.google.android.material.transition.MaterialSharedAxis.Z
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    private lateinit var task: Task
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -55,7 +55,21 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        enterTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                    .toLong()
+        }
+        exitTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                    .toLong()
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration =
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                    .toLong()
+        }
     }
 
     override fun onCreateView(
@@ -68,36 +82,13 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        enterTransition = MaterialFadeThrough().apply {
-            duration =
-                resources.getInteger(integer.material_motion_duration_long_1)
-                    .toLong()
-        }
-        exitTransition = MaterialFadeThrough().apply {
-            duration =
-                resources.getInteger(integer.material_motion_duration_long_1)
-                    .toLong()
-        }
-        reenterTransition = MaterialFadeThrough().apply {
-            duration =
-                resources.getInteger(integer.material_motion_duration_long_1)
-                    .toLong()
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         fab?.apply {
-            icon = ResourcesCompat.getDrawable(
-                resources,
-                R.drawable.ic_baseline_add_24,
-                activity?.theme
-            )
+            setIconResource(R.drawable.ic_baseline_add_24)
             if (!this.isExtended) {
-                this.extend()
+                this.postDelayed({extend()}, 150)
             }
         }
 
@@ -119,13 +110,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun doOnScrolled(dy: Int) {
-        /*val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         if (dy > 15 && fab?.isExtended == true) fab.shrink()
-        else if (dy < -15 && fab?.isExtended == false) fab.extend()*/
+        else if (dy < -15 && fab?.isExtended == false) fab.extend()
     }
 
     private fun doOnScrollChanged(recyclerView: RecyclerView, newState: Int) {
-        /*val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
         val linearLayoutManager =
             (binding.recyclerViewTasksList.layoutManager as LinearLayoutManager)
         val adapter = recyclerView.adapter as TaskListAdapter
@@ -136,7 +127,7 @@ class HomeFragment : Fragment() {
             ) {
                 if (fab?.isExtended == false) fab.extend()
             }
-        }*/
+        }
     }
 
     override fun onPause() {
@@ -150,7 +141,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         postponeEnterTransition()
-        requireView().doOnPreDraw { startPostponedEnterTransition() }
+        requireView().doOnPreDraw {
+            startPostponedEnterTransition()
+        }
 
 /*        val appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -163,41 +156,47 @@ class HomeFragment : Fragment() {
             ),
             fallbackOnNavigateUpListener = { requireActivity().onNavigateUp() }
         )*/
-        binding.toolbarMain.inflateMenu(R.menu.menu_home)
-        binding.toolbarMain.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_settings -> {
-                    exitTransition = MaterialSharedAxis(Z, true).apply {
-                        duration =
-                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
+        binding.toolbarMain.apply {
+            inflateMenu(R.menu.menu_home)
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_settings -> {
+                        exitTransition = MaterialSharedAxis(Z, true).apply {
+                            duration =
+                                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                                    .toLong()
+                        }
+                        reenterTransition = MaterialSharedAxis(Z, false).apply {
+                            duration =
+                                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                                    .toLong()
+                        }
+                        val action = HomeFragmentDirections.actionActionHomeToActionSettings()
+                        findNavController().navigate(action)
+                        true
                     }
-                    reenterTransition = MaterialSharedAxis(Z, false).apply {
-                        duration =
-                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
+                    R.id.action_filter -> {
+                        val action = HomeFragmentDirections.actionGlobalFilterBottomSheetDialog()
+                        findNavController().navigate(action)
+                        true
                     }
-                    val action = HomeFragmentDirections.actionActionHomeToActionSettings()
-                    findNavController().navigate(action)
-                    true
+                    R.id.action_search -> {
+                        exitTransition = MaterialSharedAxis(Z, true).apply {
+                            duration =
+                                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                                    .toLong()
+                        }
+                        reenterTransition = MaterialSharedAxis(Z, false).apply {
+                            duration =
+                                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+                                    .toLong()
+                        }
+                        val action = HomeFragmentDirections.actionGlobalSearchFragment()
+                        findNavController().navigate(action)
+                        true
+                    }
+                    else -> false
                 }
-                R.id.action_filter -> {
-                    val action = HomeFragmentDirections.actionGlobalFilterBottomSheetDialog()
-                    findNavController().navigate(action)
-                    true
-                }
-                R.id.action_search -> {
-                    exitTransition = MaterialSharedAxis(Z, true).apply {
-                        duration =
-                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
-                    }
-                    reenterTransition = MaterialSharedAxis(Z, false).apply {
-                        duration =
-                            resources.getInteger(integer.material_motion_duration_long_1).toLong()
-                    }
-                    val action = HomeFragmentDirections.actionGlobalSearchFragment()
-                    findNavController().navigate(action)
-                    true
-                }
-                else -> false
             }
         }
 
@@ -237,21 +236,27 @@ class HomeFragment : Fragment() {
         val snoozeColor = resources.getColor(android.R.color.holo_orange_light, null)
         val snoozeColorDark = resources.getColor(android.R.color.holo_orange_dark, null)
 
-        val adapter = TaskListAdapter { cardView, task ->
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(integer.material_motion_duration_long_1).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(integer.material_motion_duration_long_1).toLong()
-            }
+        val adapter = TaskListAdapter(
+            onItemClicked = { cardView, task ->
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration =
+                        resources.getInteger(integer.material_motion_duration_medium_1).toLong()
+                }
+                reenterTransition = MaterialElevationScale(true).apply {
+                    duration =
+                        resources.getInteger(integer.material_motion_duration_medium_1).toLong()
+                }
 
-            val taskCardDetailTransitionName =
-                resources.getString(R.string.task_card_detail_transition_name)
-            val extras = FragmentNavigatorExtras(cardView to taskCardDetailTransitionName)
-            val action = HomeFragmentDirections.actionGlobalTaskFragment(task.id!!)
-            findNavController().navigate(action, extras)
+                val taskCardDetailTransitionName =
+                    resources.getString(R.string.task_card_detail_transition_name)
+                val extras = FragmentNavigatorExtras(cardView to taskCardDetailTransitionName)
+                val action = HomeFragmentDirections.actionGlobalTaskFragment(task.id!!)
+                findNavController().navigate(action, extras)
 //            task = it
 //            viewModel.accept(TasksUiEvent.OnTaskClick(it))
+            }
+        ) { task, isChecked ->
+            viewModel.setIsCompleted(task, isChecked)
         }
 
         binding.recyclerViewTasksList.adapter = adapter
@@ -277,11 +282,10 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.tasksPagingDataFlow.distinctUntilChanged()
-                    .collectLatest {
-                        Timber.tag("Reminder").d("collected paging data: $it")
-                        adapter.submitData(it)
-                    }
+                viewModel.tasksPagingDataFlow.collectLatest {
+                    Timber.tag("Paging Data").d("collected paging data: $it")
+                    adapter.submitData(it)
+                }
             }
         }
 
@@ -349,12 +353,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.chipAddCategory.setOnClickListener {
-            findNavController().navigate(
-                HomeFragmentDirections.actionGlobalAddCategoryCollectionFragment(
-                    DialogTitle.CATEGORY
-                )
+        binding.chipAddCategory.setOnClickListener { chipAddCategoryView ->
+            val action = HomeFragmentDirections.actionGlobalAddCategoryCollectionFragment(
+                DialogTitle.CATEGORY
             )
+            findNavController().navigate(action)
         }
 
         binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
@@ -372,5 +375,4 @@ class HomeFragment : Fragment() {
     companion object {
         const val NOT_SET = -1
     }
-
 }

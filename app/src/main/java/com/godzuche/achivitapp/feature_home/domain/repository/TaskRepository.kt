@@ -31,8 +31,6 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
-//    suspend fun updateTaskStatus(taskId: Int, status: TaskStatus)
-
     fun getCategory(title: String): Flow<TaskCategoryEntity>
     fun getAllCategory(): Flow<List<TaskCategoryEntity>>
     suspend fun insertCategory(category: TaskCategoryEntity)

@@ -48,7 +48,7 @@ class TasksViewModel @Inject constructor(
     val uiState: StateFlow<TasksUiState> = _uiState.asStateFlow()
 
     val tasksPagingDataFlow: Flow<PagingData<Task>>
-        get() = repository.getAllTask().cachedIn(viewModelScope + Dispatchers.IO)
+        get() = repository.getAllTask().cachedIn(viewModelScope)
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -104,6 +104,18 @@ class TasksViewModel @Inject constructor(
                 category = category,
                 collection = collection,
                 status = filterStatus
+            )
+        }
+    }
+
+    fun setIsCompleted(task: Task, isChecked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Timber.tag("CheckBox").i("ViewModel: $isChecked")
+            repository.updateTask(
+                task.copy(
+                    isCompleted = isChecked,
+                    status = if (isChecked) TaskStatus.COMPLETED else TaskStatus.IN_PROGRESS
+                )
             )
         }
     }

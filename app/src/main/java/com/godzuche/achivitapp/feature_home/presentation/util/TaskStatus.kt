@@ -5,5 +5,5 @@ enum class TaskStatus {
     TODO,
     IN_PROGRESS,
     RUNNING_LATE,
-    COMPLETED_TASKS
+    COMPLETED
 }

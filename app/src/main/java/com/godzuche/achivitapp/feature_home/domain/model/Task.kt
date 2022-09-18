@@ -7,7 +7,7 @@ data class Task(
     val id: Int? = null,
     val title: String,
     val description: String,
-//    val completed: Boolean = false,
+    val isCompleted: Boolean = false,
     // val isPriority: Boolean = false
     val created: Long? = null,
     val dueDate: Long,
@@ -18,6 +18,7 @@ data class Task(
         return TaskEntity(
             title = title,
             description = description,
+            isCompleted = isCompleted,
             created = created!!,
             dueDate = dueDate,
             status = status,
@@ -29,6 +30,7 @@ data class Task(
         return TaskEntity(
             id = id!!,
             title = title,
+            isCompleted = isCompleted,
             description = description,
             dueDate = dueDate,
             status = status,

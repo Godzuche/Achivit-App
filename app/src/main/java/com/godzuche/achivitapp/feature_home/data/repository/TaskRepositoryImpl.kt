@@ -83,16 +83,10 @@ class TaskRepositoryImpl(
     }
 
     override suspend fun updateTask(task: Task) {
-        Timber.tag("Reminder").d("updateTask called in repo")
+        Timber.tag("CheckBox")
+            .i("updateTask called in repo with completed status: ${task.isCompleted}")
         taskDao.update(task.toTaskEntity())
     }
-
-/*    override suspend fun updateTaskStatus(taskId: Int, status: TaskStatus) {
-        getTask(taskId).distinctUntilChanged().collect() {
-            Timber.tag("Reminder").d("updateTaskStatus called in repo")
-            it.data?.let { task -> updateTask(task.copy(status = status)) }
-        }
-    }*/
 
     override fun getCategory(title: String): Flow<TaskCategoryEntity> {
         return categoryDao.getCategory(title)
@@ -156,7 +150,7 @@ class TaskRepositoryImpl(
             TaskStatus.RUNNING_LATE -> {
                 //
             }
-            TaskStatus.COMPLETED_TASKS -> {
+            TaskStatus.COMPLETED -> {
                 //
             }
         }

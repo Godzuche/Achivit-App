@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -52,19 +51,17 @@ class TaskDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.taskId.value = navigationArgs.id.toLong()
-        val taskId = navigationArgs.id
-        viewModel.accept(TaskUiEvent.OnRetrieveTask(taskId = taskId))
-
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment
             duration =
-                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
+                resources.getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
                     .toLong()
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(requireContext().themeColor(com.google.android.material.R.attr.colorSurface))
         }
-
+//        viewModel.taskId.value = navigationArgs.id.toLong()
+        val taskId = navigationArgs.id
+        viewModel.accept(TaskUiEvent.OnRetrieveTask(taskId = taskId))
     }
 
     override fun onCreateView(
@@ -188,11 +185,7 @@ class TaskDetailFragment : Fragment() {
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
 
         fab?.apply {
-            icon = ResourcesCompat.getDrawable(
-                resources,
-                R.drawable.ic_baseline_edit_24,
-                activity?.theme
-            )
+            setIconResource(R.drawable.ic_baseline_add_24)
             if (this.isExtended) {
                 this.shrink()
             }

@@ -15,7 +15,6 @@ class NotificationsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setHasOptionsMenu(true)
         enterTransition = MaterialFadeThrough().apply {
             duration =
                 resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)

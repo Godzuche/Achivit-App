@@ -3,8 +3,13 @@ package com.godzuche.achivitapp
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -49,15 +54,27 @@ class MainActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         val splashScreen = installSplashScreen()
-
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val windowInsetController = ViewCompat.getWindowInsetsController(window.decorView)
+//        windowInsetController?.isAppearanceLightNavigationBars = true
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
 
         setContentView(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main)) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updateLayoutParams<MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+                topMargin = insets.top
+            }
+            WindowInsetsCompat.CONSUMED
+        }
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -85,7 +102,9 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.action_home -> {
                     if (!binding.fabAdd.isShown) {
-                        binding.fabAdd.show()
+                        binding.fabAdd.apply {
+                            postDelayed({ show() }, 150)
+                        }
                     }
                     binding.bottomNavView.visibility = View.VISIBLE
                 }
