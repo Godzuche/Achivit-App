@@ -12,9 +12,9 @@ import androidx.core.app.NotificationCompat.DEFAULT_ALL
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.feature_home.domain.model.Task
-import com.godzuche.achivitapp.feature_home.presentation.ui_elements.task_details.TaskDetailFragmentArgs
-import com.godzuche.achivitapp.feature_home.receivers.*
+import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_detail.TaskDetailFragmentArgs
+import com.godzuche.achivitapp.feature_task.receivers.*
 
 fun Context.createDueTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -35,10 +35,10 @@ fun Context.createDueTaskNotificationChannel() {
 
 fun Context.createDailyTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val id = com.godzuche.achivitapp.feature_home.worker.Constants.NOTIFICATION_CHANNEL_ID
-        val name = com.godzuche.achivitapp.feature_home.worker.Constants.NOTIFICATION_CHANNEL_NAME
+        val id = com.godzuche.achivitapp.feature_task.worker.Constants.NOTIFICATION_CHANNEL_ID
+        val name = com.godzuche.achivitapp.feature_task.worker.Constants.NOTIFICATION_CHANNEL_NAME
         val channelDescription =
-            com.godzuche.achivitapp.feature_home.worker.Constants.NOTIFICATION_CHANNEL_DESCRIPTION
+            com.godzuche.achivitapp.feature_task.worker.Constants.NOTIFICATION_CHANNEL_DESCRIPTION
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(id, name, importance).apply {
             description = channelDescription
@@ -60,7 +60,7 @@ fun Context.makeDueTaskNotification(
 
     val pendingIntent = NavDeepLinkBuilder(this)
         .setGraph(R.navigation.nav_graph_main)
-        .setDestination(R.id.task_fragment)
+        .setDestination(R.id.task_detail)
         .setArguments(args)
         .createPendingIntent()
 
@@ -119,10 +119,10 @@ fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
 
     val notificationBuilder = NotificationCompat.Builder(
         context,
-        com.godzuche.achivitapp.feature_home.worker.Constants.NOTIFICATION_CHANNEL_ID
+        com.godzuche.achivitapp.feature_task.worker.Constants.NOTIFICATION_CHANNEL_ID
     )
         .setSmallIcon(R.drawable.ic_baseline_check_box_24)
-        .setContentTitle(com.godzuche.achivitapp.feature_home.worker.Constants.NOTIFICATION_TITLE)
+        .setContentTitle(com.godzuche.achivitapp.feature_task.worker.Constants.NOTIFICATION_TITLE)
         .setContentText("You have ${tasks.size} tasks of high priority for today")
         .setContentIntent(pendingIntent)
         .setStyle(notificationStyle)

@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:name=".TaskApplication"
@@ -30,7 +30,7 @@
         </activity>
 
         <receiver
-            android:name=".feature_home.receivers.DueTaskAlarmReceiver"
+            android:name=".feature_task.receivers.DueTaskAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 

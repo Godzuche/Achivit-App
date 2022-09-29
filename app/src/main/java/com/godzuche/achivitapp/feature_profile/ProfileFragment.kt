@@ -4,13 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Size
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentProfileBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.composethemeadapter3.Mdc3Theme
 import com.google.android.material.transition.MaterialFadeThrough
 
 class ProfileFragment : Fragment() {
@@ -20,7 +34,7 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
         enterTransition = MaterialFadeThrough().apply {
             duration =
                 resources.getInteger(com.google.android.material.R.integer.material_motion_duration_long_1)
@@ -43,6 +57,32 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding.imvUserProfileIcon.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                Mdc3Theme {
+                    Box(contentAlignment = Alignment.Center) {
+                        val ctx = LocalContext.current
+                        val imageRequest = ImageRequest.Builder(ctx)
+                            .data(R.drawable.avatar)
+                            .size(Size.ORIGINAL)
+                            .crossfade(true)
+                            .build()
+
+                        AsyncImage(
+                            model = imageRequest,
+                            placeholder = painterResource(R.drawable.baseline_account_circle_24),
+                            contentDescription = "Profile photo",
+                            contentScale = ContentScale.Crop,
+                            filterQuality = FilterQuality.High,
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                        )
+                    }
+                }
+            }
+        }
         return binding.root
     }
 
@@ -58,11 +98,11 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Glide.with(requireView())
+        /*Glide.with(requireView())
             .load(R.drawable.avatar__9_)
             .transition(DrawableTransitionOptions.withCrossFade())
             .centerCrop()
-            .into(binding.imvUserProfileIcon)
+            .into(binding.imvUserProfileIcon)*/
     }
 
 /*    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

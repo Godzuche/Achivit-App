@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val windowInsetController = ViewCompat.getWindowInsetsController(window.decorView)
+//        val windowInsetController = ViewCompat.getWindowInsetsController(window.decorView)
 //        windowInsetController?.isAppearanceLightNavigationBars = true
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.action_home -> {
+                    binding.bottomNavView.visibility = View.VISIBLE
+                    binding.fabAdd.hide()
+                }
+                R.id.action_tasks -> {
                     if (!binding.fabAdd.isShown) {
                         binding.fabAdd.apply {
                             postDelayed({ show() }, 150)
@@ -108,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     binding.bottomNavView.visibility = View.VISIBLE
                 }
-                R.id.task_fragment -> {
+                R.id.task_detail -> {
                     binding.bottomNavView.visibility = View.GONE
                     if (!binding.fabAdd.isShown) {
                         binding.fabAdd.show()
@@ -119,6 +123,10 @@ class MainActivity : AppCompatActivity() {
                     binding.fabAdd.hide()
                 }
                 R.id.action_profile -> {
+                    binding.bottomNavView.visibility = View.VISIBLE
+                    binding.fabAdd.hide()
+                }
+                R.id.action_settings -> {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
