@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_detail
+package com.godzuche.achivitapp.feature_task.presentation.task_detail
 
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 

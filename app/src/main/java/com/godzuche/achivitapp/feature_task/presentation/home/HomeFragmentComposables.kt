@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
+package com.godzuche.achivitapp.feature_task.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells

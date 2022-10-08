@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet
+package com.godzuche.achivitapp.feature_task.presentation.modal_bottom_sheet
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,9 +15,8 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.ModalBottomSheetViewModel
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks.TasksFragment.Companion.NOT_SET
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksFragment.Companion.NOT_SET
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip

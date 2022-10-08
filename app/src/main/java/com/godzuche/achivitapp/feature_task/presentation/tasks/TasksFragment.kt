@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.databinding.FragmentTasksBinding
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent

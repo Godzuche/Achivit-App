@@ -1,11 +1,10 @@
-package com.godzuche.achivitapp.feature_task.presentation.state_holder
+package com.godzuche.achivitapp.feature_task.presentation.modal_bottom_sheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.modal_bottom_sheet.ModalBottomSheetUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.ModalBottomSheetUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent

@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.util.dp
 import com.godzuche.achivitapp.feature_task.domain.model.Task
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

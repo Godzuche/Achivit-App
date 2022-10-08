@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import android.app.Dialog
 import android.os.Bundle
@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentAddTaskCategoryBinding
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView

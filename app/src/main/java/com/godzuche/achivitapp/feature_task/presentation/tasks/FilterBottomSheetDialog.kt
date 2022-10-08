@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FilterModalBottomSheetContentBinding
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.DialogTitle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip

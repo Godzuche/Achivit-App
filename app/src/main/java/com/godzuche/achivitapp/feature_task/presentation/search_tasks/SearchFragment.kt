@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.search
+package com.godzuche.achivitapp.feature_task.presentation.search_tasks
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.databinding.FragmentSearchBinding
-import com.godzuche.achivitapp.feature_task.presentation.state_holder.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.util.onQueryTextChange
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis

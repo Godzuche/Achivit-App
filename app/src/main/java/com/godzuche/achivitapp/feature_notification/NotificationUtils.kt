@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.feature_task.domain.model.Task
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.task_detail.TaskDetailFragmentArgs
+import com.godzuche.achivitapp.feature_task.presentation.task_detail.TaskDetailFragmentArgs
 import com.godzuche.achivitapp.feature_task.receivers.*
 
 fun Context.createDueTaskNotificationChannel() {

@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.state_holder
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,7 +11,6 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEnti
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
-import com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
 import com.godzuche.achivitapp.feature_task.receivers.setReminder
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-
 
 @ExperimentalCoroutinesApi
 @HiltViewModel

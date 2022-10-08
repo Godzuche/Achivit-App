@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import android.view.LayoutInflater
 import android.view.View

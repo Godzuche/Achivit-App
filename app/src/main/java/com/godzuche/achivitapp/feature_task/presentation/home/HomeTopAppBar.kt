@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.home
+package com.godzuche.achivitapp.feature_task.presentation.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavDirections
 import com.godzuche.achivitapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +22,8 @@ fun HomeTopAppBar(
     name: String = "Jonathan",
     activeTasks: Int = 5,
     scrollBehavior: TopAppBarScrollBehavior,
-    onNavigate: (NavDirections) -> Unit
+    onSettingsActionClicked: () -> Unit,
+    onProfileIconClicked: () -> Unit
 ) {
     val ctx = LocalContext.current
     TopAppBar(
@@ -44,7 +44,7 @@ fun HomeTopAppBar(
         },
         navigationIcon = {
             IconButton(
-                onClick = {},
+                onClick = onProfileIconClicked,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(
@@ -55,7 +55,7 @@ fun HomeTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { onNavigate(HomeFragmentDirections.actionGlobalSettingsFragment()) }) {
+            IconButton(onClick = onSettingsActionClicked) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
             }
         },

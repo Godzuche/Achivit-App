@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature_task.presentation.ui_elements.home.HomeFragment">
+    tools:context=".feature_task.presentation.home.HomeFragment">
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/home_compose_view"

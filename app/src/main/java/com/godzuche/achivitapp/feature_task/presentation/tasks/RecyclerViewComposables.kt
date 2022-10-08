@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.presentation.ui_elements.tasks
+package com.godzuche.achivitapp.feature_task.presentation.tasks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
