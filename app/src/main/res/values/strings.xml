@@ -39,5 +39,6 @@
     <string name="tasks">Tasks</string>
     <string name="activeTasksMessage">You have %1$d active tasks today</string>
     <string name="greeting">Hi, %1$s! 👋</string>
+    <string name="add_new_category">Add new category</string>
 
 </resources>

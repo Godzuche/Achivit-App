@@ -9,14 +9,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -116,6 +123,7 @@ fun CategoriesRow(modifier: Modifier = Modifier) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
         contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         items(categoriesData) { category ->
@@ -129,6 +137,17 @@ fun CategoriesRow(modifier: Modifier = Modifier) {
                 )
             }
         }
+        item(categoriesData.size) {
+            IconButton(
+                onClick = {},
+                modifier = Modifier
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.add_new_category)
+                )
+            }
+        }
     }
 }
 
@@ -138,9 +157,55 @@ fun CategoryElement(title: String, started: Int, ends: Int, timeLeft: Int) {
     Card(
         onClick = {},
         modifier = Modifier
-            .height(56.dp)
+            .wrapContentHeight()
             .width((LocalConfiguration.current.screenWidthDp.dp - 48.dp))
     ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            val (title, collectionsCount, dateCreated, tasksCount, stat) = createRefs()
+            Text(
+                text = "My Tasks",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .constrainAs(title) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                    }
+            )
+            Text(
+                text = "12 collections",
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .constrainAs(collectionsCount) {
+                        top.linkTo(title.bottom)
+                        start.linkTo(title.start)
+                    }
+            )
+            Text(
+                text = "Created: Jan 17, 2022",
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .constrainAs(dateCreated) {
+                        bottom.linkTo(parent.bottom)
+                        top.linkTo(collectionsCount.bottom)
+                        start.linkTo(title.start)
+                    }
+            )
+            Text(
+                text = "23 Tasks",
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .constrainAs(tasksCount) {
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+        }
     }
 }
 
