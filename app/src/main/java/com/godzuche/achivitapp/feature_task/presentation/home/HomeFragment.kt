@@ -99,7 +99,7 @@ class HomeFragment : Fragment() {
                                         Screen.Profile -> {
                                             findNavController().navigate(HomeFragmentDirections.actionGlobalActionProfile())
                                         }
-                                        else -> {}
+                                        else -> Unit
                                     }
                                 }
                                 else -> Unit

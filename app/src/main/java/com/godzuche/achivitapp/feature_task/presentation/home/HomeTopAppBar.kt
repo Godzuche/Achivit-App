@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.feature_task.presentation.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -23,12 +24,14 @@ fun HomeTopAppBar(
     activeTasks: Int = 5,
     scrollBehavior: TopAppBarScrollBehavior,
     onSettingsActionClicked: () -> Unit,
-    onProfileIconClicked: () -> Unit
+    onProfileIconClicked: () -> Unit,
+    onTopBarTitleClicked: () -> Unit
 ) {
     val ctx = LocalContext.current
     TopAppBar(
         title = {
             Column(
+                modifier = Modifier.clickable(enabled = true, onClick = onTopBarTitleClicked),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(

@@ -32,8 +32,15 @@ fun HomeScreen(
             topBar = {
                 HomeTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    onProfileIconClicked = { onEvent(HomeEvent.Navigate(Screen.Profile)) },
-                    onSettingsActionClicked = { onEvent(HomeEvent.Navigate(Screen.Settings)) }
+                    onProfileIconClicked = {
+                        onEvent(HomeEvent.Navigate(Screen.Profile))
+                    },
+                    onSettingsActionClicked = {
+                        onEvent(HomeEvent.Navigate(Screen.Settings))
+                    },
+                    onTopBarTitleClicked = {
+                        onEvent(HomeEvent.Navigate(Screen.Profile))
+                    }
                 )
             }
         ) { innerPadding ->
