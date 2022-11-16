@@ -36,7 +36,6 @@ class TaskRepositoryImpl(
     }
 
     override fun getTaskOnce(id: Int): Task {
-        Timber.d("Reminder", "getTaskOnce() called in repo")
         return taskDao.getTaskOnce(id).toTask()
     }
 
@@ -128,17 +127,33 @@ class TaskRepositoryImpl(
         return collectionDao.update(collection)
     }
 
+    override fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>> {
+        return taskDao.getFilteredTasks(
+            getFilteredQuery(filter = filter)
+        )
+            .map { taskEntities ->
+                taskEntities.map { it.toTask() }
+            }
+    }
+
+    // Get filtered query
     private fun getFilteredQuery(filter: TaskFilter): SupportSQLiteQuery {
         val query = StringBuilder()
 
         val categoryFilter = filter.category?.title
         val collectionFilter = filter.collection?.title
-        when (filter.status) {
+
+        query.append("SELECT * FROM task_table WHERE status = ${filter.status}")
+
+        /*when (filter.status) {
             TaskStatus.NONE -> {
-                query.append(
+                *//*query.append(
                     "SELECT * FROM task_categories WHERE title = categoryFilter" +
                             "AND task_collections = collectionFilter" +
                             "AND status = filter.status"
+                )*//*
+                query.append(
+                    "SELECT * FROM task_table WHERE status = filter.status"
                 )
             }
             TaskStatus.TODO -> {
@@ -153,7 +168,7 @@ class TaskRepositoryImpl(
             TaskStatus.COMPLETED -> {
                 //
             }
-        }
+        }*/
 
         return SimpleSQLiteQuery(query.toString())
     }

@@ -6,6 +6,7 @@ import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.data.local.relations.CategoryWithCollections
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
@@ -41,5 +42,7 @@ interface TaskRepository {
     fun getAllCollection(): Flow<List<TaskCollectionEntity>>
     suspend fun insertCollection(collection: TaskCollectionEntity)
     suspend fun updateCollection(collection: TaskCollectionEntity)
+
+    fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>>
 
 }

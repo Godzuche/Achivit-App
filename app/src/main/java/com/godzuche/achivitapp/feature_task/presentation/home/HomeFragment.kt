@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentHomeBinding
@@ -43,6 +44,8 @@ class HomeFragment : Fragment() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val viewModel: TasksViewModel by activityViewModels()
+
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +81,7 @@ class HomeFragment : Fragment() {
             setContent {
                 Mdc3Theme {
                     HomeScreen(
+                        homeViewModel = homeViewModel,
                         onEvent = { event ->
                             exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
                                 duration =
@@ -239,7 +243,7 @@ fun HomeSectionPreview() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun Home(modifier: Modifier = Modifier, innerPadding: PaddingValues) {
+fun Home(modifier: Modifier = Modifier, innerPadding: PaddingValues, homeViewModel: HomeViewModel) {
     val listState = rememberLazyListState()
     LazyColumn(
         modifier = Modifier
@@ -250,7 +254,8 @@ fun Home(modifier: Modifier = Modifier, innerPadding: PaddingValues) {
     ) {
         item {
             TaskStatusGrid(
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp),
+                homeViewModel = homeViewModel
             )
         }
         item {

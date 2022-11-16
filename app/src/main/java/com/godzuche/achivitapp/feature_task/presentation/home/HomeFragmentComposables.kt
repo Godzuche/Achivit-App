@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TaskStatusGrid(modifier: Modifier = Modifier) {
+fun TaskStatusGrid(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
     val statusOverviewData by remember { mutableStateOf(TASK_STATUS_OVERVIEWS) }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -30,14 +30,20 @@ fun TaskStatusGrid(modifier: Modifier = Modifier) {
             .then(modifier)
     ) {
         items(statusOverviewData.size) { index ->
-            TaskStatusOverviewCard(data = statusOverviewData[index])
+            TaskStatusOverviewCard(
+                data = statusOverviewData[index],
+                todos = homeViewModel.todoTasks.value
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskStatusOverviewCard(data: TaskStatusOverview) {
+fun TaskStatusOverviewCard(data: TaskStatusOverview, todos: Int) {
+
+    val todoCount = remember { todos }
+
     Card(
         onClick = {},
         modifier = Modifier.size(80.dp),
@@ -50,7 +56,11 @@ fun TaskStatusOverviewCard(data: TaskStatusOverview) {
                 .height(80.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = data.taskCount.toString(), fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+            Text(
+                text = todoCount.toString() /*data.taskCount.toString()*/,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
             Text(text = data.status, fontSize = 14.sp)
         }
     }

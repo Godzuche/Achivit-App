@@ -21,6 +21,7 @@ sealed class HomeEvent {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel,
     onEvent: (HomeEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -44,7 +45,7 @@ fun HomeScreen(
                 )
             }
         ) { innerPadding ->
-            Home(innerPadding = innerPadding)
+            Home(innerPadding = innerPadding, homeViewModel = homeViewModel)
         }
     }
 }

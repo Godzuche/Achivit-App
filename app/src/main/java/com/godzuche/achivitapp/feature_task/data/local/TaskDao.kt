@@ -2,6 +2,8 @@ package com.godzuche.achivitapp.feature_task.data.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -41,5 +43,8 @@ interface TaskDao {
                 "ORDER BY title ASC"
     )
     suspend fun searchTasksByTitle(title: String): List<TaskEntity>
+
+    @RawQuery(observedEntities = [TaskEntity::class])
+    fun getFilteredTasks(query: SupportSQLiteQuery): Flow<List<TaskEntity>>
 
 }
