@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.util.Resource
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategory
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
+import com.godzuche.achivitapp.feature_task.domain.repository.CollectionRepository
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
 import com.godzuche.achivitapp.feature_task.receivers.setReminder
@@ -25,11 +28,13 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val app: Application,
-    private val getTask: GetTask,
+//    private val getTask: GetTask,
 //    private val getAllTasks: GetTasks,
 //    private val searchTasksByTitle: SearchTasksByTitle,
 //    private val insertTask: InsertTask,
-    private val repository: TaskRepository,
+    private val taskRepository: TaskRepository,
+    private val categoryRepository: CategoryRepository,
+    private val collectionRepository: CollectionRepository
 ) : AndroidViewModel(app) {
 
     val checkedChipId = MutableStateFlow<Int>(0)
@@ -46,7 +51,7 @@ class TasksViewModel @Inject constructor(
     val uiState: StateFlow<TasksUiState> = _uiState.asStateFlow()
 
     val tasksPagingDataFlow: Flow<PagingData<Task>>
-        get() = repository.getAllTask().cachedIn(viewModelScope)
+        get() = taskRepository.getAllTask().cachedIn(viewModelScope)
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -57,7 +62,7 @@ class TasksViewModel @Inject constructor(
 
     fun getCategoryCollections(categoryTitle: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getCategoryWithCollectionByTitle(categoryTitle)
+            categoryRepository.getCategoryWithCollectionsByTitle(categoryTitle)
                 .collectLatest { listOfCategoryWithCollection ->
                     listOfCategoryWithCollection.map { categoryWithCollections ->
                         val collectionList = categoryWithCollections.collections.map { it.title }
@@ -67,7 +72,7 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    val categories = repository.getAllCategory()
+    val categories = categoryRepository.getAllCategory()
         .map {
             it.map { category ->
                 category.title
@@ -78,7 +83,7 @@ class TasksViewModel @Inject constructor(
             emptyList()
         )
 
-    val collections = repository.getAllCollection()
+    val collections = collectionRepository.getAllCollection()
         .map {
             it.map { collection ->
                 collection.title
@@ -109,7 +114,7 @@ class TasksViewModel @Inject constructor(
     fun setIsCompleted(task: Task, isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             Timber.tag("CheckBox").i("ViewModel: $isChecked")
-            repository.updateTask(
+            taskRepository.updateTask(
                 task.copy(
                     isCompleted = isChecked,
                     status = if (isChecked) TaskStatus.COMPLETED else TaskStatus.IN_PROGRESS
@@ -119,13 +124,19 @@ class TasksViewModel @Inject constructor(
     }
 
     fun addNewCategory(title: String) {
-        viewModelScope.launch(Dispatchers.IO) { repository.insertCategory(TaskCategoryEntity(title = title)) }
+        viewModelScope.launch(Dispatchers.IO) {
+            categoryRepository.insertCategory(
+                TaskCategory(
+                    title = title
+                )
+            )
+        }
     }
 
     fun addNewCollection(title: String, categoryTitle: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertCollection(
-                TaskCollectionEntity(
+            collectionRepository.insertCollection(
+                TaskCollection(
                     title = title,
                     categoryTitle = categoryTitle
                 )
@@ -141,7 +152,7 @@ class TasksViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(500L)
-            repository.searchTasksByTitle(query).onEach { result ->
+            taskRepository.searchTasksByTitle(query).onEach { result ->
                 if (result is Resource.Success) {
                     _uiState.update {
                         it.copy(tasksItems = result.data!!)
@@ -157,7 +168,7 @@ class TasksViewModel @Inject constructor(
         _searchQuery.value = query
         searchJob?.cancel()
         searchJob = viewModelScope.launch(Dispatchers.IO) {
-            repository.searchTasksByTitle(query).onEach { result ->
+            taskRepository.searchTasksByTitle(query).onEach { result ->
                 if (result is Resource.Success) {
                     _uiState.update {
                         it.copy(tasksItems = result.data!!)
@@ -219,7 +230,7 @@ class TasksViewModel @Inject constructor(
                         /*if (action.shouldPopBackStack) {
                             sendUiEvent(UiEvent.PopBackStack)
                         }*/
-                        repository.deleteTask(action.task)
+                        taskRepository.deleteTask(action.task)
                         sendUiEvent(
                             UiEvent.ShowSnackBar(
                                 "Task deleted!",
@@ -231,13 +242,13 @@ class TasksViewModel @Inject constructor(
                 is TasksUiEvent.OnUndoDeleteClick -> {
                     deletedTask?.let { it ->
                         viewModelScope.launch {
-                            repository.reInsertTask(it)
+                            taskRepository.reInsertTask(it)
                         }
                     }
                 }
                 is TasksUiEvent.OnDoneChange -> {
                     viewModelScope.launch {
-                        repository.updateTask(
+                        taskRepository.updateTask(
                             action.task.copy(
 //                                completed = action.isDone
                             )
@@ -261,7 +272,7 @@ class TasksViewModel @Inject constructor(
 
     private fun insertTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertTask(task)
+            taskRepository.insertTask(task)
         }
     }
 
@@ -296,7 +307,7 @@ class TasksViewModel @Inject constructor(
 //        insertTask(newTask)
 //        insertAndGetId(newTask)
         viewModelScope.launch(Dispatchers.IO) {
-            val insertedTaskId = repository.insertAndGetTask(newTask)
+            val insertedTaskId = taskRepository.insertAndGetTask(newTask)
             setReminder(
                 getApplication(),
                 insertedTaskId,
@@ -365,14 +376,14 @@ class TasksViewModel @Inject constructor(
     }
 
     fun retrieveTask(id: Int): Flow<Task> {
-        return repository.getTask(id).mapLatest {
+        return taskRepository.getTask(id).mapLatest {
             it.data!!
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
-            repository.deleteTask(task)
+            taskRepository.deleteTask(task)
         }
     }
 
@@ -410,7 +421,7 @@ class TasksViewModel @Inject constructor(
 
     private fun updateTask(task: Task) {
         viewModelScope.launch {
-            repository.updateTask(task)
+            taskRepository.updateTask(task)
         }
     }
 

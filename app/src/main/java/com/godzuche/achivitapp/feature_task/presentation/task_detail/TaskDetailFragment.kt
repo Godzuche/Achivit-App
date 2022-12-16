@@ -16,8 +16,8 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
-import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent

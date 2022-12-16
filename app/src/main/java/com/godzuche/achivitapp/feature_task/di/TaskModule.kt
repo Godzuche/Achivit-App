@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.godzuche.achivitapp.feature_task.data.local.TaskCategoryDao
-import com.godzuche.achivitapp.feature_task.data.local.TaskCollectionDao
 import com.godzuche.achivitapp.feature_task.data.local.TaskRoomDatabase
+import com.godzuche.achivitapp.feature_task.data.repository.CategoryRepositoryImpl
+import com.godzuche.achivitapp.feature_task.data.repository.CollectionRepositoryImpl
 import com.godzuche.achivitapp.feature_task.data.repository.TaskRepositoryImpl
+import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
+import com.godzuche.achivitapp.feature_task.domain.repository.CollectionRepository
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.domain.use_case.GetTask
 import dagger.Module
@@ -64,18 +66,29 @@ object TaskModule {
             .build()
     }
 
-    @Provides
+/*    @Provides
     @Singleton
     fun provideCategoryDao(db: TaskRoomDatabase): TaskCategoryDao = db.categoryDao
 
     @Provides
     @Singleton
-    fun provideCollectionDao(db: TaskRoomDatabase): TaskCollectionDao = db.collectionDao
+    fun provideCollectionDao(db: TaskRoomDatabase): TaskCollectionDao = db.collectionDao*/
 
     @Provides
     @Singleton
     fun getTaskRepository(db: TaskRoomDatabase): TaskRepository {
-        return TaskRepositoryImpl(db.taskDao, db.categoryDao, db.collectionDao)
+        return TaskRepositoryImpl(taskDao = db.taskDao)
+    }
+
+    @Provides
+    @Singleton
+    fun getCategoryRepository(db: TaskRoomDatabase): CategoryRepository =
+        CategoryRepositoryImpl(categoryDao = db.categoryDao)
+
+    @Provides
+    @Singleton
+    fun getCollectionRepository(db: TaskRoomDatabase): CollectionRepository {
+        return CollectionRepositoryImpl(collectionDao = db.collectionDao)
     }
 
     @Provides

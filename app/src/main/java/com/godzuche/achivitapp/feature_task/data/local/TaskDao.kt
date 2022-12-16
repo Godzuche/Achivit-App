@@ -2,7 +2,6 @@ package com.godzuche.achivitapp.feature_task.data.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow

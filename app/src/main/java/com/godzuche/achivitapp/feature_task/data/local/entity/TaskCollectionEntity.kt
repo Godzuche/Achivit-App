@@ -12,4 +12,14 @@ data class TaskCollectionEntity(
 
     @ColumnInfo(name = "category_title")
     val categoryTitle: String,
-)
+) {
+    fun toTaskCollection() = TaskCollection(title = title, categoryTitle = categoryTitle)
+}
+
+data class TaskCollection(
+    val title: String,
+    val categoryTitle: String
+) {
+    fun toTaskCollectionEntity() =
+        TaskCollectionEntity(title = title, categoryTitle = categoryTitle)
+}

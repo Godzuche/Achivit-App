@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.databinding.FragmentSearchBinding
-import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksUiEvent
+import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.util.onQueryTextChange
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis

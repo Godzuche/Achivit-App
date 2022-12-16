@@ -22,11 +22,7 @@ data class TaskEntity(
     val dueDate: Long,
     // TODO: Allow users to set/change the status of a task
     @ColumnInfo(name = "status")
-    val status: TaskStatus = /*when {
-        dueDate > timeNow -> TaskStatus.TODO
-        dueDate <= timeNow -> TaskStatus.IN_PROGRESS
-        else -> TaskStatus.NONE
-    },*/TaskStatus.TODO,
+    val status: TaskStatus = TaskStatus.TODO,
     @ColumnInfo(name = "collection_title")
     val collectionTitle: String,
 ) {

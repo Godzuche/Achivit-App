@@ -27,11 +27,11 @@ interface TaskCategoryDao {
 
     @Transaction
     @Query("SELECT * FROM task_categories")
-    fun getCategoryWithCollection(): Flow<List<CategoryWithCollections>>
+    fun getCategoriesWithCollections(): Flow<List<CategoryWithCollections>>
 
     @Transaction
     @Query("SELECT * FROM task_categories WHERE title = :categoryTitle")
-    fun getCategoryWithCollectionByTitle(categoryTitle: String): Flow<List<CategoryWithCollections>>
+    fun getCategoryWithCollectionsByTitle(categoryTitle: String): Flow<List<CategoryWithCollections>>
 
     @Query("DELETE FROM task_categories")
     suspend fun deleteAll()

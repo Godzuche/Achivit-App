@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
+import com.godzuche.achivitapp.feature_task.domain.repository.CollectionRepository
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.ModalBottomSheetUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
@@ -18,7 +20,9 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ModalBottomSheetViewModel @Inject constructor(
-    private val repository: TaskRepository,
+    private val taskRepository: TaskRepository,
+    private val categoryRepository: CategoryRepository,
+    private val collectionRepository: CollectionRepository
 ) : ViewModel() {
 
     private val taskId = MutableStateFlow(-1)
@@ -30,7 +34,7 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<UiEvent>()
 //    val uiEvent = _uiEvent.asSharedFlow()
 
-    val categories = repository.getAllCategory()
+    val categories = categoryRepository.getAllCategory()
         .map {
             it.map { category ->
                 category.title
@@ -41,7 +45,7 @@ class ModalBottomSheetViewModel @Inject constructor(
             emptyList()
         )
 
-    val collections = repository.getAllCollection()
+    val collections = collectionRepository.getAllCollection()
         .map {
             it.map { collection ->
                 collection.title
@@ -70,7 +74,7 @@ class ModalBottomSheetViewModel @Inject constructor(
 
     private fun retrieveTask(id: Int) {
         viewModelScope.launch {
-            repository.getTask(id)
+            taskRepository.getTask(id)
                 .map { it.data }
                 .distinctUntilChanged()
                 .collectLatest { task ->
@@ -141,13 +145,13 @@ class ModalBottomSheetViewModel @Inject constructor(
 
     private fun updateTask(task: Task) {
         viewModelScope.launch {
-            repository.updateTask(task)
+            taskRepository.updateTask(task)
         }
     }
 
     fun getCollectionCategory(collectionTitle: String, onGetCategoryTitle: ((String) -> Unit)) {
         viewModelScope.launch {
-            repository.getCollection(collectionTitle).collectLatest {
+            collectionRepository.getCollection(collectionTitle).collectLatest {
                 onGetCategoryTitle(it.categoryTitle)
             }
         }
@@ -155,7 +159,7 @@ class ModalBottomSheetViewModel @Inject constructor(
 
     fun getCategoryCollections(categoryTitle: String, onGetCollections: (List<String>) -> Unit) {
         viewModelScope.launch {
-            repository.getCategoryWithCollectionByTitle(categoryTitle).map { list ->
+            categoryRepository.getCategoryWithCollectionsByTitle(categoryTitle).map { list ->
                 list.map { category ->
                     onGetCollections(category.collections.map { it.title })
                 }
