@@ -25,6 +25,15 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> get() = _uiState.asStateFlow()
 
     init {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            taskRepository.getTodayTasks().collectLatest { tasks ->
+                _uiState.update {
+                    it.copy(todayTasks = tasks)
+                }
+            }
+        }
+
         viewModelScope.launch(context = Dispatchers.IO) {
             taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.NONE)).map {
                 it.size

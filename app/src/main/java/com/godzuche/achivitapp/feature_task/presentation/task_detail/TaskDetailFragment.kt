@@ -16,12 +16,12 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.home.millisToString
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksUiEvent
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.SnackBarActions
 import com.godzuche.achivitapp.feature_task.presentation.util.UiEvent
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.setupOnChipClickDateTimePicker
 import com.godzuche.achivitapp.feature_task.presentation.util.themeColor
 import com.google.android.material.R.attr
@@ -169,13 +169,13 @@ class TaskDetailFragment : Fragment() {
 
             val taskDueDate = task.dueDate
             chipTime.apply {
-                text = convertMillisToString(taskDueDate)
+                text = taskDueDate.millisToString()
                 visibility = View.VISIBLE
             }
 
             val createdDate = task.created
             tvCreatedDate.text =
-                createdDate?.let { getString(R.string.created, convertMillisToString(createdDate)) }
+                createdDate?.let { getString(R.string.created, createdDate.millisToString()) }
         }
     }
 

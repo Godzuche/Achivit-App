@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util
 import androidx.fragment.app.Fragment
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.home.millisToString
 import com.godzuche.achivitapp.feature_task.presentation.task_detail.TaskDetailViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -21,14 +22,6 @@ object DateTimePickerUtil {
     private var dateSelection: Long = 0L
 
     private val mCalendar = Calendar.getInstance()
-
-    fun convertMillisToString(timeMillis: Long): String {
-        val calender = Calendar.getInstance()
-        calender.timeInMillis = timeMillis
-        val date = calender.time
-        val sdf = SimpleDateFormat("E, MMM d, h:mm a", Locale.getDefault())
-        return sdf.format(date)
-    }
 
     @ExperimentalCoroutinesApi
     fun Fragment.setupOnChipClickDateTimePicker(
@@ -112,7 +105,7 @@ object DateTimePickerUtil {
                 }.timeInMillis
 
                 binding.chipTime.apply {
-                    text = convertMillisToString(taskDueDate)
+                    text = taskDueDate.millisToString()
                 }
 
                 task.apply {

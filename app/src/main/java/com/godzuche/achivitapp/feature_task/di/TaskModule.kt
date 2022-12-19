@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.feature_task.di
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
+import android.icu.util.Calendar
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -36,6 +37,7 @@ object TaskModule {
 
     private val categoryContentValues = ContentValues().apply {
         put("title", "My Tasks")
+        put("created", Calendar.getInstance().timeInMillis)
     }
     private val collectionContentValues = ContentValues().apply {
         put("title", "All Tasks")

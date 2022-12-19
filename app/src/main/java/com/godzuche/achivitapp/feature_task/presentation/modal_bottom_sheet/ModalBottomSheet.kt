@@ -15,9 +15,9 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.home.millisToString
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksFragment.Companion.NOT_SET
 import com.godzuche.achivitapp.feature_task.presentation.tasks.TasksViewModel
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -121,7 +121,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
                 val chip = Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
                 chip.apply {
-                    text = convertMillisToString(taskDueDate)
+                    text = taskDueDate.millisToString()
                     isCloseIconVisible = true
                     this.setOnCloseIconClickListener {
                         binding.chipGroupTime.removeView(this)
@@ -176,10 +176,10 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.uiStateFlow
-                        .map { it.task }
+                        .map { uiState -> uiState.task }
                         .distinctUntilChanged()
-                        .collectLatest { it1 ->
-                            it1?.let { task ->
+                        .collectLatest {
+                            it?.let { task ->
                                 currentTask = task
                                 binding.apply {
                                     btSave.setOnClickListener {
@@ -217,7 +217,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                                     val chip =
                                         Chip(requireContext(), null, R.style.Widget_App_Chip_Input)
                                     chip.apply {
-                                        text = convertMillisToString(task.dueDate)
+                                        text = task.dueDate.millisToString()
                                         isCloseIconVisible = true
                                         this.setOnCloseIconClickListener {
                                             binding.chipGroupTime.removeView(this)
@@ -271,9 +271,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                         .show()
 
                 } else {
-                    if ((chipGroupTime.getChildAt(0) as Chip).text.toString() == convertMillisToString(
-                            currentTask.dueDate
-                        )
+                    if ((chipGroupTime.getChildAt(0) as Chip).text.toString() == currentTask.dueDate.millisToString()
                     ) {
                         Toast.makeText(
                             requireContext(),
@@ -312,9 +310,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         description: String,
         chipText: String,
     ): Boolean {
-        return task1.title == title && task1.description == description && convertMillisToString(
-            task1.dueDate
-        ) == chipText
+        return task1.title == title && task1.description == description && task1.dueDate.millisToString() == chipText
     }
 
     private fun addNewTask() {

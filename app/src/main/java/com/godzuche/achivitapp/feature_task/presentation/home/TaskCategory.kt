@@ -11,9 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 data class Category(
@@ -40,15 +43,15 @@ data class Category(
 fun CategoryCard(
     categoryTitle: String,
     collectionsCount: Int,
+    created: String,
     modifier: Modifier = Modifier,
-    created: String = "",
     tasksCount: Int = 0
 ) {
     Card(
         onClick = {},
         modifier = Modifier
             .wrapContentHeight()
-            .width((LocalConfiguration.current.screenWidthDp.dp - 48.dp))
+            .width((LocalConfiguration.current.screenWidthDp.dp - /*48.dp*/ 68.dp))
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -77,7 +80,7 @@ fun CategoryCard(
                     }
             )
             Text(
-                text = "Created: Jan 17, 2022",
+                text = "Created: $created",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .constrainAs(dateCreatedText) {
@@ -98,4 +101,14 @@ fun CategoryCard(
 
         }
     }
+}
+
+@Preview
+@Composable
+fun CategoryCardPreview() {
+    CategoryCard(
+        categoryTitle = "My Tasks",
+        collectionsCount = 4,
+        created = "Jan 17, 2022"
+    )
 }

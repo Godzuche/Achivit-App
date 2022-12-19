@@ -9,10 +9,12 @@ data class TaskCategoryEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "title")
     val title: String,
+    @ColumnInfo(name = "created")
+    val created: Long
 ) {
-    fun toTaskCategory() = TaskCategory(title = title)
+    fun toTaskCategory() = TaskCategory(title = title, created = created)
 }
 
-data class TaskCategory(val title: String) {
-    fun toCategoryEntity() = TaskCategoryEntity(title = title)
+data class TaskCategory(val title: String, val created: Long) {
+    fun toCategoryEntity() = TaskCategoryEntity(title = title, created = created)
 }

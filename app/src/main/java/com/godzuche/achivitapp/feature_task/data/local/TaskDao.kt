@@ -43,6 +43,9 @@ interface TaskDao {
     )
     suspend fun searchTasksByTitle(title: String): List<TaskEntity>
 
+    @Query("SELECT * FROM task_table")
+    fun getTasks(): Flow<List<TaskEntity>>
+
     @RawQuery(observedEntities = [TaskEntity::class])
     fun getFilteredTasks(query: SupportSQLiteQuery): Flow<List<TaskEntity>>
 

@@ -9,19 +9,21 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.godzuche.achivitapp.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun HomeTopAppBar(
     modifier: Modifier = Modifier,
+    todayTasks: Int = 0,
     name: String = "Jonathan",
-    activeTasks: Int = 5,
     scrollBehavior: TopAppBarScrollBehavior,
     onSettingsActionClicked: () -> Unit,
     onProfileIconClicked: () -> Unit,
@@ -40,7 +42,11 @@ fun HomeTopAppBar(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = ctx.resources.getString(R.string.activeTasksMessage, activeTasks),
+                    text = pluralStringResource(
+                        id = R.plurals.activeTasksMessage,
+                        count = todayTasks,
+                        formatArgs = arrayOf(todayTasks)
+                    ),
                     fontSize = 14.sp
                 )
             }

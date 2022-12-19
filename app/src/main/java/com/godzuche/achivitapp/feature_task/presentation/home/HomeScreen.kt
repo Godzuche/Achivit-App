@@ -28,6 +28,7 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             HomeTopAppBar(
+                todayTasks = state.todayTasks.size,
                 scrollBehavior = scrollBehavior,
                 onProfileIconClicked = {
                     onEvent(HomeUiEvent.Navigate(Screen.Profile))

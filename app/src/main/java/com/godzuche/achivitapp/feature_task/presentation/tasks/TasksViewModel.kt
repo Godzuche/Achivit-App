@@ -6,9 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.util.Resource
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategory
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
@@ -28,10 +26,6 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val app: Application,
-//    private val getTask: GetTask,
-//    private val getAllTasks: GetTasks,
-//    private val searchTasksByTitle: SearchTasksByTitle,
-//    private val insertTask: InsertTask,
     private val taskRepository: TaskRepository,
     private val categoryRepository: CategoryRepository,
     private val collectionRepository: CollectionRepository
@@ -118,27 +112,6 @@ class TasksViewModel @Inject constructor(
                 task.copy(
                     isCompleted = isChecked,
                     status = if (isChecked) TaskStatus.COMPLETED else TaskStatus.IN_PROGRESS
-                )
-            )
-        }
-    }
-
-    fun addNewCategory(title: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            categoryRepository.insertCategory(
-                TaskCategory(
-                    title = title
-                )
-            )
-        }
-    }
-
-    fun addNewCollection(title: String, categoryTitle: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            collectionRepository.insertCollection(
-                TaskCollection(
-                    title = title,
-                    categoryTitle = categoryTitle
                 )
             )
         }
@@ -295,8 +268,8 @@ class TasksViewModel @Inject constructor(
     ) {
 
         created = Calendar.getInstance().timeInMillis
-        val category = getCategoryEntry(categoryTitle)
-        val collection = getCollectionEntry(collectionTitle, categoryTitle)
+        /*val category = getCategoryEntry(categoryTitle)
+        val collection = getCollectionEntry(collectionTitle, categoryTitle)*/
         val newTask = getNewTaskEntry(
             taskTitle,
             taskDescription,
@@ -317,21 +290,7 @@ class TasksViewModel @Inject constructor(
             )
             Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
         }
-        /*viewModelScope.launch(Dispatchers.IO) {
-            delay(300L)
-            repository.getLastInsertedTask().distinctUntilChanged().collectLatest { task ->
-                task.id?.let {
-                    setReminder(
-                        getApplication(),
-                        it,
-                        dueDate,
-                        task.title,
-                        task.description
-                    )
-                    Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
-                }
-            }
-        }*/
+
         viewModelScope.launch {
             delay(300L)
             sendUiEvent(UiEvent.ScrollToTop)
@@ -345,12 +304,6 @@ class TasksViewModel @Inject constructor(
         return TaskCollectionEntity(
             title = collectionTitle,
             categoryTitle = categoryTitle
-        )
-    }
-
-    private fun getCategoryEntry(categoryTitle: String): TaskCategoryEntity {
-        return TaskCategoryEntity(
-            title = categoryTitle
         )
     }
 

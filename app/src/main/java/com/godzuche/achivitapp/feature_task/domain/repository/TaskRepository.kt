@@ -29,6 +29,8 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
+    fun getTodayTasks(): Flow<List<Task>>
+
     fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>>
 
 }

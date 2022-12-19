@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +31,8 @@ import kotlinx.coroutines.launch
 class AddCategoryCollectionFragment : DialogFragment() {
 
     @ExperimentalCoroutinesApi
-    private val viewModel: TasksViewModel by viewModels()
+    private val tasksViewModel: TasksViewModel by activityViewModels()
+    private val addCategoryCollectionViewModel: AddCategoryCollectionViewModel by viewModels()
 
     private val navigationArgs: AddCategoryCollectionFragmentArgs by navArgs()
 
@@ -58,7 +60,7 @@ class AddCategoryCollectionFragment : DialogFragment() {
                 binding.ilDropDown.visibility = View.VISIBLE
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                        viewModel.categories.collectLatest { categoryList ->
+                        tasksViewModel.categories.collectLatest { categoryList ->
                             val adapter = ArrayAdapter(
                                 requireContext(),
                                 R.layout.list_item_category,
@@ -94,11 +96,14 @@ class AddCategoryCollectionFragment : DialogFragment() {
             if (this.isEntryValid(title, categoryTitle)) {
                 when (navigationArgs.dialogTitle) {
                     DialogTitle.CATEGORY -> {
-                        viewModel.addNewCategory(title = title)
+                        addCategoryCollectionViewModel.addNewCategory(title = title)
                         close()
                     }
                     DialogTitle.COLLECTION -> {
-                        viewModel.addNewCollection(title = title, categoryTitle = categoryTitle)
+                        addCategoryCollectionViewModel.addNewCollection(
+                            title = title,
+                            categoryTitle = categoryTitle
+                        )
                         close()
                     }
                 }

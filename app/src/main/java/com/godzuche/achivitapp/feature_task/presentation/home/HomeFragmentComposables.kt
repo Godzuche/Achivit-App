@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,10 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.godzuche.achivitapp.core.util.capitalizeEachWord
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
+import com.godzuche.achivitapp.ui.theme.MGreen
+import com.godzuche.achivitapp.ui.theme.MOrange
 
 @Composable
 fun TaskStatusGrid(
@@ -35,7 +39,7 @@ fun TaskStatusGrid(
             .fillMaxWidth()
 //            .height(168.dp)
             .height(272.dp)
-            .background(Color.LightGray.copy(alpha = 0.5f))
+            .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
             .then(modifier)
     ) {
         items(statuses.size) { index ->
@@ -52,18 +56,6 @@ fun TaskStatusGrid(
             )
         }
     }
-}
-
-val MOrange = Color(0xFFFFA500)
-val MGreen = Color(0xFF52D726)
-
-fun String.nameAndColor() = when (this) {
-    "NONE" -> capitalizeEachWord() to Color.Transparent
-    "TODO" -> capitalizeEachWord() to Color.Gray.copy(alpha = 0.5f)
-    "IN_PROGRESS" -> capitalizeEachWord() to MOrange.copy(alpha = 0.5f)
-    "RUNNING_LATE" -> capitalizeEachWord() to Color.Red.copy(alpha = 0.5f)
-    "COMPLETED" -> capitalizeEachWord() to MGreen.copy(alpha = 0.5f)
-    else -> "Null" to Color.Transparent
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,4 +89,19 @@ fun TaskStatusOverviewCard(status: String, count: Int) {
             )
         }
     }
+}
+
+fun String.nameAndColor() = when (this) {
+    "NONE" -> capitalizeEachWord() to Color.Transparent
+    "TODO" -> capitalizeEachWord() to Color.Gray.copy(alpha = 0.5f)
+    "IN_PROGRESS" -> capitalizeEachWord() to MOrange.copy(alpha = 0.5f)
+    "RUNNING_LATE" -> capitalizeEachWord() to Color.Red.copy(alpha = 0.5f)
+    "COMPLETED" -> capitalizeEachWord() to MGreen.copy(alpha = 0.5f)
+    else -> "Null" to Color.Transparent
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun TaskStatusGridPreview() {
+    TaskStatusGrid(state = HomeUiState(completedTasksCount = 5))
 }

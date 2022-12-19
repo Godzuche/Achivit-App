@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
 import com.godzuche.achivitapp.feature_task.domain.model.Task
+import com.godzuche.achivitapp.feature_task.presentation.home.millisToString
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil.convertMillisToString
 import com.google.android.material.composethemeadapter3.Mdc3Theme
 import timber.log.Timber
 
@@ -74,7 +74,7 @@ class TaskListAdapter(
                 tvTaskDescription.text = task.description
 
                 val taskDueDate = task.dueDate
-                chipTimeDate.text = convertMillisToString(taskDueDate)
+                chipTimeDate.text = taskDueDate.millisToString()
 
                 taskColorView.apply {
                     setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)

@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.feature_task.data.repository
 
+import android.icu.util.Calendar
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -77,9 +78,25 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
         taskDao.update(task.toTaskEntity())
     }
 
-/*    override fun getLastInsertedTask(): Flow<Task> {
-        return taskDao.getLastInsertedTask().map { it.first().toTask() }
-    }*/
+    override fun getTodayTasks(): Flow<List<Task>> {
+        val taskDueDate = Calendar.getInstance()
+        val dueDate = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return taskDao.getTasks().map { taskEntities ->
+            taskEntities.filter { taskEntity ->
+                taskDueDate.timeInMillis = taskEntity.dueDate
+                taskDueDate.apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                }
+                taskDueDate == dueDate
+            }.map { it.toTask() }
+        }
+    }
 
     override fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>> {
         return taskDao.getFilteredTasks(

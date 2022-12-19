@@ -9,7 +9,6 @@ data class TaskCollectionEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "title")
     val title: String,
-
     @ColumnInfo(name = "category_title")
     val categoryTitle: String,
 ) {
