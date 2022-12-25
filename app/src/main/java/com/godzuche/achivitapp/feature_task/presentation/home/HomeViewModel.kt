@@ -1,8 +1,9 @@
 package com.godzuche.achivitapp.feature_task.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategory
+import com.godzuche.achivitapp.feature_task.data.local.relations.CollectionWithTasks
 import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
 import com.godzuche.achivitapp.feature_task.domain.repository.CollectionRepository
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
@@ -10,10 +11,12 @@ import com.godzuche.achivitapp.feature_task.presentation.util.TaskFilter
 import com.godzuche.achivitapp.feature_task.presentation.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
@@ -43,7 +46,6 @@ class HomeViewModel @Inject constructor(
                         noneStatusCount = noneStatusCount
                     )
                 }
-                Log.d("HomeViewModel", "retrieved $noneStatusCount todo tasks")
             }
         }
 
@@ -56,7 +58,6 @@ class HomeViewModel @Inject constructor(
                         todosTaskCount = todosCount
                     )
                 }
-                Log.d("HomeViewModel", "retrieved $todosCount todo tasks")
             }
         }
 
@@ -70,7 +71,6 @@ class HomeViewModel @Inject constructor(
                             inProgressTaskCount = inProgressCount
                         )
                     }
-                    Log.d("HomeViewModel", "retrieved $inProgressCount tasks in progress")
                 }
         }
 
@@ -84,7 +84,6 @@ class HomeViewModel @Inject constructor(
                             lateTasksCount = lateTasksCount
                         )
                     }
-                    Log.d("HomeViewModel", "retrieved $lateTasksCount tasks in progress")
                 }
         }
 
@@ -98,21 +97,39 @@ class HomeViewModel @Inject constructor(
                             completedTasksCount = completedTasksCount
                         )
                     }
-                    Log.d("HomeViewModel", "retrieved $completedTasksCount tasks in progress")
                 }
         }
 
         viewModelScope.launch(context = Dispatchers.IO) {
-            categoryRepository.getCategoriesWithCollections()
-                .map {
-                    it.map { categoryWithCollections ->
-                        categoryWithCollections.category.toTaskCategory() to categoryWithCollections.collections.map { it.toTaskCollection() }
-                    }
-                }.collectLatest { categoryWithCollectionsPairs ->
+            categoryRepository.getAllCategory()
+                .collectLatest { taskCategories ->
                     _uiState.update {
-                        it.copy(categoryWithCollectionsPairs = categoryWithCollectionsPairs)
+                        it.copy(categories = taskCategories)
                     }
                 }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val categoryAndCollectionsWithTasksPairs =
+                emptyList<Pair<TaskCategory, List<CollectionWithTasks>>>().toMutableList()
+
+            _uiState.collectLatest {
+                // To avoid duplicate category entries in the list
+                categoryAndCollectionsWithTasksPairs.clear()
+                it.categories.forEach { category ->
+
+                    collectionRepository.getCollectionsWithTasksByCategoryTitle(category.title)
+                        .collectLatest { collectionsWithTasks ->
+                            categoryAndCollectionsWithTasksPairs.add(category to collectionsWithTasks)
+                        }
+                }
+                _uiState.update { state ->
+                    state.copy(
+                        categoryAndCollectionsWithTasksPairs = categoryAndCollectionsWithTasksPairs
+                    )
+                }
+            }
+
         }
 
     }

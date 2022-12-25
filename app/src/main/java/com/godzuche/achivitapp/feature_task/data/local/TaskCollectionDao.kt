@@ -33,6 +33,10 @@ interface TaskCollectionDao {
     @Query("SELECT * FROM task_collections  WHERE title = :collectionTitle")
     fun getCollectionWithTasksByCollectionTitle(collectionTitle: String): Flow<List<CollectionWithTasks>>
 
+    @Transaction
+    @Query("SELECT * FROM task_collections  WHERE category_title = :categoryTitle")
+    fun getCollectionWithTasksByCategoryTitle(categoryTitle: String): Flow<List<CollectionWithTasks>>
+
     @Query("DELETE FROM task_collections")
     suspend fun deleteAll()
 }

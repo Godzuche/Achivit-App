@@ -44,8 +44,8 @@ fun CategoryCard(
     categoryTitle: String,
     collectionsCount: Int,
     created: String,
-    modifier: Modifier = Modifier,
-    tasksCount: Int = 0
+    tasksCount: Int,
+    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = {},
@@ -90,7 +90,7 @@ fun CategoryCard(
                     }
             )
             Text(
-                text = "23 Tasks",
+                text = "$tasksCount Task(s)",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .constrainAs(tasksCountText) {
@@ -109,6 +109,7 @@ fun CategoryCardPreview() {
     CategoryCard(
         categoryTitle = "My Tasks",
         collectionsCount = 4,
-        created = "Jan 17, 2022"
+        created = "Jan 17, 2022",
+        tasksCount = 0
     )
 }

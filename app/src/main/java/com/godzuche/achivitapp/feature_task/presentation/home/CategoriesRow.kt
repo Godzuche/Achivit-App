@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -18,43 +19,54 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategory
-import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
-import com.godzuche.achivitapp.feature_task.presentation.util.task_frag_util.DateTimePickerUtil
+import com.godzuche.achivitapp.feature_task.data.local.relations.CollectionWithTasks
 
 @Composable
 fun CategoriesRow(
     state: HomeUiState,
     modifier: Modifier = Modifier
 ) {
+    val rowState = rememberLazyListState()
     LazyRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        state = rowState,
+        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         items(
-            state.categoryWithCollectionsPairs?.toList()
+            items = state.categoryAndCollectionsWithTasksPairs?.toList()
                 ?: listOf(
                     Pair(
                         TaskCategory(
                             title = "Category is Empty",
                             created = Calendar.getInstance().timeInMillis
                         ),
-                        emptyList<TaskCollection>()
+                        emptyList<CollectionWithTasks>()
                     )
                 ),
-            key = { categoryWithCollectionsPairs ->
-                // use category title as key
-                categoryWithCollectionsPairs.first.title
-            }
+            /*key = { categoryWithCollectionsPairs ->
+                // use category title as key since it is unique to each categories
+                val taskCategory = categoryWithCollectionsPairs.first
+                taskCategory.title
+            }*/
         ) { categoryWithCollectionsPair ->
+/*            Log.d("CategoriesRow", "row size = ${state.categoryAndCollectionsWithTasksPairs?.size ?: 0}")
+            Log.d("CategoriesRow", "title = ${categoryWithCollectionsPair.first.title}")*/
             categoryWithCollectionsPair.run {
                 val taskCategory: TaskCategory = first
-                val taskCollections: List<TaskCollection> = second
+                val taskCollectionsWithTasks = second
                 CategoryCard(
                     categoryTitle = taskCategory.title,
-                    collectionsCount = taskCollections.size,
-                    created = taskCategory.created.millisToString(pattern = "MMM d, YYYY")
+                    collectionsCount = taskCollectionsWithTasks.size,
+                    created = taskCategory.created.millisToString(pattern = "MMM d, YYYY"),
+                    tasksCount = taskCollectionsWithTasks.run {
+                        if (this.isNotEmpty()) {
+                            sumOf {
+                                it.tasks.size
+                            }
+                        } else 0
+                    }
                 )
             }
         }

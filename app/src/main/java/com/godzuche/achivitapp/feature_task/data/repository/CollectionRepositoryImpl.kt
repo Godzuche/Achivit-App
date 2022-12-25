@@ -2,6 +2,7 @@ package com.godzuche.achivitapp.feature_task.data.repository
 
 import com.godzuche.achivitapp.feature_task.data.local.TaskCollectionDao
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollection
+import com.godzuche.achivitapp.feature_task.data.local.relations.CollectionWithTasks
 import com.godzuche.achivitapp.feature_task.domain.repository.CollectionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,5 +24,9 @@ class CollectionRepositoryImpl(private val collectionDao: TaskCollectionDao) :
 
     override suspend fun updateCollection(collection: TaskCollection) {
         collectionDao.update(collection = collection.toTaskCollectionEntity())
+    }
+
+    override fun getCollectionsWithTasksByCategoryTitle(categoryTitle: String): Flow<List<CollectionWithTasks>> {
+        return collectionDao.getCollectionWithTasksByCategoryTitle(categoryTitle = categoryTitle)
     }
 }

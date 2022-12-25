@@ -2,6 +2,7 @@ package com.godzuche.achivitapp.feature_task.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.godzuche.achivitapp.feature_task.domain.model.Task
 
 enum class Screen { Profile, Settings, TaskStatusDetail, Category }
 
@@ -64,6 +66,7 @@ fun Home(
             .consumedWindowInsets(innerPadding)
             .then(modifier),
         contentPadding = innerPadding,
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp),
         state = listState
     ) {
         item {
@@ -76,9 +79,18 @@ fun Home(
             HomeSection(
                 title = "Categories",
                 viewMoreButtonText = "View All",
-                modifier = Modifier.padding(horizontal = 8.dp)
+//                modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 CategoriesRow(state = state)
+            }
+        }
+        item {
+            HomeSection(
+                title = "Today's tasks",
+                modifier = Modifier.padding(horizontal = 8.dp),
+                viewMoreButtonText = "View All"
+            ) {
+                TodayTasks(state = state)
             }
         }
     }
