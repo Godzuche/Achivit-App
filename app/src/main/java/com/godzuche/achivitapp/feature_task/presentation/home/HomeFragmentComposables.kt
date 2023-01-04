@@ -100,6 +100,15 @@ fun String.nameAndColor() = when (this) {
     else -> "Null" to Color.Transparent
 }
 
+fun String.statusColor() = when (this) {
+    "NONE" -> Color.Transparent
+    "TODO" -> Color.Gray.copy(alpha = 0.5f)
+    "IN_PROGRESS" -> MOrange.copy(alpha = 0.5f)
+    "RUNNING_LATE" -> Color.Red.copy(alpha = 0.5f)
+    "COMPLETED" -> MGreen.copy(alpha = 0.5f)
+    else -> Color.Transparent
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun TaskStatusGridPreview() {

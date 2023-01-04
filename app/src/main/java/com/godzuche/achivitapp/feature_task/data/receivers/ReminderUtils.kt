@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.receivers
+package com.godzuche.achivitapp.feature_task.data.receivers
 
 import android.app.AlarmManager
 import android.app.Application

@@ -134,3 +134,14 @@ fun HomeSectionPreview() {
         }
     }
 }
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    Surface {
+        HomeScreen(
+            state = HomeUiState(),
+            onEvent = {}
+        )
+    }
+}

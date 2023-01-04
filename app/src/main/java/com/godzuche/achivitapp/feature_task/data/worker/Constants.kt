@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.worker
+package com.godzuche.achivitapp.feature_task.data.worker
 
 object Constants {
     const val NOTIFICATION_CHANNEL_NAME = "Daily Task Reminder"

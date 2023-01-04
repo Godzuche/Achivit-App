@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature_task.worker
+package com.godzuche.achivitapp.feature_task.data.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker

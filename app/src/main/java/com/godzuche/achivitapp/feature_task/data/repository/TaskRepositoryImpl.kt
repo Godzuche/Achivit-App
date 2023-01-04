@@ -80,7 +80,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
 
     override fun getTodayTasks(): Flow<List<Task>> {
         val taskDueDate = Calendar.getInstance()
-        val dueDate = Calendar.getInstance().apply {
+        val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
@@ -93,7 +93,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
                     set(Calendar.HOUR_OF_DAY, 0)
                     set(Calendar.MINUTE, 0)
                 }
-                taskDueDate == dueDate
+                taskDueDate == today
             }.map { it.toTask() }
         }
     }

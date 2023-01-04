@@ -14,7 +14,7 @@ import com.godzuche.achivitapp.feature_task.domain.repository.CollectionReposito
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
-import com.godzuche.achivitapp.feature_task.receivers.setReminder
+import com.godzuche.achivitapp.feature_task.data.receivers.setReminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

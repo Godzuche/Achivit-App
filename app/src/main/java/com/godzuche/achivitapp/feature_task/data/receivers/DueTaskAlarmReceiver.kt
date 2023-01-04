@@ -1,11 +1,11 @@
-package com.godzuche.achivitapp.feature_task.receivers
+package com.godzuche.achivitapp.feature_task.data.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.work.*
-import com.godzuche.achivitapp.feature_task.receivers.Constants.KEY_TASK_ID
-import com.godzuche.achivitapp.feature_task.worker.DueTaskWorker
+import com.godzuche.achivitapp.feature_task.data.receivers.Constants.KEY_TASK_ID
+import com.godzuche.achivitapp.feature_task.data.worker.DueTaskWorker
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
