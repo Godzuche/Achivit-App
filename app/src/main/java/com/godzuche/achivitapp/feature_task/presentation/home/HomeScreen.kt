@@ -140,7 +140,18 @@ fun HomeSectionPreview() {
 fun HomeScreenPreview() {
     Surface {
         HomeScreen(
-            state = HomeUiState(),
+            state = HomeUiState(
+                todayTasks = listOf(
+                    Task(
+                        id = 0,
+                        title = "Lights out",
+                        created = 0L,
+                        description = "Go to bed",
+                        dueDate = 0L,
+                        collectionTitle = "Personal Collection"
+                    )
+                )
+            ),
             onEvent = {}
         )
     }

@@ -33,8 +33,8 @@ interface TaskDao {
     @Query("SELECT * FROM task_table WHERE id = :id")
     fun getTaskOnce(id: Int): TaskEntity
 
-    @Query("SELECT * FROM task_table ORDER BY id DESC")
-    fun getAllTasks(): PagingSource<Int, TaskEntity>
+    @Query("SELECT * FROM task_table ORDER BY due_date DESC, id DESC")
+    fun getPagedTasks(): PagingSource<Int, TaskEntity>
 
     @Query(
         "SELECT * FROM task_table WHERE " +
@@ -43,8 +43,8 @@ interface TaskDao {
     )
     suspend fun searchTasksByTitle(title: String): List<TaskEntity>
 
-    @Query("SELECT * FROM task_table")
-    fun getTasks(): Flow<List<TaskEntity>>
+    @Query("SELECT * FROM task_table ORDER BY due_date DESC, id DESC")
+    fun getTodayTasks(): Flow<List<TaskEntity>>
 
     @RawQuery(observedEntities = [TaskEntity::class])
     fun getFilteredTasks(query: SupportSQLiteQuery): Flow<List<TaskEntity>>

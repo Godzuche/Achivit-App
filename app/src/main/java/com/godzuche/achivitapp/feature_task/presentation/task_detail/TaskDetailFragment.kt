@@ -35,6 +35,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -108,6 +109,7 @@ class TaskDetailFragment : Fragment() {
                         .collectLatest {
                             if (it != null) {
                                 task = it
+                                Timber.tag("wwww").d("Task created detail frag1: ${task?.created}")
                                 bind(it)
                                 setupOnChipClickDateTimePicker(it, binding, viewModel)
                             }
@@ -174,6 +176,9 @@ class TaskDetailFragment : Fragment() {
             }
 
             val createdDate = task.created
+
+            Timber.tag("wwww").d("Task created detail frag2: $createdDate")
+
             tvCreatedDate.text =
                 createdDate?.let { getString(R.string.created, createdDate.millisToString()) }
         }
@@ -185,20 +190,28 @@ class TaskDetailFragment : Fragment() {
         val fab = activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
 
         fab?.apply {
-            setIconResource(R.drawable.ic_baseline_add_24)
+            setIconResource(R.drawable.ic_baseline_edit_24)
             if (this.isExtended) {
                 this.shrink()
             }
-        }
-
-        fab?.setOnClickListener {
-            findNavController().navigate(
-                TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
-                    navigationArgs.id
+            setOnClickListener {
+                findNavController().navigate(
+                    TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
+                        navigationArgs.id
+                    )
                 )
-            )
 
+            }
         }
+
+//        fab?.setOnClickListener {
+//            findNavController().navigate(
+//                TaskDetailFragmentDirections.actionGlobalModalBottomSheet(
+//                    navigationArgs.id
+//                )
+//            )
+//
+//        }
 
     }
 

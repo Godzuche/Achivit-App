@@ -10,31 +10,30 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class DueTaskAlarmReceiver() : BroadcastReceiver() {
+class DueTaskAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.tag(TAG).d("Receiver called")
 
-        val bundle = intent?.extras
-        bundle?.apply {
-            val taskId = getInt(KEY_TASK_ID)
-            val dueTaskRequest = OneTimeWorkRequestBuilder<DueTaskWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setInputData(
-                    workDataOf(
-                        "taskId" to taskId
-                    )
-                )
-                .addTag("due_task")
-                .build()
+        val messageBundle = intent?.extras ?: return
 
-            val workManager = context?.let { WorkManager.getInstance(it) }
-            workManager?.enqueueUniqueWork(
-                DueTaskWorker.TAG + taskId.toString(),
-                ExistingWorkPolicy.REPLACE,
-                dueTaskRequest
+        val taskId = messageBundle.getInt(Constants.KEY_TASK_ID)
+        val dueTaskRequest = OneTimeWorkRequestBuilder<DueTaskWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setInputData(
+                workDataOf(
+                    "taskId" to taskId
+                )
             )
-        }
+            .addTag("due_task")
+            .build()
+
+        val workManager = context?.let { WorkManager.getInstance(it) }
+        workManager?.enqueueUniqueWork(
+            DueTaskWorker.TAG + taskId.toString(),
+            ExistingWorkPolicy.REPLACE,
+            dueTaskRequest
+        )
     }
 
     companion object {

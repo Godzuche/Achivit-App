@@ -69,7 +69,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?,
     ): View? {
         _binding = ModalBottomSheetContentBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -163,6 +162,10 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         bind(navigationArgs.taskId)
     }
 
+    private fun Int.isValid(): Boolean {
+        return this != -1
+    }
+
     private fun bind(taskId: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -172,7 +175,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        if (taskId != -1) {
+        if (taskId.isValid()) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.uiStateFlow
@@ -233,7 +236,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                         }
                 }
             }
-        } else if (taskId == -1) {
+        } else if (!taskId.isValid()) {
             /*(binding.ilCategory.editText as MaterialAutoCompleteTextView)
                 .setText("My Tasks", false)*/
             binding.ilCategory.visibility = View.VISIBLE
@@ -275,26 +278,33 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                     ) {
                         Toast.makeText(
                             requireContext(),
-                            "Same date and time",
+                            "Time is unchanged!",
                             Toast.LENGTH_SHORT
                         )
                             .show()
 
                         viewModel.updateTask(
-                            id,
-                            binding.etTitle.text.toString(),
-                            binding.etDescription.text.toString(),
+                            taskId = id,
+                            taskTitle = binding.etTitle.text.toString(),
+                            taskDescription = binding.etDescription.text.toString(),
                             dueDate = currentTask.dueDate,
-                            collectionTitle = binding.etCollection.text.toString()
+                            collectionTitle = binding.etCollection.text.toString(),
+                            shouldReschedule = false
                         )
-
                     } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "This task has been successfully rescheduled!",
+                            Toast.LENGTH_LONG
+                        ).show()
+
                         viewModel.updateTask(
-                            id,
-                            binding.etTitle.text.toString(),
-                            binding.etDescription.text.toString(),
+                            taskId = id,
+                            taskTitle = binding.etTitle.text.toString(),
+                            taskDescription = binding.etDescription.text.toString(),
                             dueDate = mCalendar.timeInMillis,
-                            collectionTitle = binding.etCollection.text.toString()
+                            collectionTitle = binding.etCollection.text.toString(),
+                            shouldReschedule = true
                         )
                     }
                 }

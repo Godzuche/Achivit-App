@@ -9,7 +9,7 @@ data class Task(
     val description: String,
     val isCompleted: Boolean = false,
     // val isPriority: Boolean = false
-    val created: Long? = null,
+    val created: Long,
     val dueDate: Long,
     val status: TaskStatus = TaskStatus.TODO,
     val collectionTitle: String,
@@ -19,7 +19,7 @@ data class Task(
             title = title,
             description = description,
             isCompleted = isCompleted,
-            created = created!!,
+            created = created,
             dueDate = dueDate,
             status = status,
             collectionTitle = collectionTitle
@@ -31,6 +31,7 @@ data class Task(
             id = id!!,
             title = title,
             isCompleted = isCompleted,
+            created = created,
             description = description,
             dueDate = dueDate,
             status = status,

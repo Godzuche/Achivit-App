@@ -44,5 +44,6 @@
     </plurals>
     <string name="greeting">Hi, %1$s! 👋</string>
     <string name="add_new_category">Add new category</string>
+    <string name="key_dark_mode">key_dark_mode</string>
 
 </resources>

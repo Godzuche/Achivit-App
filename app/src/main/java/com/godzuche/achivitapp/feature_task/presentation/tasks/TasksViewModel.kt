@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.util.Resource
+import com.godzuche.achivitapp.feature_task.data.DueTaskAndroidAlarmScheduler
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
@@ -14,7 +15,6 @@ import com.godzuche.achivitapp.feature_task.domain.repository.CollectionReposito
 import com.godzuche.achivitapp.feature_task.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_task.presentation.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature_task.presentation.util.*
-import com.godzuche.achivitapp.feature_task.data.receivers.setReminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -30,6 +30,8 @@ class TasksViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val collectionRepository: CollectionRepository
 ) : AndroidViewModel(app) {
+
+    val dueTaskAlarmScheduler = DueTaskAndroidAlarmScheduler(app.applicationContext)
 
     val checkedChipId = MutableStateFlow<Int>(0)
 
@@ -277,17 +279,14 @@ class TasksViewModel @Inject constructor(
             dueDate = dueDate,
             collectionTitle
         )
-//        insertTask(newTask)
-//        insertAndGetId(newTask)
+
         viewModelScope.launch(Dispatchers.IO) {
             val insertedTaskId = taskRepository.insertAndGetTask(newTask)
-            setReminder(
-                getApplication(),
-                insertedTaskId,
-                dueDate,/*
-                    task.title,
-                    task.description*/
+
+            dueTaskAlarmScheduler.schedule(
+                newTask.copy(id = insertedTaskId)
             )
+
             Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
         }
 
@@ -342,34 +341,6 @@ class TasksViewModel @Inject constructor(
 
     fun undoDelete(task: Task) {
         insertTask(task)
-    }
-
-    fun updateTask(
-        taskId: Int,
-        taskTitle: String,
-        taskDescription: String,
-        dueDate: Long,
-        collectionTitle: String,
-    ) {
-        val updatedTask =
-            getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dueDate, collectionTitle)
-        updateTask(updatedTask)
-    }
-
-    private fun getUpdatedTaskEntry(
-        taskId: Int,
-        taskTitle: String,
-        taskDescription: String,
-        dueDate: Long,
-        collectionTitle: String,
-    ): Task {
-        return Task(
-            id = taskId,
-            title = taskTitle,
-            description = taskDescription,
-            dueDate = dueDate,
-            collectionTitle = collectionTitle
-        )
     }
 
     private fun updateTask(task: Task) {

@@ -1,7 +1,9 @@
 package com.godzuche.achivitapp.feature_task.presentation.modal_bottom_sheet
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.godzuche.achivitapp.feature_task.data.DueTaskAndroidAlarmScheduler
 import com.godzuche.achivitapp.feature_task.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.feature_task.domain.model.Task
 import com.godzuche.achivitapp.feature_task.domain.repository.CategoryRepository
@@ -20,10 +22,14 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ModalBottomSheetViewModel @Inject constructor(
+    private val app: Application,
     private val taskRepository: TaskRepository,
     private val categoryRepository: CategoryRepository,
     private val collectionRepository: CollectionRepository
-) : ViewModel() {
+) : AndroidViewModel(app) {
+
+    private val dueTaskAlarmScheduler =
+        DueTaskAndroidAlarmScheduler(context = app.applicationContext)
 
     private val taskId = MutableStateFlow(-1)
     private val _task = MutableStateFlow<Task?>(null)
@@ -98,11 +104,11 @@ class ModalBottomSheetViewModel @Inject constructor(
             bottomSheetAction,
             _task,
             taskId
-        ) { a, b, c ->
+        ) { action, task, taskId ->
             ModalBottomSheetUiState(
-                bottomSheetAction = a,
-                task = b,
-                id = c
+                bottomSheetAction = action,
+                task = task,
+                id = taskId
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ModalBottomSheetUiState())
 
@@ -121,10 +127,11 @@ class ModalBottomSheetViewModel @Inject constructor(
         taskDescription: String,
         dueDate: Long,
         collectionTitle: String,
+        shouldReschedule: Boolean
     ) {
         val updatedTask =
             getUpdatedTaskEntry(taskId, taskTitle, taskDescription, dueDate, collectionTitle)
-        updateTask(updatedTask)
+        updateTask(task = updatedTask, shouldReschedule = shouldReschedule)
     }
 
     private fun getUpdatedTaskEntry(
@@ -138,14 +145,20 @@ class ModalBottomSheetViewModel @Inject constructor(
             id = taskId,
             title = taskTitle,
             description = taskDescription,
+            created = task.value?.created!!,
             dueDate = dueDate,
+            status = task.value?.status!!,
             collectionTitle = collectionTitle
         )
     }
 
-    private fun updateTask(task: Task) {
+    private fun updateTask(task: Task, shouldReschedule: Boolean) {
         viewModelScope.launch {
             taskRepository.updateTask(task)
+
+            if (shouldReschedule) {
+                dueTaskAlarmScheduler.schedule(task)
+            }
         }
     }
 

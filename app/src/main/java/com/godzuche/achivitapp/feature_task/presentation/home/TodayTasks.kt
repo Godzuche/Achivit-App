@@ -110,6 +110,7 @@ fun TodayTasksPreview() {
                 Task(
                     title = "Read",
                     description = "Read a book",
+                    created = 0L,
                     dueDate = 0L,
                     collectionTitle = "New Collection"
                 )

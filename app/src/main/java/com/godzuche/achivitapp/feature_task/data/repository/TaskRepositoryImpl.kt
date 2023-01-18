@@ -32,7 +32,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
 
     override fun getAllTask(): Flow<PagingData<Task>> {
         val pagingSourceFactory = {
-            taskDao.getAllTasks()
+            taskDao.getPagedTasks()
         }
 
         return Pager(
@@ -86,7 +86,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        return taskDao.getTasks().map { taskEntities ->
+        return taskDao.getTodayTasks().map { taskEntities ->
             taskEntities.filter { taskEntity ->
                 taskDueDate.timeInMillis = taskEntity.dueDate
                 taskDueDate.apply {

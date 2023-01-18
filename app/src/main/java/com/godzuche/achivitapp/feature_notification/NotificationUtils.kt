@@ -19,9 +19,9 @@ import com.godzuche.achivitapp.feature_task.presentation.task_detail.TaskDetailF
 
 fun Context.createDueTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val id = NOTIFICATION_CHANNEL_ID
-        val name = NOTIFICATION_CHANNEL_NAME
-        val channelDescription = NOTIFICATION_CHANNEL_DESCRIPTION
+        val id = DUE_TASK_NOTIFICATION_CHANNEL_ID
+        val name = DUE_TASK_NOTIFICATION_CHANNEL_NAME
+        val channelDescription = DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(id, name, importance).apply {
             description = channelDescription
@@ -36,10 +36,10 @@ fun Context.createDueTaskNotificationChannel() {
 
 fun Context.createDailyTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val id = Constants.NOTIFICATION_CHANNEL_ID
-        val name = Constants.NOTIFICATION_CHANNEL_NAME
+        val id = Constants.DAILY_NOTIFICATION_CHANNEL_ID
+        val name = Constants.DAILY_NOTIFICATION_CHANNEL_NAME
         val channelDescription =
-            Constants.NOTIFICATION_CHANNEL_DESCRIPTION
+            Constants.DAILY_NOTIFICATION_CHANNEL_DESCRIPTION
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(id, name, importance).apply {
             description = channelDescription
@@ -65,7 +65,7 @@ fun Context.makeDueTaskNotification(
         .setArguments(args)
         .createPendingIntent()
 
-    val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+    val notificationBuilder = NotificationCompat.Builder(this, DUE_TASK_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_baseline_check_box_24)
         .setContentTitle(NOTIFICATION_TITLE)
         .setContentText("\"${taskTitle}\" is active now")
@@ -96,7 +96,10 @@ fun Context.makeDueTaskNotification(
         // for ActivityCompat#requestPermissions for more details.
         return
     }
-    NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notificationBuilder.build())
+    // Using a constant notification id to have just one notification at a time.
+    // Todo: Use the task id + 1 as the notification id
+    NotificationManagerCompat.from(this)
+        .notify(taskId + 1, notificationBuilder.build())
 }
 
 fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
@@ -120,7 +123,7 @@ fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
 
     val notificationBuilder = NotificationCompat.Builder(
         context,
-        Constants.NOTIFICATION_CHANNEL_ID
+        Constants.DAILY_NOTIFICATION_CHANNEL_ID
     )
         .setSmallIcon(R.drawable.ic_baseline_check_box_24)
         .setContentTitle(Constants.NOTIFICATION_TITLE)

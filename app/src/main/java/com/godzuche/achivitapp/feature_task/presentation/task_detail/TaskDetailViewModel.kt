@@ -89,6 +89,7 @@ class TaskDetailViewModel @Inject constructor(
         }
     }
 
+    // Todo: Create a method to update just the due date
     fun updateTask(
         taskId: Int,
         taskTitle: String,
@@ -112,6 +113,7 @@ class TaskDetailViewModel @Inject constructor(
             id = taskId,
             title = taskTitle,
             description = taskDescription,
+            created = detail.value?.created!!,
             dueDate = dueDate,
             collectionTitle = collectionTitle
         )

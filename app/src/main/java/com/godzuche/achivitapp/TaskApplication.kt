@@ -47,7 +47,8 @@ class TaskApplication : Application(), Configuration.Provider {
     private fun setUpDarkModePreference() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val defaultValue = resources.getStringArray(R.array.entry_value_theme)[0]
-        val darkMode = sharedPref.getString("key_dark_mode", defaultValue)
+        val darkMode =
+            sharedPref.getString(resources.getString(R.string.key_dark_mode), defaultValue)
         setDarkMode(darkMode)
     }
 }
