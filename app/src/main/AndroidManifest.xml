@@ -29,7 +29,7 @@
         </activity>
 
         <receiver
-            android:name=".feature_task.data.receivers.DueTaskAlarmReceiver"
+            android:name=".core.data.receivers.DueTaskAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
