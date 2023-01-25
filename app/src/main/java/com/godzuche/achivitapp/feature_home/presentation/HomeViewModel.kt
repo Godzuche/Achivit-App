@@ -7,8 +7,8 @@ import com.godzuche.achivitapp.core.data.local.relations.CollectionWithTasks
 import com.godzuche.achivitapp.core.domain.repository.CategoryRepository
 import com.godzuche.achivitapp.core.domain.repository.CollectionRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskFilter
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskFilter
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val taskRepository: TaskRepository,

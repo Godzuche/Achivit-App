@@ -112,7 +112,8 @@ fun TodayTasksPreview() {
                     description = "Read a book",
                     created = 0L,
                     dueDate = 0L,
-                    collectionTitle = "New Collection"
+                    collectionTitle = "New Collection",
+                    categoryTitle = "New Category"
                 )
             )
         )

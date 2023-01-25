@@ -147,7 +147,8 @@ fun HomeScreenPreview() {
                         created = 0L,
                         description = "Go to bed",
                         dueDate = 0L,
-                        collectionTitle = "Personal Collection"
+                        collectionTitle = "Personal Collection",
+                        categoryTitle = "Demo"
                     )
                 )
             ),

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 
 @Entity(tableName = "task_table")
 data class TaskEntity(
@@ -25,6 +25,8 @@ data class TaskEntity(
     val status: TaskStatus = TaskStatus.TODO,
     @ColumnInfo(name = "collection_title")
     val collectionTitle: String,
+    @ColumnInfo(name = "category_title")
+    val categoryTitle: String
 ) {
     fun toTask(): Task {
         /*val timeNow by lazy { Calendar.getInstance().timeInMillis }
@@ -40,9 +42,9 @@ data class TaskEntity(
             isCompleted = isCompleted,
             created = created,
             dueDate = dueDate,
-//            status = taskStatus,
             status = status,
-            collectionTitle = collectionTitle
+            collectionTitle = collectionTitle,
+            categoryTitle = categoryTitle
         )
     }
 }

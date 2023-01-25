@@ -3,7 +3,8 @@ package com.godzuche.achivitapp.core.domain.repository
 import androidx.paging.PagingData
 import com.godzuche.achivitapp.core.util.Resource
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskFilter
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskFilter
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
@@ -13,7 +14,7 @@ interface TaskRepository {
     fun getTaskOnce(id: Int): Task
 
     //    fun getAllTask(): Flow<Resource<List<Task>>>
-    fun getAllTask(): Flow<PagingData<Task>>
+    fun getAllTask(categoryTitle: String, status: TaskStatus): Flow<PagingData<Task>>
 
     fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>>
 

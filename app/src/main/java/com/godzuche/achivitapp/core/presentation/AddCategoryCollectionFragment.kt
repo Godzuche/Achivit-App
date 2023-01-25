@@ -19,8 +19,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentAddTaskCategoryBinding
-import com.godzuche.achivitapp.feature_tasks.presentation.util.DialogTitle
-import com.godzuche.achivitapp.feature_tasks.presentation.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.DialogTitle
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.task_list.TasksViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import dagger.hilt.android.AndroidEntryPoint

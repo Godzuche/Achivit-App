@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.findNavController
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.feature_tasks.presentation.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.task_list.TasksViewModel
 import com.google.android.material.composethemeadapter3.Mdc3Theme
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis

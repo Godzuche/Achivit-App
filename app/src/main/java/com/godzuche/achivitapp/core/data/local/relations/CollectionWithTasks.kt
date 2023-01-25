@@ -12,4 +12,5 @@ data class CollectionWithTasks(
         entityColumn = "collection_title"
     )
     val tasks: List<TaskEntity>,
+//    val tasks: PagingSource<Int, TaskEntity>,
 )

@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.core.data.local.entity.TaskEntity
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -38,6 +39,17 @@ interface TaskDao {
 
     @Query(
         "SELECT * FROM task_table WHERE " +
+                " category_title = :category AND status = :status " +
+                "ORDER BY due_date DESC, id DESC"
+    )
+    fun getFilteredPagedTasks(
+        category: String,
+        /*collection: String,*/
+        status: TaskStatus
+    ): PagingSource<Int, TaskEntity>
+
+    @Query(
+        "SELECT * FROM task_table WHERE " +
                 " title LIKE '%' || :title || '%' OR description LIKE '%' || :title || '%'" +
                 "ORDER BY title ASC"
     )
@@ -48,5 +60,8 @@ interface TaskDao {
 
     @RawQuery(observedEntities = [TaskEntity::class])
     fun getFilteredTasks(query: SupportSQLiteQuery): Flow<List<TaskEntity>>
+
+    @Query("SELECT * FROM task_table WHERE status = :status ORDER BY due_date DESC, id DESC")
+    fun getTaskByStatus(status: TaskStatus): Flow<List<TaskEntity>>
 
 }

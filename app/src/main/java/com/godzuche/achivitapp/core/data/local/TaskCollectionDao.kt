@@ -1,7 +1,9 @@
 package com.godzuche.achivitapp.core.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.godzuche.achivitapp.core.data.local.entity.TaskCollectionEntity
+import com.godzuche.achivitapp.core.data.local.entity.TaskEntity
 import com.godzuche.achivitapp.core.data.local.relations.CollectionWithTasks
 import kotlinx.coroutines.flow.Flow
 
@@ -36,6 +38,10 @@ interface TaskCollectionDao {
     @Transaction
     @Query("SELECT * FROM task_collections  WHERE category_title = :categoryTitle")
     fun getCollectionWithTasksByCategoryTitle(categoryTitle: String): Flow<List<CollectionWithTasks>>
+
+    @Transaction
+    @Query("SELECT * FROM task_collections  WHERE category_title = :categoryTitle")
+    fun getCollectionWithTasksByCategoryTitle2(categoryTitle: String): PagingSource<Int, CollectionWithTasks>
 
     @Query("DELETE FROM task_collections")
     suspend fun deleteAll()

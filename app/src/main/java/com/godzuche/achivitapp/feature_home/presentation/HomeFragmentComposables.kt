@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.godzuche.achivitapp.core.util.capitalizeEachWord
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 import com.godzuche.achivitapp.ui.theme.MGreen
 import com.godzuche.achivitapp.ui.theme.MOrange
 
@@ -98,6 +98,24 @@ fun String.nameAndColor() = when (this) {
     "RUNNING_LATE" -> capitalizeEachWord() to Color.Red.copy(alpha = 0.5f)
     "COMPLETED" -> capitalizeEachWord() to MGreen.copy(alpha = 0.5f)
     else -> "Null" to Color.Transparent
+}
+
+fun String.toChipText() = when (this) {
+    "NONE" -> capitalizeEachWord()
+    "TODO" -> capitalizeEachWord()
+    "IN_PROGRESS" -> capitalizeEachWord()
+    "RUNNING_LATE" -> "Late"
+    "COMPLETED" -> "Done"
+    else -> "Null"
+}
+
+fun String.fromChipText() = when (this) {
+    "None" -> TaskStatus.NONE
+    "Todo" -> TaskStatus.TODO
+    "In Progress" -> TaskStatus.IN_PROGRESS
+    "Late" -> TaskStatus.RUNNING_LATE
+    "Done" -> TaskStatus.COMPLETED
+    else -> "Null"
 }
 
 fun String.statusColor() = when (this) {

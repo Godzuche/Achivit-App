@@ -18,7 +18,7 @@ import com.godzuche.achivitapp.core.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL
 import com.godzuche.achivitapp.core.data.receivers.NOTIFICATION_TITLE
 import com.godzuche.achivitapp.core.data.worker.Constants
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature_task.presentation.task_detail.TaskDetailFragmentArgs
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.task_detail.TaskDetailFragmentArgs
 
 fun Context.createDueTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

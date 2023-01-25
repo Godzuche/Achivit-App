@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.godzuche.achivitapp.feature_notification.makeDueTaskNotification
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope

@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.core.domain.model
 
 import com.godzuche.achivitapp.core.data.local.entity.TaskEntity
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 
 data class Task(
     val id: Int? = null,
@@ -13,6 +13,7 @@ data class Task(
     val dueDate: Long,
     val status: TaskStatus = TaskStatus.TODO,
     val collectionTitle: String,
+    val categoryTitle: String
 ) {
     fun toNewTaskEntity(): TaskEntity {
         return TaskEntity(
@@ -22,7 +23,8 @@ data class Task(
             created = created,
             dueDate = dueDate,
             status = status,
-            collectionTitle = collectionTitle
+            collectionTitle = collectionTitle,
+            categoryTitle = categoryTitle
         )
     }
 
@@ -35,7 +37,8 @@ data class Task(
             description = description,
             dueDate = dueDate,
             status = status,
-            collectionTitle = collectionTitle
+            collectionTitle = collectionTitle,
+            categoryTitle = categoryTitle
         )
     }
 }

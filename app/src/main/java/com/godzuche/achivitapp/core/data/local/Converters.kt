@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.core.data.local
 
 import androidx.room.TypeConverter
-import com.godzuche.achivitapp.feature_tasks.presentation.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
 
 
 class Converters {
