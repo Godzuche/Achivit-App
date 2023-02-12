@@ -1,11 +1,10 @@
 package com.godzuche.achivitapp.feature_home.presentation
 
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,31 +14,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
-import com.godzuche.achivitapp.core.util.capitalizeEachWord
-import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
-import com.godzuche.achivitapp.ui.theme.MGreen
-import com.godzuche.achivitapp.ui.theme.MOrange
+import com.godzuche.achivitapp.core.ui.theme.AchivitTypography
+import com.godzuche.achivitapp.core.ui.theme.MGreen
+import com.godzuche.achivitapp.core.ui.theme.MOrange
+import com.godzuche.achivitapp.feature_home.presentation.core.util.capitalizeEachWord
+import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
 
 @Composable
 fun TaskStatusGrid(
     state: HomeUiState,
     modifier: Modifier = Modifier
 ) {
+    val lazyGridState = rememberLazyGridState()
     val statuses = TaskStatus.values()
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-        contentPadding = PaddingValues(vertical = 8.dp),
+
+//    Column(modifier = modifier) {
+    LazyHorizontalGrid(
+        state = lazyGridState,
+        rows = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(24.dp),
         modifier = Modifier
             .fillMaxWidth()
-//            .height(168.dp)
-            .height(272.dp)
-            .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
+            .height(max(220.dp, with(LocalDensity.current) { 220.sp.toDp() }))
+//            .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
             .then(modifier)
     ) {
         items(statuses.size) { index ->
@@ -56,6 +60,7 @@ fun TaskStatusGrid(
             )
         }
     }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,24 +73,30 @@ fun TaskStatusOverviewCard(status: String, count: Int) {
 
     Card(
         onClick = {},
-        modifier = Modifier.size(80.dp),
+//        modifier = Modifier.size(80.dp),
+        modifier = Modifier
+            .width(220.dp)
+        /*.heightIn(min = 56.dp)*/,
         colors = CardDefaults.cardColors(containerColor = statusTitleAndColor.second)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .height(80.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
         ) {
+            // TODO: Set a font style from the typographies defined in the theme
             Text(
                 text = animatedCount.toString(),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold
+                /*fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold*/
+                style = AchivitTypography.titleMedium
             )
             Text(
                 text = statusTitleAndColor.first,
-                fontSize = 14.sp,
+                style = AchivitTypography.bodyMedium
+//                fontSize = 14.sp,
             )
         }
     }

@@ -50,7 +50,7 @@ fun CategoryCard(
         onClick = {},
         modifier = Modifier
             .wrapContentHeight()
-            .width((LocalConfiguration.current.screenWidthDp.dp - /*48.dp*/ 68.dp))
+            .width((LocalConfiguration.current.screenWidthDp.dp - (72 + 4).dp))
     ) {
         ConstraintLayout(
             modifier = Modifier

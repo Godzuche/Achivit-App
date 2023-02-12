@@ -1,8 +1,8 @@
 package com.godzuche.achivitapp.feature_home.presentation
 
-import com.godzuche.achivitapp.core.data.local.entity.TaskCategory
-import com.godzuche.achivitapp.core.data.local.relations.CollectionWithTasks
-import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.data.local.entity.TaskCategory
+import com.godzuche.achivitapp.data.local.relations.CollectionWithTasks
+import com.godzuche.achivitapp.domain.model.Task
 
 data class HomeUiState(
     val todayTasks: List<Task> = emptyList(),

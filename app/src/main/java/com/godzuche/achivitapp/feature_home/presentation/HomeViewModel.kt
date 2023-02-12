@@ -2,16 +2,15 @@ package com.godzuche.achivitapp.feature_home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.godzuche.achivitapp.core.data.local.entity.TaskCategory
-import com.godzuche.achivitapp.core.data.local.relations.CollectionWithTasks
-import com.godzuche.achivitapp.core.domain.repository.CategoryRepository
-import com.godzuche.achivitapp.core.domain.repository.CollectionRepository
-import com.godzuche.achivitapp.core.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskFilter
-import com.godzuche.achivitapp.feature_tasks_feed.presentation.util.TaskStatus
+import com.godzuche.achivitapp.data.local.entity.TaskCategory
+import com.godzuche.achivitapp.data.local.relations.CollectionWithTasks
+import com.godzuche.achivitapp.domain.repository.CategoryRepository
+import com.godzuche.achivitapp.domain.repository.CollectionRepository
+import com.godzuche.achivitapp.domain.repository.TaskRepository
+import com.godzuche.achivitapp.feature_tasks_feed.util.TaskFilter
+import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject

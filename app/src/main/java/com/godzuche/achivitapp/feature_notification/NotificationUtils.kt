@@ -12,13 +12,13 @@ import androidx.core.app.NotificationCompat.DEFAULT_ALL
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.core.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
-import com.godzuche.achivitapp.core.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_ID
-import com.godzuche.achivitapp.core.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_NAME
-import com.godzuche.achivitapp.core.data.receivers.NOTIFICATION_TITLE
-import com.godzuche.achivitapp.core.data.worker.Constants
-import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature_tasks_feed.presentation.task_detail.TaskDetailFragmentArgs
+import com.godzuche.achivitapp.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+import com.godzuche.achivitapp.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_ID
+import com.godzuche.achivitapp.data.receivers.DUE_TASK_NOTIFICATION_CHANNEL_NAME
+import com.godzuche.achivitapp.data.worker.Constants
+import com.godzuche.achivitapp.data.worker.Constants.NOTIFICATION_TITLE
+import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.feature_tasks_feed.task_detail.TaskDetailFragmentArgs
 
 fun Context.createDueTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

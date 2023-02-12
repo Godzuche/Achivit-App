@@ -5,7 +5,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature_tasks_feed.presentation.task_list.TasksFragment">
+    tools:context=".feature_tasks_feed.task_list.TasksFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -78,17 +78,17 @@
         android:id="@+id/recycler_view_tasks_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
         android:clipToPadding="false"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:overScrollMode="always"
         android:paddingStart="4dp"
         android:paddingTop="8dp"
         android:paddingEnd="4dp"
         android:paddingBottom="84dp"
-        android:layout_marginBottom="8dp"
         android:scrollbars="none"
         android:transitionGroup="true"
-        android:overScrollMode="always"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:listitem="@layout/item_task_list" />
 
     <!--should be visible whenever list is empty-->

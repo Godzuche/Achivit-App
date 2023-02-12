@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.domain.model.Task
 
 @Composable
 fun TodayTasks(

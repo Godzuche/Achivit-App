@@ -37,7 +37,7 @@
     <string name="delete_task">Delete task</string>
     <string name="new_category">New category</string>
     <string name="tasks">Tasks</string>
-<!--    <string name="activeTasksMessage">You have %1$d active tasks today</string>-->
+    <!--    <string name="activeTasksMessage">You have %1$d active tasks today</string>-->
     <plurals name="activeTasksMessage">
         <item quantity="one">You have %1$d task today </item>
         <item quantity="other">You have %1$d tasks today </item>
