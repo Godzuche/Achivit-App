@@ -12,7 +12,7 @@ import timber.log.Timber
 class DueTaskAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Timber.tag(TAG).d("Receiver called")
+        Timber.tag(TAG).d("Receiver onReceive called")
 
         val messageBundle = intent?.extras ?: return
 
@@ -36,6 +36,6 @@ class DueTaskAlarmReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val TAG = "DueTaskAlarmReceiver"
+        private const val TAG = "DueTask"
     }
 }

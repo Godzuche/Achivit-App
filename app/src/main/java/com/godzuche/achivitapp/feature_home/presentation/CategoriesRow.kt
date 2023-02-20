@@ -32,7 +32,7 @@ fun CategoriesRow(
         state = rowState,
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        contentPadding = PaddingValues(horizontal = 24.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         items(
             items = state.categoryAndCollectionsWithTasksPairs?.toList()

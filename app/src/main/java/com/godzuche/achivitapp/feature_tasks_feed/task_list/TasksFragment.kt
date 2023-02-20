@@ -310,13 +310,6 @@ class TasksFragment : Fragment() {
                                             )
                                             binding.chipGroup.clearCheck()
                                             binding.chipGroup.check(checkedId)
-                                            /*if (binding.chipGroup.checkedChipId == View.NO_ID) {
-//                                                binding.chipGroup.clearCheck()
-                                                binding.chipGroup.check(0)
-                                            } else {
-                                                binding.chipGroup.clearCheck()
-                                                binding.chipGroup.check(checkedId)
-                                            }*/
                                         }
                                 }
                             }

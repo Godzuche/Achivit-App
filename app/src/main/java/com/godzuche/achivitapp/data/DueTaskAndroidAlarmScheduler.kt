@@ -9,6 +9,7 @@ import com.godzuche.achivitapp.data.receivers.Constants
 import com.godzuche.achivitapp.data.receivers.DueTaskAlarmReceiver
 import com.godzuche.achivitapp.domain.DueTaskAlarmScheduler
 import com.godzuche.achivitapp.domain.model.Task
+import timber.log.Timber
 
 class DueTaskAndroidAlarmScheduler(
     private val context: Context
@@ -17,6 +18,7 @@ class DueTaskAndroidAlarmScheduler(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(task: Task) {
+        Timber.tag("DueTask").d("schedule function called")
         val extras = Bundle().apply {
             task.id?.let {
                 putInt(Constants.KEY_TASK_ID, it)
@@ -36,12 +38,6 @@ class DueTaskAndroidAlarmScheduler(
             task.dueDate,
             pendingIntent
         )
-        /*AlarmManagerCompat.setExactAndAllowWhileIdle(
-            alarmManager,
-            AlarmManager.RTC_WAKEUP,
-            taskDueDate,
-            alarmPendingIntent
-        )*/
     }
 
     override fun cancel(task: Task) {

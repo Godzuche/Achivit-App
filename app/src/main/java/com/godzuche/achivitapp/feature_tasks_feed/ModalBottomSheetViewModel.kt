@@ -111,9 +111,9 @@ class ModalBottomSheetViewModel @Inject constructor(
             taskId
         ) { action, task, taskId ->
             ModalBottomSheetUiState(
-                bottomSheetAction = action,
+                bottomSheetActionTitle = action,
                 task = task,
-                id = taskId
+                taskId = taskId
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ModalBottomSheetUiState())
 

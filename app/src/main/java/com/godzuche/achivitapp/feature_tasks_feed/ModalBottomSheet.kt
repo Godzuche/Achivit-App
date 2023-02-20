@@ -170,7 +170,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiStateFlow.map { it.bottomSheetAction }.collectLatest { action ->
+                viewModel.uiStateFlow.map { it.bottomSheetActionTitle }.collectLatest { action ->
                     binding.tvHeader.text = action
                 }
             }

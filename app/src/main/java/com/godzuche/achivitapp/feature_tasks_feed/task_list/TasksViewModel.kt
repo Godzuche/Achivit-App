@@ -291,7 +291,7 @@ class TasksViewModel @Inject constructor(
                 newTask.copy(id = insertedTaskId)
             )
 
-            Timber.tag("Reminder").d("ViewModel Set at %s", dueDate.toString())
+            Timber.tag("DueTask").d("TasksViewModel Set at %s", dueDate.toString())
         }
 
         viewModelScope.launch {

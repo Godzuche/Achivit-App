@@ -1,14 +1,13 @@
 package com.godzuche.achivitapp.feature_home.presentation
 
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,18 +31,16 @@ fun TaskStatusGrid(
 ) {
     val lazyGridState = rememberLazyGridState()
     val statuses = TaskStatus.values()
-
-//    Column(modifier = modifier) {
     LazyHorizontalGrid(
         state = lazyGridState,
         rows = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(24.dp),
+        contentPadding = PaddingValues(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(max(220.dp, with(LocalDensity.current) { 220.sp.toDp() }))
-//            .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp))
             .then(modifier)
     ) {
         items(statuses.size) { index ->
@@ -60,7 +57,6 @@ fun TaskStatusGrid(
             )
         }
     }
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,10 +69,8 @@ fun TaskStatusOverviewCard(status: String, count: Int) {
 
     Card(
         onClick = {},
-//        modifier = Modifier.size(80.dp),
         modifier = Modifier
-            .width(220.dp)
-        /*.heightIn(min = 56.dp)*/,
+            .width(220.dp),
         colors = CardDefaults.cardColors(containerColor = statusTitleAndColor.second)
     ) {
         Column(
@@ -86,17 +80,13 @@ fun TaskStatusOverviewCard(status: String, count: Int) {
                 .padding(12.dp)
                 .fillMaxWidth()
         ) {
-            // TODO: Set a font style from the typographies defined in the theme
             Text(
                 text = animatedCount.toString(),
-                /*fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold*/
                 style = AchivitTypography.titleMedium
             )
             Text(
                 text = statusTitleAndColor.first,
                 style = AchivitTypography.bodyMedium
-//                fontSize = 14.sp,
             )
         }
     }

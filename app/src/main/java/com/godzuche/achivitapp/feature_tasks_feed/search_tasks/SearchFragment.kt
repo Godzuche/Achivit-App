@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,9 +14,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.databinding.FragmentSearchBinding
 import com.godzuche.achivitapp.feature_tasks_feed.task_list.TasksViewModel
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis
@@ -25,8 +22,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchFragment : Fragment() {
-    private var _binding: FragmentSearchBinding? = null
-    private val binding get() = _binding!!
+    /*private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!*/
 
     private val viewModel: TasksViewModel by activityViewModels()
 
@@ -52,7 +49,7 @@ class SearchFragment : Fragment() {
         return binding.root*/
 
         return ComposeView(requireContext()).apply {
-            id = R.id.action_search
+            id = R.id.search_tasks_fragment
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -68,8 +65,8 @@ class SearchFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.searchToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+/*        super.onViewCreated(view, savedInstanceState)
+        binding.searchToolbar.setNavigationOnClickListener { findNavController().navigateUp() }*/
 
         /*       val searchView = binding.searchView
                searchView.apply {
@@ -89,19 +86,23 @@ class SearchFragment : Fragment() {
     @Composable
     fun SearchTasks() {
         Scaffold {
-            SearchScreen(modifier = Modifier.consumeWindowInsets(it))
+            SearchScreen(modifier = Modifier
+                .padding(it)
+                .consumeWindowInsets(it))
         }
     }
 
     @Composable
     fun SearchScreen(modifier: Modifier = Modifier) {
-
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .then(modifier))
     }
 
-    override fun onStart() {
+/*    override fun onStart() {
         super.onStart()
-/*        val appBarLayout = activity?.findViewById<AppBarLayout>(R.id.app_bar_layout)
-        appBarLayout?.visibility = View.GONE*/
+*//*        val appBarLayout = activity?.findViewById<AppBarLayout>(R.id.app_bar_layout)
+        appBarLayout?.visibility = View.GONE*//*
     }
 
     fun clearToolbarMenu() {
@@ -111,6 +112,6 @@ class SearchFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
+    }*/
 
 }
