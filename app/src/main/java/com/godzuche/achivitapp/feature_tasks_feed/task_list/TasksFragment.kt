@@ -163,15 +163,16 @@ class TasksFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetAction.emit("Add Task")
+                launch { viewModel.bottomSheetAction.emit("Add Task") }
+                launch { viewModel.bottomSheetTaskId.emit(-1) }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        /*viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bottomSheetTaskId.emit(-1)
             }
-        }
+        }*/
 
         val displayMetrics: DisplayMetrics = resources.displayMetrics
         val height = (displayMetrics.heightPixels / displayMetrics.density).toInt().dp
@@ -244,7 +245,6 @@ class TasksFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.tasksPagingDataFlow.collect {
-                    Timber.tag("Chip").d("collected paging data: $it")
                     adapter.submitData(it)
                 }
             }
@@ -301,9 +301,9 @@ class TasksFragment : Fragment() {
                             if (index == (categoryList.size - 1)) {
                                 launch {
                                     viewModel.uiState
-                                        .distinctUntilChangedBy { it.checkCategoryFilterChipId }
+                                        .distinctUntilChangedBy { it.checkedCategoryFilterChipId }
                                         .collectLatest { state ->
-                                            val checkedId = state.checkCategoryFilterChipId
+                                            val checkedId = state.checkedCategoryFilterChipId
                                             Log.d(
                                                 "Chip",
                                                 "Collected chip id: $checkedId"
@@ -331,8 +331,9 @@ class TasksFragment : Fragment() {
 
             val checkedId = checkedIds.first()
             val checkedTitle = (group[checkedId] as Chip).text.toString()
-            Timber.tag("Chip").d("Checked change id: $checkedId text: $checkedTitle")
+            Timber.tag("TasksChip").d("Checked change id: $checkedId text: $checkedTitle")
             viewModel.setCheckedCategoryChip(checkedId, checkedTitle)
+            viewModel.setCheckedCollectionChip(NOT_SET, "")
         }
     }
 

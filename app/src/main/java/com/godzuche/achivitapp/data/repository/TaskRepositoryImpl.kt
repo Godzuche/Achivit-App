@@ -30,17 +30,36 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
         return taskDao.getTaskOnce(id).toTask()
     }
 
-    override fun getAllTask(categoryTitle: String, status: TaskStatus): Flow<PagingData<Task>> {
+    override fun getAllTask(
+        categoryTitle: String,
+        collectionTitle: String,
+        status: TaskStatus
+    ): Flow<PagingData<Task>> {
         val pagingSourceFactory = {
 //            taskDao.getPagedTasks()
             if (categoryTitle == "My Tasks") {
                 if (status == TaskStatus.NONE) {
                     taskDao.getPagedTasks()
                 } else {
-                    taskDao.getFilteredPagedTasks(categoryTitle, status)
+                    taskDao.getFilteredPagedTasks(status)
                 }
             } else {
-                taskDao.getFilteredPagedTasks(categoryTitle, status)
+                when (status) {
+                    TaskStatus.NONE -> {
+                        if (collectionTitle.isEmpty()) {
+                            taskDao.getFilteredPagedTasks(categoryTitle)
+                        } else {
+                            taskDao.getFilteredPagedTasks(categoryTitle, collectionTitle)
+                        }
+                    }
+                    else -> {
+                        if (collectionTitle.isEmpty()) {
+                            taskDao.getFilteredPagedTasks(categoryTitle, status)
+                        } else {
+                            taskDao.getFilteredPagedTasks(categoryTitle, collectionTitle, status)
+                        }
+                    }
+                }
             }
         }
 

@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.6.0-alpha05"
+    def nav_version = "2.6.0-alpha04"
     def fragment_version = "1.6.0-alpha05"
     def room_version = "2.5.0"
     def paging_version = "3.1.1"

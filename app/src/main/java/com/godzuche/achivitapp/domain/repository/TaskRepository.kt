@@ -14,7 +14,11 @@ interface TaskRepository {
     fun getTaskOnce(id: Int): Task
 
     //    fun getAllTask(): Flow<Resource<List<Task>>>
-    fun getAllTask(categoryTitle: String, status: TaskStatus): Flow<PagingData<Task>>
+    fun getAllTask(
+        categoryTitle: String,
+        collectionTitle: String,
+        status: TaskStatus
+    ): Flow<PagingData<Task>>
 
     fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>>
 

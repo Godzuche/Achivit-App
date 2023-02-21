@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/action_home"
         android:name="com.godzuche.achivitapp.feature_home.presentation.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        android:label="Home" />
 
     <fragment
         android:id="@+id/action_tasks"
@@ -83,7 +82,7 @@
         app:launchSingleTop="true" />
     <dialog
         android:id="@+id/addTaskCategoryFragment"
-        android:name="com.godzuche.achivitapp.core.presentation.AddCategoryCollectionFragment">
+        android:name="com.godzuche.achivitapp.feature_home.presentation.core.presentation.AddCategoryCollectionFragment">
         <argument
             android:name="dialogTitle"
             app:argType="string" />

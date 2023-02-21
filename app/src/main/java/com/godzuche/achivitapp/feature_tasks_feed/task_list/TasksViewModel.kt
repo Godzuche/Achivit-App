@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.data.DueTaskAndroidAlarmScheduler
-import com.godzuche.achivitapp.data.local.entity.TaskCategoryEntity
 import com.godzuche.achivitapp.data.local.entity.TaskCollectionEntity
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.repository.CategoryRepository
@@ -15,7 +14,10 @@ import com.godzuche.achivitapp.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature_home.presentation.core.util.Resource
 import com.godzuche.achivitapp.feature_home.presentation.fromChipText
 import com.godzuche.achivitapp.feature_tasks_feed.ui_state.TasksUiState
-import com.godzuche.achivitapp.feature_tasks_feed.util.*
+import com.godzuche.achivitapp.feature_tasks_feed.util.Routes
+import com.godzuche.achivitapp.feature_tasks_feed.util.SnackBarActions
+import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
+import com.godzuche.achivitapp.feature_tasks_feed.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -50,6 +52,7 @@ class TasksViewModel @Inject constructor(
         taskRepository
             .getAllTask(
                 it.categoryFilter,
+                it.collectionFilter,
                 it.statusFilter
             )
     }.cachedIn(viewModelScope)
@@ -84,8 +87,8 @@ class TasksViewModel @Inject constructor(
             emptyList()
         )
 
-    private val _filter = MutableStateFlow(TaskFilter())
-    val filter: StateFlow<TaskFilter> = _filter.asStateFlow()
+/*    private val _filter = MutableStateFlow(TaskFilter())
+    val filter: StateFlow<TaskFilter> = _filter.asStateFlow()*/
 
     val accept: (TasksUiEvent) -> Unit
 
@@ -194,19 +197,19 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    fun filter(
-        category: TaskCategoryEntity,
-        collection: TaskCollectionEntity,
-        filterStatus: TaskStatus,
-    ) {
-        _filter.update {
-            it.copy(
-                category = category,
-                collection = collection,
-                status = filterStatus
-            )
-        }
-    }
+    /*   fun filter(
+           category: TaskCategoryEntity,
+           collection: TaskCollectionEntity,
+           filterStatus: TaskStatus,
+       ) {
+           _filter.update {
+               it.copy(
+                   category = category,
+                   collection = collection,
+                   status = filterStatus
+               )
+           }
+       }*/
 
     fun setIsCompleted(task: Task, isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -365,8 +368,19 @@ class TasksViewModel @Inject constructor(
 //            val filteredTaskItems = taskRepository.getFilteredTasks()
         _uiState.update {
             it.copy(
-                checkCategoryFilterChipId = checkedId,
+                checkedCategoryFilterChipId = checkedId,
                 categoryFilter = categoryTitle
+            )
+        }
+    }
+
+    fun setCheckedCollectionChip(checkedId: Int, collectionTitle: String) {
+        // Todo: Update the taskItems in the UI state object
+//            val filteredTaskItems = taskRepository.getFilteredTasks()
+        _uiState.update {
+            it.copy(
+                checkedCollectionFilterChipId = checkedId,
+                collectionFilter = collectionTitle
             )
         }
     }

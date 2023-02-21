@@ -86,17 +86,21 @@ class SearchFragment : Fragment() {
     @Composable
     fun SearchTasks() {
         Scaffold {
-            SearchScreen(modifier = Modifier
-                .padding(it)
-                .consumeWindowInsets(it))
+            SearchScreen(
+                modifier = Modifier
+                    .padding(it)
+                    .consumeWindowInsets(it)
+            )
         }
     }
 
     @Composable
     fun SearchScreen(modifier: Modifier = Modifier) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .then(modifier))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(modifier)
+        )
     }
 
 /*    override fun onStart() {

@@ -38,9 +38,9 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val _task = MutableStateFlow<Task?>(null)
     val task = _task.asStateFlow()
 
-    val uiStateFlow: StateFlow<ModalBottomSheetUiState>
-
     val categoryCollections: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+
+    val uiStateFlow: StateFlow<ModalBottomSheetUiState>
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
 //    val uiEvent = _uiEvent.asSharedFlow()
@@ -52,7 +52,7 @@ class ModalBottomSheetViewModel @Inject constructor(
             }
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(),
+            SharingStarted.WhileSubscribed(5000),
             emptyList()
         )
 

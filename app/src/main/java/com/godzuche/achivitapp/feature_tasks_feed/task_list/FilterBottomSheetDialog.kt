@@ -66,9 +66,9 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                             if (index == (categoryList.size - 1)) {
                                 launch {
                                     viewModel.uiState
-                                        .distinctUntilChangedBy { it.checkCategoryFilterChipId }
+                                        .distinctUntilChangedBy { it.checkedCategoryFilterChipId }
                                         .collectLatest {
-                                            val checkedId = it.checkCategoryFilterChipId
+                                            val checkedId = it.checkedCategoryFilterChipId
                                             Timber.tag("Chip").d("Collected chip id: $checkedId")
                                             chipGroup.clearCheck()
                                             chipGroup.check(checkedId)
@@ -91,19 +91,18 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                             chip.text = title
                             chip.id = index
                             chipGroup.addView(chip)
-                            /*if (index == (collectionList.size - 1)) {
+                            if (index == (collectionList.size - 1)) {
                                 launch {
                                     viewModel.uiState
-                                        .distinctUntilChangedBy { it.checkCategoryFilterChipId }
+                                        .distinctUntilChangedBy { it.checkedCollectionFilterChipId }
                                         .collectLatest {
-                                            // Todo: create filterBottomSheet state object
-                                            val checkedId = it.checkCategoryFilterChipId
+                                            val checkedId = it.checkedCollectionFilterChipId
                                             Timber.tag("Chip").d("Collected chip id: $checkedId")
                                             chipGroup.clearCheck()
                                             chipGroup.check(checkedId)
                                         }
                                 }
-                            }*/
+                            }
                         }
                     }
                 }
@@ -149,6 +148,14 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                     val checkedTitle = (group[checkedId] as Chip).text.toString()
                     Timber.tag("Chip").d("Checked change id: $checkedId text: $checkedTitle")
                     viewModel.setCheckedStatusChip(checkedId, checkedTitle)
+                }
+                chipGroupCollections.setOnCheckedStateChangeListener { group, checkedIds ->
+                    if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+
+                    val checkedId = checkedIds.first()
+                    val checkedTitle = (group[checkedId] as Chip).text.toString()
+//                    Timber.tag("Chip").d("Checked change id: $checkedId text: $checkedTitle")
+                    viewModel.setCheckedCollectionChip(checkedId, checkedTitle)
                 }
             }
         }

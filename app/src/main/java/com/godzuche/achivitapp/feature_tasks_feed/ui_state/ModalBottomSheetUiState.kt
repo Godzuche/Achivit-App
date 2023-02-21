@@ -8,10 +8,12 @@ data class ModalBottomSheetUiState(
     val taskId: Int = -1,
     //
 
-    /*val categorySelection: String,
-    val collectionSelection: String,
-    val taskTitle: String,
-    val descriptionText: String,*/
+    val categorySelection: String = "",
+    val collectionSelection: String = "",
+    val categories: List<String> = emptyList(),
+    val categoryCollections: List<String> = emptyList(),
+    val taskTitle: String = "",
+    val descriptionText: String = "",
     val dateTimeSelection: Long = 0L,
 )
 

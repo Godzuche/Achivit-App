@@ -7,15 +7,12 @@ import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
 
 data class TasksUiState(
     val tasksItems: List<Task> = emptyList(),
-    val checkCategoryFilterChipId: Int = 0,
+    val checkedCategoryFilterChipId: Int = 0,
     val categoryFilter: String = "",
     val statusFilterId: Int = 0,
     val statusFilter: TaskStatus = TaskStatus.NONE,
-//    val filters: List<TasksFilter> = emptyList(),
-    /* val loading: Boolean = false,
-     val userMessage: List<Message> = emptyList(),*/
-//    val lastScrolledPosition: Int = 0,
-//    val hasNotScrolledForCurrentSearch: Boolean = false,
+    val checkedCollectionFilterChipId: Int = -1,
+    val collectionFilter: String = "",
     val categories: List<TaskCategory> = emptyList(),
     val categoryAndCollectionsWithTasksPairs: List<Pair<TaskCategory, List<CollectionWithTasks>>>? = null
 )

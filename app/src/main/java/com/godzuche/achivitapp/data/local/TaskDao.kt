@@ -39,12 +39,48 @@ interface TaskDao {
 
     @Query(
         "SELECT * FROM task_table WHERE " +
+                " status = :status ORDER BY due_date DESC, id DESC"
+    )
+    fun getFilteredPagedTasks(
+        status: TaskStatus
+    ): PagingSource<Int, TaskEntity>
+
+    @Query(
+        "SELECT * FROM task_table WHERE " +
+                " category_title = :category ORDER BY due_date DESC, id DESC"
+    )
+    fun getFilteredPagedTasks(
+        category: String
+    ): PagingSource<Int, TaskEntity>
+
+    @Query(
+        "SELECT * FROM task_table WHERE " +
                 " category_title = :category AND status = :status " +
                 "ORDER BY due_date DESC, id DESC"
     )
     fun getFilteredPagedTasks(
         category: String,
-        /*collection: String,*/
+        status: TaskStatus
+    ): PagingSource<Int, TaskEntity>
+
+    @Query(
+        "SELECT * FROM task_table WHERE " +
+                " category_title = :category AND collection_title = :collection " +
+                "ORDER BY due_date DESC, id DESC"
+    )
+    fun getFilteredPagedTasks(
+        category: String,
+        collection: String
+    ): PagingSource<Int, TaskEntity>
+
+    @Query(
+        "SELECT * FROM task_table WHERE " +
+                " category_title = :category AND collection_title = :collection AND status = :status " +
+                "ORDER BY due_date DESC, id DESC"
+    )
+    fun getFilteredPagedTasks(
+        category: String,
+        collection: String,
         status: TaskStatus
     ): PagingSource<Int, TaskEntity>
 

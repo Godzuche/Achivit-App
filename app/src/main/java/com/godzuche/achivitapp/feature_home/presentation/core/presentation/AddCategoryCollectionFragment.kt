@@ -18,7 +18,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.core.presentation.AddCategoryCollectionFragmentArgs
 import com.godzuche.achivitapp.databinding.FragmentAddTaskCategoryBinding
 import com.godzuche.achivitapp.feature_tasks_feed.task_list.TasksViewModel
 import com.godzuche.achivitapp.feature_tasks_feed.util.DialogTitle
