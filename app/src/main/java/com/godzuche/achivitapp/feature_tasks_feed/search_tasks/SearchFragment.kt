@@ -4,16 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.feature_tasks_feed.task_list.TasksViewModel
 import com.google.android.material.R.integer
@@ -22,8 +34,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchFragment : Fragment() {
-    /*private var _binding: FragmentSearchBinding? = null
-    private val binding get() = _binding!!*/
 
     private val viewModel: TasksViewModel by activityViewModels()
 
@@ -58,7 +68,7 @@ class SearchFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-                    SearchTasks()
+                    SearchTasks(viewModel)
                 }
             }
         }
@@ -84,38 +94,97 @@ class SearchFragment : Fragment() {
 
     @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
     @Composable
-    fun SearchTasks() {
-        Scaffold {
+    fun SearchTasks(viewModel: TasksViewModel) {
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        ) {
             SearchScreen(
                 modifier = Modifier
                     .padding(it)
-                    .consumeWindowInsets(it)
+                    .consumeWindowInsets(it),
+                viewModel
             )
         }
     }
 
     @Composable
-    fun SearchScreen(modifier: Modifier = Modifier) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(modifier)
-        )
+    fun rememberLifecycleEvent(lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current): Lifecycle.Event {
+        var state by remember {
+            mutableStateOf(Lifecycle.Event.ON_ANY)
+        }
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                state = event
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+        return state
     }
 
-/*    override fun onStart() {
-        super.onStart()
-*//*        val appBarLayout = activity?.findViewById<AppBarLayout>(R.id.app_bar_layout)
-        appBarLayout?.visibility = View.GONE*//*
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+    @Composable
+    fun SearchScreen(
+        modifier: Modifier = Modifier,
+        viewModel: TasksViewModel,
+    ) {
+        val latestLifecycleEvent = rememberLifecycleEvent()
+
+        var query by remember {
+            mutableStateOf("")
+        }
+        var active by remember {
+            mutableStateOf(false)
+        }
+
+        /*if (latestLifecycleEvent == Lifecycle.Event.ON_RESUME) {
+            active = true
+        }*/
+
+        val tasks = viewModel.tasksPagingDataFlow.collectAsLazyPagingItems()
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            SearchBar(
+                query = query,
+                onQueryChange = {
+                    query = it
+                    active = it.isNotEmpty()
+                },
+                onSearch = {
+                    active = it.isNotEmpty()
+                    keyboardController?.hide()
+                },
+                active = active,
+                onActiveChange = {
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
+                },
+                trailingIcon = {
+                    Icon(imageVector = Icons.Filled.Clear,
+                        contentDescription = "Clear",
+                        modifier = Modifier.clickable {
+                            query = ""
+                            active = query.isNotEmpty()
+
+                        }
+                    )
+                },
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                placeholder = {Text("Search tasks")},
+                modifier = Modifier.fillMaxWidth().navigationBarsPadding()
+            ) {
+                LazyColumn {
+                    items(items = tasks) {
+                        Text(it?.title ?: "", color = Color.Black)
+                    }
+                }
+            }
+        }
     }
-
-    fun clearToolbarMenu() {
-        binding.searchToolbar.menu.clear()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }*/
-
 }

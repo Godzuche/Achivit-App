@@ -2,7 +2,6 @@ package com.godzuche.achivitapp.feature_tasks_feed.task_list
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -168,12 +167,6 @@ class TasksFragment : Fragment() {
             }
         }
 
-        /*viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomSheetTaskId.emit(-1)
-            }
-        }*/
-
         val displayMetrics: DisplayMetrics = resources.displayMetrics
         val height = (displayMetrics.heightPixels / displayMetrics.density).toInt().dp
         val width = (displayMetrics.widthPixels / displayMetrics.density).toInt().dp
@@ -304,10 +297,6 @@ class TasksFragment : Fragment() {
                                         .distinctUntilChangedBy { it.checkedCategoryFilterChipId }
                                         .collectLatest { state ->
                                             val checkedId = state.checkedCategoryFilterChipId
-                                            Log.d(
-                                                "Chip",
-                                                "Collected chip id: $checkedId"
-                                            )
                                             binding.chipGroup.clearCheck()
                                             binding.chipGroup.check(checkedId)
                                         }

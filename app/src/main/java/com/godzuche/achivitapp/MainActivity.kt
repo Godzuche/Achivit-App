@@ -130,10 +130,6 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
-                R.id.action_search -> {
-                    binding.bottomNavView.visibility = View.VISIBLE
-                    binding.fabAdd.hide()
-                }
                 else -> {
                     binding.fabAdd.hide()
                     binding.bottomNavView.visibility = View.GONE
