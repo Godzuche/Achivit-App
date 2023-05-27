@@ -5,8 +5,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_notification.makeDueTaskNotification
-import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
+import com.godzuche.achivitapp.feature.feed.util.TaskStatus
+import com.godzuche.achivitapp.feature.notification.makeDueTaskNotification
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +37,6 @@ class DueTaskWorker @AssistedInject constructor(
             )
             withContext(Dispatchers.IO) {
                 repo.updateTask(task.await().copy(status = TaskStatus.IN_PROGRESS))
-                Timber.tag("wwww").d("Task created worker: ${task.await().created}")
             }
         }
         workDeferred.await()

@@ -13,7 +13,7 @@
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_baseline_filter_list_24"
         android:orderInCategory="2"
-        android:title="Fiter"
+        android:title="@string/filter"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_settings"

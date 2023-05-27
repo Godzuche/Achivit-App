@@ -1,10 +1,20 @@
 package com.godzuche.achivitapp
 
+import android.Manifest
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -15,7 +25,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
-import com.godzuche.achivitapp.feature_settings.setDarkMode
+import com.godzuche.achivitapp.feature.settings.setDarkMode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,11 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
-/*    private val currentNavigationFragment: Fragment?
-        get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-            ?.childFragmentManager
-            ?.fragments
-            ?.first()*/
+    /*    private val currentNavigationFragment: Fragment?
+            get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                ?.childFragmentManager
+                ?.fragments
+                ?.first()*/
 
     private val listener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { pref, prefKey ->
@@ -39,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                     val darkMode = pref?.getString(prefKey, defaultValue)
                     setDarkMode(darkMode)
                 }
+
                 "key_notification_badge" -> {
                     val badgeDrawable =
                         binding.bottomNavView.getBadge(R.id.action_notifications)
@@ -53,6 +64,54 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Granted
+        } else {
+            // Denied
+            // Check if the permission has been denied twice by the user
+            val isNotificationPermissionPermanentlyDeclined =
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ).not()
+            val title = if (isNotificationPermissionPermanentlyDeclined) {
+                "Granted Permission"
+            } else {
+                "OK"
+            }
+            val message = if (isNotificationPermissionPermanentlyDeclined) {
+                "It seems you permanently declined fine location permission." +
+                        "You can go to the app settings to grant it."
+            } else {
+                "This app needs access to send notification for proper functioning"
+            }
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.apply {
+                this.setTitle(title)
+                setMessage(message)
+                setPositiveButton(
+                    "OK"
+                ) { dialog, _ ->
+                    if (isNotificationPermissionPermanentlyDeclined) {
+                        goToAppSettings()
+                    } else {
+                        requestNotificationPermission()
+                    }
+                    dialog.dismiss()
+                }
+                setNegativeButton(
+                    "Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+            }
+            alertDialogBuilder.show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -65,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(view)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main)) { view, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main)) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updateLayoutParams<MarginLayoutParams> {
                 leftMargin = insets.left
@@ -104,6 +163,7 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
+
                 R.id.action_tasks -> {
                     if (!binding.fabAdd.isShown) {
                         binding.fabAdd.apply {
@@ -112,24 +172,29 @@ class MainActivity : AppCompatActivity() {
                     }
                     binding.bottomNavView.visibility = View.VISIBLE
                 }
+
                 R.id.task_detail -> {
                     binding.bottomNavView.visibility = View.GONE
                     if (!binding.fabAdd.isShown) {
                         binding.fabAdd.show()
                     }
                 }
+
                 R.id.action_notifications -> {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
+
                 R.id.action_profile -> {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
+
                 R.id.action_settings -> {
                     binding.bottomNavView.visibility = View.VISIBLE
                     binding.fabAdd.hide()
                 }
+
                 else -> {
                     binding.fabAdd.hide()
                     binding.bottomNavView.visibility = View.GONE
@@ -137,6 +202,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission()
+        }
     }
 
     override fun onResume() {
@@ -154,6 +222,36 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun goToAppSettings() {
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        ).also(this@MainActivity::startActivity)
+    }
+
+    private fun requestNotificationPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is granted
+            }
+
+            /*ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) -> {
+                // Permission was denied and additional rationale should be displayed
+            }*/
+
+            else -> {
+                // Permission has not been asked yet or it has been denied
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
 }

@@ -7,12 +7,12 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
+import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.data.local.TaskDao
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature_home.presentation.core.util.Resource
-import com.godzuche.achivitapp.feature_tasks_feed.util.TaskFilter
-import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
+import com.godzuche.achivitapp.feature.feed.util.TaskFilter
+import com.godzuche.achivitapp.feature.feed.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -20,9 +20,10 @@ import timber.log.Timber
 
 class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
 
-    override fun getTask(id: Int): Flow<Resource<Task>> = flow {
+    override fun getTask(id: Int): Flow<AchivitResult<Task>> = flow {
+        emit(AchivitResult.Loading)
         taskDao.getTask(id).collect {
-            emit(Resource.Success(data = it.toTask()))
+            emit(AchivitResult.Success(data = it.toTask()))
         }
     }
 
@@ -52,6 +53,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
                             taskDao.getFilteredPagedTasks(categoryTitle, collectionTitle)
                         }
                     }
+
                     else -> {
                         if (collectionTitle.isEmpty()) {
                             taskDao.getFilteredPagedTasks(categoryTitle, status)
@@ -78,10 +80,10 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
 
     }
 
-    override fun searchTasksByTitle(title: String): Flow<Resource<List<Task>>> = flow {
+    override fun searchTasksByTitle(title: String): Flow<AchivitResult<List<Task>>> = flow {
 //        val dbQuery = appendDbQuery(title)
         val searchedTasks = taskDao.searchTasksByTitle(title).map { it.toTask() }
-        emit(Resource.Success(data = searchedTasks))
+        emit(AchivitResult.Success(data = searchedTasks))
     }
 
     override suspend fun insertTask(task: Task) {
@@ -155,18 +157,23 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
                     "SELECT * FROM task_table WHERE status = ${filter.status}"
                 )
             }
+
             TaskStatus.TODO -> {
                 "SELECT * FROM task_table WHERE status = ${filter.status}"
             }
+
             TaskStatus.IN_PROGRESS -> {
                 //
             }
+
             TaskStatus.RUNNING_LATE -> {
                 //
             }
+
             TaskStatus.COMPLETED -> {
                 //
             }
+
             else -> {}
         }
 

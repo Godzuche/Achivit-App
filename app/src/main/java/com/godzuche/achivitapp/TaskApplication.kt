@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.preference.PreferenceManager
 import androidx.work.Configuration
-import com.godzuche.achivitapp.feature_notification.createDailyTaskNotificationChannel
-import com.godzuche.achivitapp.feature_notification.createDueTaskNotificationChannel
-import com.godzuche.achivitapp.feature_settings.setDarkMode
+import com.godzuche.achivitapp.feature.notification.createDailyTaskNotificationChannel
+import com.godzuche.achivitapp.feature.notification.createDueTaskNotificationChannel
+import com.godzuche.achivitapp.feature.settings.setDarkMode
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject

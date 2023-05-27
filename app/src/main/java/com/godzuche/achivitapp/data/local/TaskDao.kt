@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.data.local.entity.TaskEntity
-import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
+import com.godzuche.achivitapp.feature.feed.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao

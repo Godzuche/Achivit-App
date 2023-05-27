@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.feature_tasks_feed.util.TaskStatus
+import com.godzuche.achivitapp.feature.feed.util.TaskStatus
 
 @Entity(tableName = "task_table")
 data class TaskEntity(

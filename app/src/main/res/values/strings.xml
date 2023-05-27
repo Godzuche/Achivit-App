@@ -45,5 +45,8 @@
     <string name="greeting">Hi, %1$s! 👋</string>
     <string name="add_new_category">Add new category</string>
     <string name="key_dark_mode">key_dark_mode</string>
+    <string name="filter">Filter</string>
+    <string name="back">Back</string>
+    <string name="clear_search_text_content_desc">Clear search text</string>
 
 </resources>
