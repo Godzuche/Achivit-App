@@ -6,6 +6,7 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
@@ -59,10 +60,10 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.7.0-beta01"
+    def nav_version = "2.7.0-beta02"
     def fragment_version = "1.7.0-alpha01"
-    def room_version = "2.5.1"
-    def paging_version = "3.2.0-beta01"
+    def room_version = "2.5.2"
+    def paging_version = "3.2.0-rc01"
 
     // Desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
@@ -85,7 +86,7 @@ dependencies {
     // Compose Interop Dependencies
     implementation 'com.google.accompanist:accompanist-themeadapter-material3:0.31.2-alpha'
     implementation 'androidx.activity:activity-compose:1.7.2'
-    implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha03'
     implementation 'androidx.compose.material:material-icons-extended:1.4.3'
     implementation 'androidx.compose.animation:animation:1.4.3'
     implementation 'androidx.compose.ui:ui-tooling:1.4.3'
@@ -147,6 +148,11 @@ dependencies {
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:2.8.1"
     implementation "androidx.work:work-testing:2.8.1"
+
+    // Datastore
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     // Timber Log
     implementation 'com.jakewharton.timber:timber:5.0.1'
