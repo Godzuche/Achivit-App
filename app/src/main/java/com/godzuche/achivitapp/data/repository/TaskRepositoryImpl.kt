@@ -1,6 +1,7 @@
 package com.godzuche.achivitapp.data.repository
 
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -8,27 +9,31 @@ import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.data.local.TaskDao
+import com.godzuche.achivitapp.data.local.database.dao.TaskDao
+import com.godzuche.achivitapp.data.local.database.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature.feed.util.TaskFilter
-import com.godzuche.achivitapp.feature.feed.util.TaskStatus
+import com.godzuche.achivitapp.presentation.tasks.util.TaskFilter
+import com.godzuche.achivitapp.presentation.tasks.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import javax.inject.Inject
 
-class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
+class TaskRepositoryImpl @Inject constructor(
+    private val taskDao: TaskDao
+) : TaskRepository {
 
     override fun getTask(id: Int): Flow<AchivitResult<Task>> = flow {
         emit(AchivitResult.Loading)
         taskDao.getTask(id).collect {
-            emit(AchivitResult.Success(data = it.toTask()))
+            emit(AchivitResult.Success(data = it.asExternalModel()))
         }
     }
 
-    override fun getTaskOnce(id: Int): Task {
-        return taskDao.getTaskOnce(id).toTask()
+    override fun retrieveTask(id: Int): Task {
+        return taskDao.getOneOffTask(id).asExternalModel()
     }
 
     override fun getAllTask(
@@ -37,7 +42,6 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
         status: TaskStatus
     ): Flow<PagingData<Task>> {
         val pagingSourceFactory = {
-//            taskDao.getPagedTasks()
             if (categoryTitle == "My Tasks") {
                 if (status == TaskStatus.NONE) {
                     taskDao.getPagedTasks()
@@ -75,14 +79,14 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
         ).flow
             .map { pagingData ->
                 pagingData
-                    .map { it.toTask() }
+                    .map { it.asExternalModel() }
             }
 
     }
 
     override fun searchTasksByTitle(title: String): Flow<AchivitResult<List<Task>>> = flow {
 //        val dbQuery = appendDbQuery(title)
-        val searchedTasks = taskDao.searchTasksByTitle(title).map { it.toTask() }
+        val searchedTasks = taskDao.searchTasksByTitle(title).map { it.asExternalModel() }
         emit(AchivitResult.Success(data = searchedTasks))
     }
 
@@ -90,7 +94,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
         taskDao.insert(task.toNewTaskEntity())
     }
 
-    override suspend fun insertAndGetTask(task: Task): Int =
+    override suspend fun insertAndGetTaskId(task: Task): Int =
         taskDao.insertAndGetId(task.toNewTaskEntity()).toInt()
 
     override suspend fun reInsertTask(task: Task) {
@@ -123,7 +127,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
                     set(Calendar.MINUTE, 0)
                 }
                 taskDueDate == today
-            }.map { it.toTask() }
+            }.map { it.asExternalModel() }
         }
     }
 
@@ -133,7 +137,7 @@ class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
                getFilteredQuery(filter = filter)
            )*/
             .map { taskEntities ->
-                taskEntities.map { it.toTask() }
+                taskEntities.map { it.asExternalModel() }
             }
     }
 

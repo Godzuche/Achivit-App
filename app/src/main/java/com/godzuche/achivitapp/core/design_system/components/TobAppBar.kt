@@ -112,7 +112,7 @@ fun SearchToolbar(
         mutableStateOf(false)
     }
     Column(modifier = modifier) {
-        Row(
+        /*Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -124,7 +124,7 @@ fun SearchToolbar(
                     )
                 )
             }
-        }
+        }*/
         SearchBar(
             query = searchQuery,
             onQueryChange = onSearchQueryChanged,

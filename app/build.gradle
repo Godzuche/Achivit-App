@@ -10,13 +10,13 @@ plugins {
 
 android {
     namespace 'com.godzuche.achivitapp'
-    compileSdk 33
+    compileSdk 34
 
     signingConfigs {
         release {
-            storeFile file('/home/godzuche/keystores/achivit-upload-keystore.jks')
+            storeFile file('C:\\Users\\UBUNTU\\Documents\\appKeystores\\achivit.jks')
             storePassword 'Goddy463'
-            keyAlias 'achivit-upload'
+            keyAlias 'achivit_key'
             keyPassword 'Goddy463'
         }
     }
@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId "com.godzuche.achivitapp"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -45,6 +45,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -58,10 +59,16 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.6.0-rc01"
-    def fragment_version = "1.6.0-rc01"
+    def nav_version = "2.7.0-beta01"
+    def fragment_version = "1.7.0-alpha01"
     def room_version = "2.5.1"
-    def paging_version = "3.1.1"
+    def paging_version = "3.2.0-beta01"
+
+    // Desugaring
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+
+    // Kotlinx Datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.recyclerview:recyclerview:1.3.0'
@@ -77,16 +84,17 @@ dependencies {
 
     // Compose Interop Dependencies
     implementation 'com.google.accompanist:accompanist-themeadapter-material3:0.31.2-alpha'
-    implementation 'androidx.activity:activity-compose:1.7.1'
-    implementation 'androidx.compose.material3:material3:1.2.0-alpha01'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
     implementation 'androidx.compose.material:material-icons-extended:1.4.3'
     implementation 'androidx.compose.animation:animation:1.4.3'
     implementation 'androidx.compose.ui:ui-tooling:1.4.3'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.4.3'
     //Coil
-    implementation "io.coil-kt:coil-compose:2.2.2"
+    implementation "io.coil-kt:coil-compose:2.4.0"
     // MDC
     implementation 'com.google.android.material:compose-theme-adapter-3:1.1.1'
 
@@ -112,8 +120,8 @@ dependencies {
     debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 
     //Dagger - Hilt
-    implementation "com.google.dagger:hilt-android:2.45"
-    kapt "com.google.dagger:hilt-android-compiler:2.45"
+    implementation "com.google.dagger:hilt-android:2.46.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.46.1"
     // Hilt for WorkManager
     implementation "androidx.hilt:hilt-work:1.0.0"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
@@ -129,7 +137,7 @@ dependencies {
     // Paging 3
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "androidx.room:room-paging:2.5.1"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha19"
+    implementation "androidx.paging:paging-compose:$paging_version"
 
     // Room Database
     implementation "androidx.room:room-runtime:$room_version"

@@ -48,5 +48,12 @@
     <string name="filter">Filter</string>
     <string name="back">Back</string>
     <string name="clear_search_text_content_desc">Clear search text</string>
+    <string name="clear_recent_searches_content_desc">Clear recent searches</string>
+    <string name="search_not_ready">Sorry, we are still processing the search index. Please come back later</string>
+    <string name="search_result_not_found">Sorry, there is no content found for your search \"%1$s\"</string>
+    <string name="try_another_search">Try another search or explore</string>
+    <string name="clear_recent_search_query">Clear recent search query</string>
+    <string name="clear_all">Clear all</string>
+    <string name="notification_loading">Loading notifications...</string>
 
 </resources>

@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,13 +21,20 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
-import com.godzuche.achivitapp.feature.settings.setDarkMode
+import com.godzuche.achivitapp.presentation.notification.NotificationUiState
+import com.godzuche.achivitapp.presentation.notification.NotificationsViewModel
+import com.godzuche.achivitapp.presentation.settings.setDarkMode
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -34,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var navController: NavController
+
+    private val notificationsViewModel by viewModels<NotificationsViewModel>()
 
     /*    private val currentNavigationFragment: Fragment?
             get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
@@ -53,12 +63,39 @@ class MainActivity : AppCompatActivity() {
                 "key_notification_badge" -> {
                     val badgeDrawable =
                         binding.bottomNavView.getBadge(R.id.action_notifications)
+                    badgeDrawable?.maxCharacterCount = 3
 //                 Resets any badge number so that a numberless badge will be displayed.
-                    val newValue = pref?.getBoolean(prefKey, true)
-                    if (newValue == false) {
+                    val isShowCountBadge = pref?.getBoolean(prefKey, true)
+                    /*if (isShowCountBadge == false) {
                         badgeDrawable?.clearNumber()
                     } else {
                         badgeDrawable?.number = 100
+                    }*/
+
+                    lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            notificationsViewModel.notificationUiState.collectLatest { notificationUiState ->
+                                when (notificationUiState) {
+                                    NotificationUiState.Loading -> Unit
+
+                                    is NotificationUiState.Success -> {
+                                        val unreadNotificationsCount =
+                                            notificationUiState.notifications.count { it.isRead.not() }
+                                        val isUnreadNotificationsAvailable = (unreadNotificationsCount > 0)
+
+                                        if (isUnreadNotificationsAvailable) {
+                                            if (isShowCountBadge == true) {
+                                                // notification count
+                                                badgeDrawable?.number = unreadNotificationsCount
+                                            } else badgeDrawable?.clearNumber()
+                                            badgeDrawable?.isVisible = true
+                                        } else {
+                                            badgeDrawable?.isVisible = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -77,8 +114,9 @@ class MainActivity : AppCompatActivity() {
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ).not()
-            val title = if (isNotificationPermissionPermanentlyDeclined) {
-                "Granted Permission"
+            val title = "Permission Required"
+            val okButtonLabel = if (isNotificationPermissionPermanentlyDeclined) {
+                "Grant Permission"
             } else {
                 "OK"
             }
@@ -92,9 +130,7 @@ class MainActivity : AppCompatActivity() {
             alertDialogBuilder.apply {
                 this.setTitle(title)
                 setMessage(message)
-                setPositiveButton(
-                    "OK"
-                ) { dialog, _ ->
+                setPositiveButton(okButtonLabel) { dialog, _ ->
                     if (isNotificationPermissionPermanentlyDeclined) {
                         goToAppSettings()
                     } else {
@@ -105,6 +141,9 @@ class MainActivity : AppCompatActivity() {
                 setNegativeButton(
                     "Cancel"
                 ) { dialog, _ ->
+                    if (isNotificationPermissionPermanentlyDeclined.not()) {
+                        requestNotificationPermission()
+                    }
                     dialog.dismiss()
                 }
             }
@@ -145,15 +184,37 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.setupWithNavController(navController)
         // Notification badge
         val badge = binding.bottomNavView.getOrCreateBadge(R.id.action_notifications)
-        // Icon only
-        badge.isVisible = true
         // digit count
         badge.maxCharacterCount = 3
+        badge.isVisible = false
 
         val isShowCountBadge = sharedPref.getBoolean("key_notification_badge", true)
-        // notification count
-        if (isShowCountBadge) badge.number = 100
-        else badge.clearNumber()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notificationsViewModel.notificationUiState.collectLatest { notificationUiState ->
+                    when (notificationUiState) {
+                        NotificationUiState.Loading -> Unit
+
+                        is NotificationUiState.Success -> {
+                            val unreadNotificationsCount =
+                                notificationUiState.notifications.count { it.isRead.not() }
+                            val isUnreadNotificationsAvailable = (unreadNotificationsCount > 0)
+
+                            if (isUnreadNotificationsAvailable) {
+                                if (isShowCountBadge) {
+                                    // notification count
+                                    badge.number = unreadNotificationsCount
+                                } else badge.clearNumber()
+                                badge.isVisible = true
+                            } else {
+                                badge.isVisible = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         binding.bottomNavView.setOnItemReselectedListener { }
 

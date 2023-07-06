@@ -21,7 +21,7 @@
             android:key="key_dark_mode"
             android:summary="Turn on/off dark mode."
             android:title="Dark mode"
-            app:defaultValue="light_mode"
+            app:defaultValue="system_default"
             app:entryValues="@array/entry_value_theme"
             app:useSimpleSummaryProvider="true" />
 
