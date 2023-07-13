@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.godzuche.achivitapp.presentation.tasks.task_list.AchivitDialog
+import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
 
 @Composable
 fun AchivitDialog(

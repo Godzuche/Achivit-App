@@ -55,5 +55,6 @@
     <string name="clear_recent_search_query">Clear recent search query</string>
     <string name="clear_all">Clear all</string>
     <string name="notification_loading">Loading notifications...</string>
+    <string name="go_back">Go back</string>
 
 </resources>

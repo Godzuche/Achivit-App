@@ -36,8 +36,8 @@
     </style>
 
     <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
-        <item name="fontFamily">@font/red_hat_display_regular</item>
-        <item name="android:fontFamily">@font/red_hat_display_regular</item>
+        <item name="fontFamily">@font/red_hat_display_medium</item>
+        <item name="android:fontFamily">@font/red_hat_display_medium</item>
     </style>
 
     <style name="TextAppearance.App.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
@@ -66,18 +66,18 @@
     </style>
 
     <style name="TextAppearance.App.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
-        <item name="fontFamily">@font/red_hat_display_medium</item>
-        <item name="android:fontFamily">@font/red_hat_display_medium</item>
+        <item name="fontFamily">@font/red_hat_display_regular</item>
+        <item name="android:fontFamily">@font/red_hat_display_regular</item>
     </style>
 
     <style name="TextAppearance.App.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
-        <item name="fontFamily">@font/red_hat_display_medium</item>
-        <item name="android:fontFamily">@font/red_hat_display_medium</item>
+        <item name="fontFamily">@font/red_hat_display_regular</item>
+        <item name="android:fontFamily">@font/red_hat_display_regular</item>
     </style>
 
     <style name="TextAppearance.App.BodySmall" parent="TextAppearance.Material3.BodySmall">
-        <item name="fontFamily">@font/red_hat_display_medium</item>
-        <item name="android:fontFamily">@font/red_hat_display_medium</item>
+        <item name="fontFamily">@font/red_hat_display_regular</item>
+        <item name="android:fontFamily">@font/red_hat_display_regular</item>
     </style>
 
     <style name="Widget.App.Chip.Input" parent="Widget.Material3.Chip.Assist">

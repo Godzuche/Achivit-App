@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/action_home"
-        android:name="com.godzuche.achivitapp.presentation.home.presentation.HomeFragment"
+        android:name="com.godzuche.achivitapp.feature.home.presentation.HomeFragment"
         android:label="Home" />
 
     <fragment
         android:id="@+id/action_tasks"
-        android:name="com.godzuche.achivitapp.presentation.tasks.task_list.TasksFragment"
+        android:name="com.godzuche.achivitapp.feature.tasks.task_list.TasksFragment"
         android:label="Tasks"
         tools:layout="@layout/fragment_tasks" />
     <action
@@ -21,25 +21,25 @@
 
     <fragment
         android:id="@+id/action_settings"
-        android:name="com.godzuche.achivitapp.presentation.settings.SettingsFragment"
+        android:name="com.godzuche.achivitapp.feature.settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@xml/settings" />
 
     <fragment
         android:id="@+id/action_profile"
-        android:name="com.godzuche.achivitapp.presentation.profile.ProfileFragment"
+        android:name="com.godzuche.achivitapp.feature.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/action_notifications"
-        android:name="com.godzuche.achivitapp.presentation.notification.NotificationsFragment"
+        android:name="com.godzuche.achivitapp.feature.notifications.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/task_detail"
-        android:name="com.godzuche.achivitapp.presentation.tasks.task_detail.TaskDetailFragment"
+        android:name="com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailFragment"
         tools:layout="@layout/fragment_task_detail">
         <argument
             android:name="id"
@@ -51,7 +51,7 @@
         app:destination="@id/task_detail" />
     <fragment
         android:id="@+id/action_search"
-        android:name="com.godzuche.achivitapp.presentation.tasks.search_tasks.SearchFragment"
+        android:name="com.godzuche.achivitapp.feature.tasks.search_tasks.SearchFragment"
         android:label=""
         tools:layout="@layout/fragment_search" />
     <action
@@ -59,7 +59,7 @@
         app:destination="@id/action_search" />
     <dialog
         android:id="@+id/modalBottomSheet"
-        android:name="com.godzuche.achivitapp.presentation.tasks.ModalBottomSheet"
+        android:name="com.godzuche.achivitapp.feature.tasks.ModalBottomSheet"
         android:label="ModalBottomSheet">
 
         <argument
@@ -74,7 +74,7 @@
         app:launchSingleTop="true" />
     <dialog
         android:id="@+id/filterBottomSheetDialog"
-        android:name="com.godzuche.achivitapp.presentation.tasks.task_list.FilterBottomSheetDialog"
+        android:name="com.godzuche.achivitapp.feature.tasks.task_list.FilterBottomSheetDialog"
         android:label="FilterBottomSheetDialog" />
     <action
         android:id="@+id/action_global_filterBottomSheetDialog"
@@ -82,7 +82,7 @@
         app:launchSingleTop="true" />
     <dialog
         android:id="@+id/addTaskCategoryFragment"
-        android:name="com.godzuche.achivitapp.presentation.AddCategoryCollectionDialogFragment">
+        android:name="com.godzuche.achivitapp.feature.AddCategoryCollectionDialogFragment">
         <argument
             android:name="dialogTitle"
             app:argType="string" />

@@ -11,6 +11,10 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.roundToInt
 
+/**
+ * This removes the content padding width constraint defined by the parent layout.
+ * It enables edge-to-edge scrolling horizontally
+ * */
 fun Modifier.removeWidthConstraint(contentPadding: Dp) =
     this.layout { measurable, constraints ->
         val placeable: Placeable = measurable.measure(
@@ -23,6 +27,9 @@ fun Modifier.removeWidthConstraint(contentPadding: Dp) =
         }
     }
 
+/**
+ *
+ * */
 fun String.capitalizeEachWord(): String = split("_").joinToString(" ") {
     it.lowercase().replaceFirstChar { char -> char.uppercase() }
 }
@@ -33,6 +40,9 @@ val Int.toDp
         toFloat(), Resources.getSystem().displayMetrics
     ).roundToInt()
 
+/**
+ * A utility function that converts time in Epoch milliseconds to formatted string using [pattern]
+ */
 fun Long.millisToString(pattern: String = "E, MMM d, h:mm a"): String {
     val calender = Calendar.getInstance()
     val timeMillis = this

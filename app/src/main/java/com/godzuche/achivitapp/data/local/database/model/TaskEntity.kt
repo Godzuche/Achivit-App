@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.presentation.tasks.util.TaskStatus
+import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 /**
  * Defines a database entity that stores task.

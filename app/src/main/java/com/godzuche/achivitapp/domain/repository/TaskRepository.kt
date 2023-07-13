@@ -3,8 +3,8 @@ package com.godzuche.achivitapp.domain.repository
 import androidx.paging.PagingData
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.presentation.tasks.util.TaskFilter
-import com.godzuche.achivitapp.presentation.tasks.util.TaskStatus
+import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
+import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {

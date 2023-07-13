@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.data.repository
 
 import android.icu.util.Calendar
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -13,8 +12,8 @@ import com.godzuche.achivitapp.data.local.database.dao.TaskDao
 import com.godzuche.achivitapp.data.local.database.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.presentation.tasks.util.TaskFilter
-import com.godzuche.achivitapp.presentation.tasks.util.TaskStatus
+import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
+import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map

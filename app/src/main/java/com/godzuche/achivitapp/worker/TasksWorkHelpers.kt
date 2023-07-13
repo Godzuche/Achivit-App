@@ -13,11 +13,17 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.presentation.tasks.task_detail.TaskDetailFragmentArgs
-import com.godzuche.achivitapp.receivers.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
-import com.godzuche.achivitapp.receivers.DUE_TASK_NOTIFICATION_CHANNEL_ID
-import com.godzuche.achivitapp.receivers.DUE_TASK_NOTIFICATION_CHANNEL_NAME
-import com.godzuche.achivitapp.worker.Constants.NOTIFICATION_TITLE
+import com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailFragmentArgs
+import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
+import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
+
+const val DAILY_NOTIFICATION_CHANNEL_NAME = "Daily Task Reminder"
+const val DAILY_NOTIFICATION_CHANNEL_DESCRIPTION =
+    "Shows notification reminder for tasks with high priority daily"
+const val DAILY_NOTIFICATION_CHANNEL_ID = "DAILY_TASK_NOTIFICATION"
+const val NOTIFICATION_TITLE = "Tasks Reminder"
+private const val TASK_NOTIFICATION_GROUP = "TASK_NOTIFICATIONS"
 
 fun Context.createDueTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,10 +45,10 @@ fun Context.createDueTaskNotificationChannel() {
 
 fun Context.createDailyTaskNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val id = Constants.DAILY_NOTIFICATION_CHANNEL_ID
-        val name = Constants.DAILY_NOTIFICATION_CHANNEL_NAME
+        val id = DAILY_NOTIFICATION_CHANNEL_ID
+        val name = DAILY_NOTIFICATION_CHANNEL_NAME
         val channelDescription =
-            Constants.DAILY_NOTIFICATION_CHANNEL_DESCRIPTION
+            DAILY_NOTIFICATION_CHANNEL_DESCRIPTION
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(id, name, importance).apply {
             description = channelDescription
@@ -60,6 +66,14 @@ fun Context.makeDueTaskNotification(
     taskTitle: String,
     taskDescription: String,
 ) {
+    if (ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        return
+    }
+
     val args = TaskDetailFragmentArgs(id = taskId).toBundle()
 
     val pendingIntent = NavDeepLinkBuilder(this)
@@ -68,7 +82,10 @@ fun Context.makeDueTaskNotification(
         .setArguments(args)
         .createPendingIntent()
 
-    val notificationBuilder = NotificationCompat.Builder(this, DUE_TASK_NOTIFICATION_CHANNEL_ID)
+    val notificationBuilder = NotificationCompat.Builder(
+        this,
+        DUE_TASK_NOTIFICATION_CHANNEL_ID
+    )
         .setSmallIcon(R.drawable.ic_baseline_check_box_24)
         .setContentTitle(NOTIFICATION_TITLE)
         .setContentText("\"${taskTitle}\" is due")
@@ -84,21 +101,7 @@ fun Context.makeDueTaskNotification(
                 .bigText(taskDescription)
                 .setBigContentTitle(taskTitle)
         )
-
-    if (ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.POST_NOTIFICATIONS
-        ) != PackageManager.PERMISSION_GRANTED
-    ) {
-        // TODO: Consider calling
-        //    ActivityCompat#requestPermissions
-        // here to request the missing permissions, and then overriding
-        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-        //                                          int[] grantResults)
-        // to handle the case where the user grants the permission. See the documentation
-        // for ActivityCompat#requestPermissions for more details.
-        return
-    }
+        .setGroup(TASK_NOTIFICATION_GROUP)
 
     NotificationManagerCompat.from(this)
         .notify(taskId + 1, notificationBuilder.build())
@@ -125,10 +128,10 @@ fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
 
     val notificationBuilder = NotificationCompat.Builder(
         context,
-        Constants.DAILY_NOTIFICATION_CHANNEL_ID
+        DAILY_NOTIFICATION_CHANNEL_ID
     )
         .setSmallIcon(R.drawable.ic_baseline_check_box_24)
-        .setContentTitle(Constants.NOTIFICATION_TITLE)
+        .setContentTitle(NOTIFICATION_TITLE)
         .setContentText("You have ${tasks.size} tasks of high priority for today")
         .setContentIntent(pendingIntent)
         .setStyle(notificationStyle)

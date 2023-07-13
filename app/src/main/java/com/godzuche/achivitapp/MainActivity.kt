@@ -14,6 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -29,11 +32,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
-import com.godzuche.achivitapp.presentation.notification.NotificationUiState
-import com.godzuche.achivitapp.presentation.notification.NotificationsViewModel
-import com.godzuche.achivitapp.presentation.settings.setDarkMode
+import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.feature.notifications.NotificationUiState
+import com.godzuche.achivitapp.feature.notifications.NotificationsViewModel
+import com.godzuche.achivitapp.feature.settings.DarkMode
+import com.godzuche.achivitapp.feature.settings.setDarkMode
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -44,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     private val notificationsViewModel by viewModels<NotificationsViewModel>()
+    private val mainActivityViewModel by viewModels<MainActivityViewModel>()
 
     /*    private val currentNavigationFragment: Fragment?
             get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
@@ -55,9 +63,9 @@ class MainActivity : AppCompatActivity() {
         SharedPreferences.OnSharedPreferenceChangeListener { pref, prefKey ->
             when (prefKey) {
                 "key_dark_mode" -> {
-                    val defaultValue = resources.getStringArray(R.array.entry_value_theme)[0]
+                    /*val defaultValue = resources.getStringArray(R.array.entry_value_theme)[0]
                     val darkMode = pref?.getString(prefKey, defaultValue)
-                    setDarkMode(darkMode)
+                    setDarkMode(darkMode)*/
                 }
 
                 "key_notification_badge" -> {
@@ -66,11 +74,6 @@ class MainActivity : AppCompatActivity() {
                     badgeDrawable?.maxCharacterCount = 3
 //                 Resets any badge number so that a numberless badge will be displayed.
                     val isShowCountBadge = pref?.getBoolean(prefKey, true)
-                    /*if (isShowCountBadge == false) {
-                        badgeDrawable?.clearNumber()
-                    } else {
-                        badgeDrawable?.number = 100
-                    }*/
 
                     lifecycleScope.launch {
                         repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -81,7 +84,8 @@ class MainActivity : AppCompatActivity() {
                                     is NotificationUiState.Success -> {
                                         val unreadNotificationsCount =
                                             notificationUiState.notifications.count { it.isRead.not() }
-                                        val isUnreadNotificationsAvailable = (unreadNotificationsCount > 0)
+                                        val isUnreadNotificationsAvailable =
+                                            (unreadNotificationsCount > 0)
 
                                         if (isUnreadNotificationsAvailable) {
                                             if (isShowCountBadge == true) {
@@ -154,6 +158,46 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        var uiState by mutableStateOf<MainActivityUiState>(MainActivityUiState.Loading)
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainActivityViewModel.uiState
+                    .onEach {
+                        uiState = it
+                    }.collect()
+            }
+
+        }
+
+        splashScreen.setKeepOnScreenCondition {
+            when (uiState) {
+                MainActivityUiState.Loading -> true
+                is MainActivityUiState.Success -> false
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainActivityViewModel.uiState.collect {
+                    when (it) {
+                        MainActivityUiState.Loading -> Unit
+                        is MainActivityUiState.Success -> {
+
+                            val darkMode = when (it.userData.darkThemeConfig) {
+                                DarkThemeConfig.FOLLOW_SYSTEM -> DarkMode.followSystemDefault
+                                DarkThemeConfig.DARK -> DarkMode.dark
+                                DarkThemeConfig.LIGHT -> DarkMode.light
+                            }
+
+                            setDarkMode(darkMode = darkMode)
+                        }
+                    }
+                }
+            }
+        }
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
 //        val windowInsetController = ViewCompat.getWindowInsetsController(window.decorView)
 //        windowInsetController?.isAppearanceLightNavigationBars = true
@@ -252,7 +296,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.action_settings -> {
-                    binding.bottomNavView.visibility = View.VISIBLE
+                    binding.bottomNavView.visibility = View.GONE
                     binding.fabAdd.hide()
                 }
 

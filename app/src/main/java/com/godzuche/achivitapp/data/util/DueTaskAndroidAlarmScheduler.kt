@@ -7,18 +7,18 @@ import android.content.Intent
 import android.os.Bundle
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.util.DueTaskAlarmScheduler
-import com.godzuche.achivitapp.receivers.Constants
-import com.godzuche.achivitapp.receivers.DueTaskAlarmReceiver
-import timber.log.Timber
+import com.godzuche.achivitapp.receiver.Constants
+import com.godzuche.achivitapp.receiver.DueTaskAlarmReceiver
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class DueTaskAndroidAlarmScheduler(
-    private val context: Context
+class DueTaskAndroidAlarmScheduler @Inject constructor(
+    @ApplicationContext private val context: Context
 ) : DueTaskAlarmScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(task: Task) {
-        Timber.tag("DueTask").d("schedule function called")
         val extras = Bundle().apply {
             task.id?.let {
                 putInt(Constants.KEY_TASK_ID, it)

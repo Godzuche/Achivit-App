@@ -4,4 +4,6 @@
     <item name="search_tasks_fragment" type="id" />
     <item name="profile_fragment" type="id" />
     <item name="notification_fragment" type="id" />
+    <item name="settings_fragment" type="id" />
+    <item name="task_detail_fragment" type="id" />
 </resources>

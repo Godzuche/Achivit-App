@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:transitionGroup="true"
-    tools:context=".presentation.tasks.search_tasks.SearchFragment">
+    tools:context=".feature.tasks.search_tasks.SearchFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
