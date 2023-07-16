@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Description
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Notifications
@@ -38,6 +39,7 @@ object AchivitIcons {
     val Account = Icons.Rounded.Person
     val Notifications = Icons.Rounded.Notifications
     val Google24 = R.drawable.icons8_google_24
+    val Edit = Icons.Rounded.Edit
 }
 
 sealed interface AchivitIcon {
