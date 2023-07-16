@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -14,7 +13,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
@@ -23,17 +21,22 @@ import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val tasksViewModel: TasksViewModel by activityViewModels()
+
+    @Inject
+    lateinit var oneTapClient: SignInClient
 
 //    private val homeViewModel: HomeViewModel by viewModels()
 
@@ -60,7 +63,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
             id = R.id.home_fragment
             layoutParams = ViewGroup.LayoutParams(
@@ -71,9 +74,6 @@ class HomeFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 Mdc3Theme {
-                    val homeViewModel: HomeViewModel = viewModel()
-                    val state by homeViewModel.uiState.collectAsState()
-
                     val dialogState by tasksViewModel.dialogState.collectAsStateWithLifecycle()
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->
@@ -106,7 +106,6 @@ class HomeFragment : Fragment() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         HomeRoute(
-                            state = state,
                             onNavigateToTaskDetail = { taskId ->
                                 exitTransition = MaterialElevationScale(false).apply {
                                     duration =

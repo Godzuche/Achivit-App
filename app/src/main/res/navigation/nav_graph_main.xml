@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_main.xml"
-    app:startDestination="@id/action_home">
+    app:startDestination="@id/auth">
+
+    <fragment
+        android:id="@+id/auth"
+        android:name="com.godzuche.achivitapp.feature.auth.AuthFragment"
+        android:label="Auth" />
 
     <fragment
         android:id="@+id/action_home"
@@ -97,6 +102,11 @@
         android:id="@+id/action_global_action_tasks"
         app:destination="@id/action_tasks"
         app:popUpTo="@id/action_tasks"
+        app:popUpToInclusive="true" />
+    <action
+        android:id="@+id/action_global_action_home"
+        app:destination="@id/action_home"
+        app:popUpTo="@id/auth"
         app:popUpToInclusive="true" />
 
     <!--    <include

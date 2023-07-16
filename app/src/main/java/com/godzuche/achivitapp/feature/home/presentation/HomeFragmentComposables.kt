@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.core.design_system.theme.MGreen
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.core.ui.util.capitalizeEachWord
+import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 @Composable
 fun TaskStatusGrid(

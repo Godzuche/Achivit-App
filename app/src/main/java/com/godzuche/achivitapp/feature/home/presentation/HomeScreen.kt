@@ -23,16 +23,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.core.design_system.components.HomeTopAppBar
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
 import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.domain.model.UserData
+import com.godzuche.achivitapp.feature.auth.AuthViewModel
+import com.godzuche.achivitapp.feature.auth.UserAuthState
 
 enum class HomeTopBarActions {
     PROFILE,
@@ -41,13 +47,18 @@ enum class HomeTopBarActions {
 
 @Composable
 fun HomeRoute(
-    state: HomeUiState,
     onTopBarAction: (HomeTopBarActions) -> Unit,
     onNavigateToTaskDetail: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
+    val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val userAuthState by authViewModel.userAuthState.collectAsStateWithLifecycle()
+
     HomeScreen(
-        homeUiState = state,
+        userAuthState = userAuthState,
+        homeUiState = homeUiState,
         onTodayTaskClick = onNavigateToTaskDetail,
         modifier = modifier,
         onTopBarAction = onTopBarAction
@@ -57,6 +68,7 @@ fun HomeRoute(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
+    userAuthState: UserAuthState,
     homeUiState: HomeUiState,
     onTodayTaskClick: (Int) -> Unit,
     onTopBarAction: (HomeTopBarActions) -> Unit,
@@ -73,6 +85,7 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             HomeTopAppBar(
+                userAuthState = userAuthState,
                 todayTasks = homeUiState.todayTasks.size,
                 scrollBehavior = scrollBehavior,
                 onProfileIconClicked = {
@@ -181,6 +194,14 @@ fun HomeSectionPreview() {
 fun HomeScreenPreview() {
     Surface {
         HomeScreen(
+            userAuthState = UserAuthState.SignedIn(
+                data = UserData(
+                    userId = "",
+                    displayName = null,
+                    email = null,
+                    profilePictureUrl = null
+                )
+            ),
             homeUiState = HomeUiState(
                 todayTasks = listOf(
                     Task(

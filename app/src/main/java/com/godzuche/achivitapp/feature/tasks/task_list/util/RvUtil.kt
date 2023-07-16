@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG
 import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.ui.util.toDp
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
-import com.godzuche.achivitapp.core.ui.util.toDp
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi

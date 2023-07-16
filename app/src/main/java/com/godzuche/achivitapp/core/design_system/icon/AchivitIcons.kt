@@ -37,6 +37,7 @@ object AchivitIcons {
     val Settings = Icons.Rounded.Settings
     val Account = Icons.Rounded.Person
     val Notifications = Icons.Rounded.Notifications
+    val Google24 = R.drawable.icons8_google_24
 }
 
 sealed interface AchivitIcon {

@@ -1,5 +1,7 @@
 package com.godzuche.achivitapp.data.di
 
+import com.godzuche.achivitapp.data.repository.AuthRepository
+import com.godzuche.achivitapp.data.repository.DefaultAuthRepository
 import com.godzuche.achivitapp.data.repository.DefaultNotificationRepository
 import com.godzuche.achivitapp.data.repository.DefaultRecentSearchRepository
 import com.godzuche.achivitapp.data.repository.DefaultSearchContentsRepository
@@ -63,4 +65,9 @@ interface DataModule {
     fun bindsDueTaskAlarmScheduler(
         dueTaskAlarmScheduler: DueTaskAndroidAlarmScheduler
     ): DueTaskAlarmScheduler
+
+    @Binds
+    fun bindsAuthRepository(
+        authRepository: DefaultAuthRepository
+    ): AuthRepository
 }

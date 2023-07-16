@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "1069040736569-12vp3tbjrhuk1hfmepn7ng1nuhtr3np0.apps.googleusercontent.com",
+          "client_id": "1069040736569-6p1d1binoomm2kaofmkd6tjd6o5bn6re.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.godzuche.achivitapp",
+            "certificate_hash": "c812df46379f64309f42b183ab2f36d7b95387f0"
+          }
+        },
+        {
+          "client_id": "1069040736569-6juuj0g0o6vncsjmqlv169ndotl77bja.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

@@ -7,6 +7,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -64,6 +65,7 @@ dependencies {
     def fragment_version = "1.7.0-alpha01"
     def room_version = "2.5.2"
     def paging_version = "3.2.0-rc01"
+    def accompanist_version = '0.31.3-beta'
 
     // Desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
@@ -84,7 +86,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
 
     // Compose Interop Dependencies
-    implementation 'com.google.accompanist:accompanist-themeadapter-material3:0.31.2-alpha'
+    implementation "com.google.accompanist:accompanist-themeadapter-material3:$accompanist_version"
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation 'androidx.compose.material3:material3:1.2.0-alpha03'
     implementation 'androidx.compose.material:material-icons-extended:1.4.3'
@@ -94,6 +96,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.4.3'
+
+    // Navigation compose
+    implementation "androidx.navigation:navigation-compose:2.6.0"
+    // Accompanist navigation animation
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+
     //Coil
     implementation "io.coil-kt:coil-compose:2.4.0"
     // MDC
@@ -137,7 +145,7 @@ dependencies {
 
     // Paging 3
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-    implementation "androidx.room:room-paging:2.5.1"
+    implementation "androidx.room:room-paging:2.5.2"
     implementation "androidx.paging:paging-compose:$paging_version"
 
     // Room Database
@@ -161,12 +169,15 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
+
 }
 
 // Allow references to generated code
-/*
 kapt {
     correctErrorTypes = true
-}*/
+}

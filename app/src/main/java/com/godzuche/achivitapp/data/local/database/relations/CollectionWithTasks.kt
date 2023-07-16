@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.data.local.database.relations
 
 import androidx.room.Embedded
-import androidx.room.Entity
 import androidx.room.Relation
 import com.godzuche.achivitapp.data.local.database.model.TaskCollectionEntity
 import com.godzuche.achivitapp.data.local.database.model.TaskEntity

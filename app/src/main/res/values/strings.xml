@@ -54,7 +54,9 @@
     <string name="try_another_search">Try another search or explore</string>
     <string name="clear_recent_search_query">Clear recent search query</string>
     <string name="clear_all">Clear all</string>
-    <string name="notification_loading">Loading notifications...</string>
+    <string name="notification_loading">Loading notifications…</string>
     <string name="go_back">Go back</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

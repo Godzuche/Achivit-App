@@ -2,8 +2,8 @@ package com.godzuche.achivitapp.feature.home.presentation
 
 import android.graphics.drawable.Icon
 import androidx.compose.ui.graphics.Color
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.core.ui.util.capitalizeEachWord
+import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 data class TaskStatusOverview(
     val taskCount: Int,
