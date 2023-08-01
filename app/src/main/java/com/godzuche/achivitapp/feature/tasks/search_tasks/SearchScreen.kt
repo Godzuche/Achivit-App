@@ -18,7 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +28,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -50,17 +49,11 @@ import com.godzuche.achivitapp.core.design_system.components.SearchToolbar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@OptIn(
-    ExperimentalLayoutApi::class,
-    ExperimentalCoroutinesApi::class, ExperimentalComposeUiApi::class
-)
 @Composable
 fun SearchRoute(
-    tasksViewModel: TasksViewModel,
-    onBackClick: () -> Unit,
+//    tasksViewModel: TasksViewModel,
+//    onBackClick: () -> Unit,
     onExploreTasksClick: () -> Unit,
     onTaskClick: (Int) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel()
@@ -81,7 +74,7 @@ fun SearchRoute(
             searchViewModel.onSearchTriggered(query)
         },
         onDeleteRecentQuery = searchViewModel::onDeleteRecentQuery,
-        onBackClick = onBackClick,
+//        onBackClick = onBackClick,
         onExploreTasksClick = onExploreTasksClick,
         onTaskClick = onTaskClick,
         onClearRecentSearches = searchViewModel::clearRecentSearches
@@ -96,7 +89,7 @@ fun SearchScreen(
     recentSearchesUiState: RecentSearchQueriesUiState,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
-    onBackClick: () -> Unit,
+//    onBackClick: () -> Unit,
     onExploreTasksClick: () -> Unit,
     onClearRecentSearches: () -> Unit,
     onDeleteRecentQuery: (String) -> Unit,
@@ -115,7 +108,6 @@ fun SearchScreen(
                 searchQuery = searchQuery,
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchTriggered = onSearchTriggered,
-                onBackClick = onBackClick,
                 content = {
                     when (searchResultUiState) {
                         SearchResultUiState.Loading,
@@ -127,9 +119,9 @@ fun SearchScreen(
                             if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
                                 RecentSearchesBody(
                                     onClearRecentSearches = onClearRecentSearches,
-                                    onRecentSearchClicked = {
-                                        onSearchQueryChanged(it)
-                                        onSearchTriggered(it)
+                                    onRecentSearchClicked = { query ->
+                                        onSearchQueryChanged(query)
+                                        onSearchTriggered(query)
                                     },
                                     recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
                                     onDeleteRecentQuery = onDeleteRecentQuery
@@ -146,9 +138,9 @@ fun SearchScreen(
                                 if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
                                     RecentSearchesBody(
                                         onClearRecentSearches = onClearRecentSearches,
-                                        onRecentSearchClicked = {
-                                            onSearchQueryChanged(it)
-                                            onSearchTriggered(it)
+                                        onRecentSearchClicked = { query ->
+                                            onSearchQueryChanged(query)
+                                            onSearchTriggered(query)
                                         },
                                         recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
                                         onDeleteRecentQuery = onDeleteRecentQuery
@@ -311,7 +303,7 @@ fun RecentSearchesBody(
                             )
                         }
                     }
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 4.dp)

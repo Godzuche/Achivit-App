@@ -58,7 +58,7 @@ class SearchFragment : Fragment() {
         setContent {
             Mdc3Theme {
                 SearchRoute(
-                    tasksViewModel = tasksViewModel,
+//                    tasksViewModel = tasksViewModel,
                     onBackClick = {
                         findNavController().popBackStack()
                     },
