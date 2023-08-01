@@ -1,6 +1,5 @@
 package com.godzuche.achivitapp.data.di
 
-import com.godzuche.achivitapp.data.repository.AuthRepository
 import com.godzuche.achivitapp.data.repository.DefaultAuthRepository
 import com.godzuche.achivitapp.data.repository.DefaultNotificationRepository
 import com.godzuche.achivitapp.data.repository.DefaultRecentSearchRepository
@@ -10,6 +9,7 @@ import com.godzuche.achivitapp.data.repository.TaskCategoryRepositoryImpl
 import com.godzuche.achivitapp.data.repository.TaskCollectionRepositoryImpl
 import com.godzuche.achivitapp.data.repository.TaskRepositoryImpl
 import com.godzuche.achivitapp.data.util.DueTaskAndroidAlarmScheduler
+import com.godzuche.achivitapp.domain.repository.AuthRepository
 import com.godzuche.achivitapp.domain.repository.NotificationRepository
 import com.godzuche.achivitapp.domain.repository.RecentSearchRepository
 import com.godzuche.achivitapp.domain.repository.SearchContentsRepository

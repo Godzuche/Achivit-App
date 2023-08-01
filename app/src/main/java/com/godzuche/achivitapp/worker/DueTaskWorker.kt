@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
@@ -21,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import timber.log.Timber
 
 @HiltWorker
 class DueTaskWorker @AssistedInject constructor(
@@ -41,16 +41,16 @@ class DueTaskWorker @AssistedInject constructor(
                     taskRepository.retrieveTask(taskId)
                 }
 
-                appContext.makeDueTaskNotification(
-                    taskId = taskId,
-                    taskTitle = task.await().title,
-                    taskDescription = task.await().description
-                )
-
                 taskRepository.updateTask(
                     task.await().copy(
                         status = TaskStatus.IN_PROGRESS
                     )
+                )
+
+                appContext.makeDueTaskNotification(
+                    taskId = taskId,
+                    taskTitle = task.await().title,
+                    taskDescription = task.await().description
                 )
 
                 notificationRepository.insertOrReplaceNotification(
@@ -92,10 +92,7 @@ private suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = 
 } catch (cancellationException: CancellationException) {
     throw cancellationException
 } catch (exception: Exception) {
-    Log.i(
-        "suspendRunCatching",
-        "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result",
-        exception,
-    )
+    Timber.tag("suspendRunCatching")
+        .i(exception, "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result")
     Result.failure(exception)
 }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -38,9 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,17 +57,24 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.RecircuTopBar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.domain.model.UserData
-import com.godzuche.achivitapp.feature.auth.AuthViewModel
 import com.godzuche.achivitapp.feature.auth.UserAuthState
+import com.godzuche.achivitapp.feature.auth.isNotNull
+import timber.log.Timber
 
 @Composable
 fun ProfileRoute(
-    authViewModel: AuthViewModel = hiltViewModel()
+    navigateToAuth: () -> Unit,
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val userAuthState by authViewModel.userAuthState.collectAsStateWithLifecycle()
+    val userAuthState by profileViewModel.userAuthState.collectAsStateWithLifecycle()
+    val profileUiState by profileViewModel.uiState.collectAsStateWithLifecycle()
 
     ProfileScreen(
-        userAuthState = userAuthState
+        userAuthState = userAuthState,
+        profileUiState = profileUiState,
+        onChangeProfilePhoto = profileViewModel::updateUserProfile,
+        onSignOutClick = profileViewModel::signOut,
+        onSignedOut = navigateToAuth
     )
 }
 
@@ -77,6 +82,10 @@ fun ProfileRoute(
 @Composable
 fun ProfileScreen(
     userAuthState: UserAuthState,
+    profileUiState: ProfileUiState,
+    onChangeProfilePhoto: (Uri, String) -> Unit,
+    onSignOutClick: () -> Unit,
+    onSignedOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -93,17 +102,61 @@ fun ProfileScreen(
     ) { padding ->
         when (userAuthState) {
             is UserAuthState.SignedIn -> {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                Column(
                     modifier = modifier
                         .padding(padding)
                         .consumeWindowInsets(padding)
+                        .windowInsetsPadding(WindowInsets(bottom = 84.dp))
+                        .fillMaxSize()
                 ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        ProfileHeader(userData = userAuthState.data)
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(300.dp),
+                        contentPadding = PaddingValues(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            ProfileHeader(
+                                userData = userAuthState.data,
+                                onUpdateUserProfile = onChangeProfilePhoto
+                            )
+                        }
+                    }
+
+                    Button(onClick = onSignOutClick, modifier = Modifier.fillMaxWidth()) {
+                        Text(text = "Sign out")
+                    }
+
+                }
+
+                when (profileUiState) {
+                    ProfileUiState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is ProfileUiState.Success -> {
+                        profileUiState.message?.let {
+                            Toast.makeText(
+                                context,
+                                it,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    is ProfileUiState.Error -> {
+                        Toast.makeText(
+                            context,
+                            profileUiState.exception?.message,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -117,14 +170,7 @@ fun ProfileScreen(
                 }
             }
 
-            is UserAuthState.NotSignedIn -> {
-                Column {
-                    Text(text = "Not currently signed in")
-                    Button(onClick = {}) {
-                        Text(text = "Sign in")
-                    }
-                }
-            }
+            is UserAuthState.NotSignedIn -> onSignedOut()
 
             is UserAuthState.Error -> {
                 Toast.makeText(context, userAuthState.e?.message, Toast.LENGTH_SHORT).show()
@@ -136,13 +182,19 @@ fun ProfileScreen(
 @Composable
 fun ProfileHeader(
     userData: UserData,
+    onUpdateUserProfile: (Uri, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        ProfileImage(photoUri = userData.profilePictureUrl)
+        ProfileImage(
+            userData = userData,
+            onChangeProfilePhoto = {
+                onUpdateUserProfile(it, userData.displayName ?: "")
+            }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
@@ -169,15 +221,18 @@ fun ProfileHeader(
 
 @Composable
 fun ProfileImage(
-    photoUri: String?
+    userData: UserData,
+    onChangeProfilePhoto: (Uri) -> Unit
 ) {
     val context = LocalContext.current
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
+
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> selectedImageUri = uri }
+        onResult = { uri -> /*selectedImageUri = uri*/ uri?.let(onChangeProfilePhoto)
+            if (uri.isNotNull()) {
+                Timber.tag("PhotoPicker").i("Selected URI: $uri")
+            }
+        }
     )
 
     Box(
@@ -187,8 +242,7 @@ fun ProfileImage(
         contentAlignment = Alignment.Center
     ) {
         val imageRequest = ImageRequest.Builder(context)
-//            .data(userData.profilePictureUrl ?: R.drawable.avatar_12)
-            .data(selectedImageUri ?: photoUri ?: R.drawable.avatar_12)
+            .data(userData.profilePictureUrl ?: R.drawable.avatar_12)
             .crossfade(true)
             .size(Size.ORIGINAL)
             .build()
@@ -252,8 +306,13 @@ fun ProfileScreenPreview() {
                 userId = "",
                 displayName = "God'swill Jonathan",
                 email = "godzuche@gmail.com",
-                profilePictureUrl = null
+                profilePictureUrl = null,
+                createdDate = 0L
             )
-        )
+        ),
+        profileUiState = ProfileUiState.Success(),
+        onChangeProfilePhoto = { _, _ -> },
+        onSignOutClick = {},
+        onSignedOut = {}
     )
 }

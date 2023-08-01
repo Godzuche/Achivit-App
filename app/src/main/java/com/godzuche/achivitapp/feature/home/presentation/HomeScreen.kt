@@ -199,7 +199,8 @@ fun HomeScreenPreview() {
                     userId = "",
                     displayName = null,
                     email = null,
-                    profilePictureUrl = null
+                    profilePictureUrl = null,
+                    createdDate = 0L
                 )
             ),
             homeUiState = HomeUiState(

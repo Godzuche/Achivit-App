@@ -34,7 +34,13 @@
         android:id="@+id/action_profile"
         android:name="com.godzuche.achivitapp.feature.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_action_profile_to_auth"
+            app:destination="@id/auth"
+            app:popUpTo="@id/auth"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/action_notifications"

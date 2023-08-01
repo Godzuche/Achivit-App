@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -100,11 +98,6 @@ fun HomeTopAppBar(
                         onClick = onProfileIconClicked,
                         modifier = Modifier.size(48.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp)
-                        )
                         val imageRequest = ImageRequest.Builder(context)
                             .data(userAuthState.data.profilePictureUrl ?: R.drawable.avatar_12)
                             .size(Size.ORIGINAL)
@@ -112,7 +105,7 @@ fun HomeTopAppBar(
                             .build()
                         AsyncImage(
                             model = imageRequest,
-                            placeholder = painterResource(id = R.drawable.avatar_12),
+//                            placeholder = painterResource(id = R.drawable.avatar_12),
                             contentDescription = "Profile picture",
                             contentScale = ContentScale.Crop,
                             filterQuality = FilterQuality.High,
@@ -152,7 +145,6 @@ fun SearchToolbar(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
-    onBackClick: () -> Unit,
     content: @Composable (ColumnScope.() -> Unit),
     modifier: Modifier = Modifier
 ) {

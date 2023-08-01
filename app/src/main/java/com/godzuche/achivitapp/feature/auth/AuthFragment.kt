@@ -8,16 +8,12 @@ import android.view.ViewGroup.LayoutParams
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,7 +25,7 @@ class AuthFragment : Fragment() {
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
-    private val authViewModel by viewModels<AuthViewModel>()
+//    private val authViewModel by viewModels<AuthViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +55,7 @@ class AuthFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             authViewModel.userAuthState.collectLatest { userAuthState ->
                 when (userAuthState) {
                     is UserAuthState.SignedIn -> {
@@ -70,6 +66,11 @@ class AuthFragment : Fragment() {
                     else -> Unit
                 }
             }
+        }*/
+
+        if (firebaseAuth.currentUser.isNotNull()) {
+            val action = AuthFragmentDirections.actionGlobalActionHome()
+            findNavController().navigate(action)
         }
     }
 

@@ -33,8 +33,13 @@ fun AuthRoute(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { activityResult ->
             val intent = activityResult.data ?: return@rememberLauncherForActivityResult
-            val credential = oneTapClient.getSignInCredentialFromIntent(intent)
-            authViewModel.signInWithGoogle(credential)
+
+            authViewModel.signInWithGoogle(
+                getSignInCredential = {
+                    val credential = oneTapClient.getSignInCredentialFromIntent(intent)
+                    credential
+                }
+            )
         }
     )
 
@@ -60,9 +65,9 @@ fun AuthRoute(
                 (authUiState as AuthUiState.OneTapUi<*>).data as BeginSignInResult
 
             googleSignInLauncher.launch(
-                IntentSenderRequest.Builder(
-                    intentSender = beginSignInResult.pendingIntent.intentSender
-                ).build()
+                IntentSenderRequest
+                    .Builder(intentSender = beginSignInResult.pendingIntent.intentSender)
+                    .build()
             )
         }
 
@@ -72,7 +77,7 @@ fun AuthRoute(
         }
 
         is AuthUiState.Error -> {
-            val errorMessage = (authUiState as AuthUiState.Error).exception?.message
+            val errorMessage = (authUiState as AuthUiState.Error).exception?.localizedMessage
 
             Toast.makeText(
                 context,

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.transition.MaterialFadeThrough
@@ -49,7 +50,12 @@ class ProfileFragment : Fragment() {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
             Mdc3Theme {
-                ProfileRoute()
+                ProfileRoute(
+                    navigateToAuth = {
+                        val action = ProfileFragmentDirections.actionActionProfileToAuth()
+                        findNavController().navigate(action)
+                    }
+                )
             }
         }
     }

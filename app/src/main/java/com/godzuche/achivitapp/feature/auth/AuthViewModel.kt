@@ -3,10 +3,11 @@ package com.godzuche.achivitapp.feature.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.data.repository.AuthRepository
 import com.godzuche.achivitapp.domain.model.UserData
+import com.godzuche.achivitapp.domain.repository.AuthRepository
 import com.google.android.gms.auth.api.identity.SignInCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,12 +27,10 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
+
     private val _authUiState: MutableStateFlow<AuthUiState> =
         MutableStateFlow(AuthUiState.NotLoading)
     val authUiState: StateFlow<AuthUiState> = _authUiState.asStateFlow()
-
-    /*   private val _userAuthState: MutableStateFlow<UserAuthState> =
-           MutableStateFlow(UserAuthState.Loading)*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val userAuthState: StateFlow<UserAuthState> =
@@ -85,58 +84,44 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signInWithGoogle(signInCredential: SignInCredential) {
+    fun signInWithGoogle(getSignInCredential: () -> SignInCredential) {
         viewModelScope.launch(Dispatchers.IO) {
-            authRepository.googleSignInWithCredential(credential = signInCredential)
-                .onEach { result ->
-                    when (result) {
-                        is AchivitResult.Loading -> {
-                            _authUiState.update {
-                                AuthUiState.Loading
-                            }
-                        }
+            val signInCredential: SignInCredential? = try {
+                getSignInCredential()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (e is CancellationException) throw e
+                _authUiState.update { AuthUiState.Error(exception = e) }
+                null
+            }
 
-                        is AchivitResult.Error -> {
-                            _authUiState.update {
-                                AuthUiState.Error(exception = result.exception)
+            signInCredential?.let {
+                authRepository.googleSignInWithCredential(credential = signInCredential)
+                    .onEach { result ->
+                        when (result) {
+                            is AchivitResult.Loading -> {
+                                _authUiState.update {
+                                    AuthUiState.Loading
+                                }
                             }
-                        }
 
-                        is AchivitResult.Success -> {
-                            _authUiState.update {
-                                AuthUiState.Success(data = result.data)
+                            is AchivitResult.Error -> {
+                                _authUiState.update {
+                                    AuthUiState.Error(exception = result.exception)
+                                }
+                            }
+
+                            is AchivitResult.Success -> {
+                                _authUiState.update {
+                                    AuthUiState.Success(data = result.data)
+                                }
                             }
                         }
-                    }
-                }.launchIn(viewModelScope)
+                    }.launchIn(viewModelScope)
+            }
         }
     }
 
-    /*    fun getSignedInUser() {
-            viewModelScope.launch {
-                authRepository.getSignedInUser().onEach { result ->
-                    when (result) {
-                        AchivitResult.Loading -> {
-                            _userAuthState.update { UserAuthState.Loading }
-                        }
-
-                        is AchivitResult.Success -> {
-                            val userData = result.data
-                            val isUserSignedIn = (userData.isNotNull())
-                            if (isUserSignedIn) {
-                                _userAuthState.update { UserAuthState.SignedIn(data = userData!!) }
-                            } else {
-                                _userAuthState.update { UserAuthState.NotSignedIn }
-                            }
-                        }
-
-                        is AchivitResult.Error -> {
-                            _userAuthState.update { UserAuthState.Error(e = result.exception) }
-                        }
-                    }
-                }.launchIn(viewModelScope)
-            }
-        }*/
 
 }
 
