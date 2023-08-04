@@ -8,6 +8,7 @@ import com.godzuche.achivitapp.data.repository.DefaultUserDataRepository
 import com.godzuche.achivitapp.data.repository.TaskCategoryRepositoryImpl
 import com.godzuche.achivitapp.data.repository.TaskCollectionRepositoryImpl
 import com.godzuche.achivitapp.data.repository.TaskRepositoryImpl
+import com.godzuche.achivitapp.data.util.ConnectivityManagerNetworkMonitor
 import com.godzuche.achivitapp.data.util.DueTaskAndroidAlarmScheduler
 import com.godzuche.achivitapp.domain.repository.AuthRepository
 import com.godzuche.achivitapp.domain.repository.NotificationRepository
@@ -18,6 +19,7 @@ import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
 import com.godzuche.achivitapp.domain.repository.TaskRepository
 import com.godzuche.achivitapp.domain.repository.UserDataRepository
 import com.godzuche.achivitapp.domain.util.DueTaskAlarmScheduler
+import com.godzuche.achivitapp.domain.util.NetworkMonitor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -70,4 +72,9 @@ interface DataModule {
     fun bindsAuthRepository(
         authRepository: DefaultAuthRepository
     ): AuthRepository
+
+    @Binds
+    fun bindsNetworkMonitor(
+        networkMonitor: ConnectivityManagerNetworkMonitor
+    ): NetworkMonitor
 }

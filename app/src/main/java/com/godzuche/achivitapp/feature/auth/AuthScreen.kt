@@ -27,6 +27,7 @@ fun AuthRoute(
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val authUiState by authViewModel.authUiState.collectAsStateWithLifecycle()
+    val userAuthState by authViewModel.userAuthState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -43,22 +44,25 @@ fun AuthRoute(
         }
     )
 
-    AuthScreen(
-        onSignInWithGoogleClick = {
-            authViewModel.requestOneTapSignIn()
+    when (userAuthState) {
+        UserAuthState.Loading -> LoadingBox()
+        is UserAuthState.SignedIn -> navigateToHome()
+        else -> {
+            AuthScreen(
+                onSignInWithGoogleClick = {
+                    authViewModel.requestOneTapSignIn()
+                }
+            )
+            if (userAuthState is UserAuthState.Error) {
+                val errorMessage = (userAuthState as UserAuthState.Error).e?.localizedMessage
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            }
         }
-    )
+    }
 
     when (authUiState) {
         AuthUiState.NotLoading -> Unit
-        AuthUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+        AuthUiState.Loading -> LoadingBox()
 
         is AuthUiState.OneTapUi<*> -> {
             val beginSignInResult =
@@ -103,5 +107,15 @@ fun AuthScreen(
             onClick = onSignInWithGoogleClick,
             modifier = Modifier.align(Alignment.Center)
         )
+    }
+}
+
+@Composable
+fun LoadingBox() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }

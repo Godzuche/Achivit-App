@@ -4,31 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
-@OptIn(ExperimentalCoroutinesApi::class)
 class SearchFragment : Fragment() {
 
-    private val tasksViewModel: TasksViewModel by activityViewModels()
+//    private val tasksViewModel: TasksViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +58,9 @@ class SearchFragment : Fragment() {
             Mdc3Theme {
                 SearchRoute(
 //                    tasksViewModel = tasksViewModel,
-                    onBackClick = {
+                    /*onBackClick = {
                         findNavController().popBackStack()
-                    },
+                    },*/
                     onExploreTasksClick = {
                         val action = SearchFragmentDirections.actionGlobalActionTasks()
                         findNavController().navigate(action)

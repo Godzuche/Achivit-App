@@ -9,6 +9,7 @@ import com.godzuche.achivitapp.domain.model.UserData
 import com.godzuche.achivitapp.domain.model.toNewExternalUserData
 import com.godzuche.achivitapp.domain.model.toUserData
 import com.godzuche.achivitapp.domain.repository.AuthRepository
+import com.godzuche.achivitapp.domain.util.NetworkMonitor
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -17,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +33,8 @@ import javax.inject.Inject
 class DefaultAuthRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val oneTapClient: SignInClient,
-    private val firestoreDb: FirebaseFirestore
+    private val firestoreDb: FirebaseFirestore,
+    private val networkMonitor: NetworkMonitor,
 ) : AuthRepository {
 
     private val _isNewUser = MutableStateFlow(false)
@@ -134,12 +137,16 @@ class DefaultAuthRepository @Inject constructor(
         try {
             emit(AchivitResult.Loading)
 
+            Timber.d("GetSignedInUser: ${networkMonitor.isOnline}")
+
+            val source = if (networkMonitor.isOnline) Source.SERVER else Source.CACHE
+
             val signedInUser = auth.currentUser
             val isUserSignedIn = (signedInUser != null)
             val userDocRef = signedInUser?.let {
                 firestoreDb.collection(USERS_PATH).document(it.uid)
             }
-            val firestoreUser = userDocRef?.get()?.await()?.toObject<ExternalUserData>()
+            val firestoreUser = userDocRef?.get(source)?.await()?.toObject<ExternalUserData>()
 
             if (isUserSignedIn) {
                 emit(

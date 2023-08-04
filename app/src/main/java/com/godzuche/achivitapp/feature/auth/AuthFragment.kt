@@ -25,8 +25,6 @@ class AuthFragment : Fragment() {
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
-//    private val authViewModel by viewModels<AuthViewModel>()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,10 +66,10 @@ class AuthFragment : Fragment() {
             }
         }*/
 
-        if (firebaseAuth.currentUser.isNotNull()) {
+        /*if (firebaseAuth.currentUser.isNotNull()) {
             val action = AuthFragmentDirections.actionGlobalActionHome()
             findNavController().navigate(action)
-        }
+        }*/
     }
 
 }

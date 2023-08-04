@@ -15,10 +15,11 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+/*
 allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         compilerOptions {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
         }
     }
-}
+}*/

@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ProfileUiState> =
@@ -33,29 +33,38 @@ class ProfileViewModel @Inject constructor(
     val userAuthState: StateFlow<UserAuthState> = _userAuthState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            authRepository.getSignedInUser().onEach { result ->
-                when (result) {
-                    AchivitResult.Loading -> {
-                        _userAuthState.update { UserAuthState.Loading }
-                    }
+        getSignedInUser()
 
-                    is AchivitResult.Success -> {
-                        val userData = result.data
-                        val isUserSignedIn = (userData.isNotNull())
-                        if (isUserSignedIn) {
-                            _userAuthState.update { UserAuthState.SignedIn(data = userData!!) }
-                        } else {
-                            _userAuthState.update { UserAuthState.NotSignedIn }
-                        }
-                    }
+        /*        isOffline.onEach {
+        //            Timber.d("GetSignedInUser: $it")
+                    getSignedInUser()
+                }.launchIn(viewModelScope)*/
+    }
 
-                    is AchivitResult.Error -> {
-                        _userAuthState.update { UserAuthState.Error(e = result.exception) }
+    private fun getSignedInUser() {
+//        viewModelScope.launch {
+        authRepository.getSignedInUser().onEach { result ->
+            when (result) {
+                AchivitResult.Loading -> {
+                    _userAuthState.update { UserAuthState.Loading }
+                }
+
+                is AchivitResult.Success -> {
+                    val userData = result.data
+                    val isUserSignedIn = (userData.isNotNull())
+                    if (isUserSignedIn) {
+                        _userAuthState.update { UserAuthState.SignedIn(data = userData!!) }
+                    } else {
+                        _userAuthState.update { UserAuthState.NotSignedIn }
                     }
                 }
-            }.launchIn(viewModelScope)
-        }
+
+                is AchivitResult.Error -> {
+                    _userAuthState.update { UserAuthState.Error(e = result.exception) }
+                }
+            }
+        }.launchIn(viewModelScope)
+//        }
     }
 
     fun updateUserProfile(photoUri: Uri, displayName: String) {
