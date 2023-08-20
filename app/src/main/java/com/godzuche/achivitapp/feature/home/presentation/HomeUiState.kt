@@ -1,6 +1,6 @@
 package com.godzuche.achivitapp.feature.home.presentation
 
-import com.godzuche.achivitapp.data.local.database.relations.CategoryWithCollectionsAndTasks
+import com.godzuche.achivitapp.domain.model.CategoryWithCollectionsAndTasks
 import com.godzuche.achivitapp.domain.model.Task
 
 data class HomeUiState(

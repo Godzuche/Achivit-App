@@ -96,6 +96,8 @@ class TaskDetailFragment : Fragment() {
                                                         TasksUiEvent.OnDeleteConfirm(task = action.task)
                                                     )
                                                 }
+
+                                                else -> Unit
                                             }
                                         }
                                     }

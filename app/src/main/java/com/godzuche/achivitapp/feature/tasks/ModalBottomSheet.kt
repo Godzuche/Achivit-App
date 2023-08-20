@@ -161,7 +161,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         timePicker.show(childFragmentManager, "time_picker_tag")
     }
 
-    private fun Int.isValid(): Boolean {
+    private fun Int.isIdValid(): Boolean {
         return this != -1
     }
 
@@ -175,7 +175,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        if (taskId.isValid()) {
+        if (taskId.isIdValid()) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.uiStateFlow
@@ -239,7 +239,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                         }
                 }
             }
-        } else if (taskId.isValid().not()) {
+        } else {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
@@ -258,7 +258,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
                                     viewModel.getCategoryCollections(categoryTitle = initialSelection)
                                 }
                                 setAdapter(adapter)
-                                setOnItemClickListener { parent, view, position, id ->
+                                setOnItemClickListener { _, _, position, _ ->
                                     viewModel.getCategoryCollections(categoryTitle = categoryList[position])
                                 }
                             }

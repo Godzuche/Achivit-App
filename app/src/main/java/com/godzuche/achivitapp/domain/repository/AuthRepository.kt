@@ -8,13 +8,13 @@ import com.google.android.gms.auth.api.identity.SignInCredential
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    suspend fun requestOneTapSignIn(): Flow<AchivitResult<BeginSignInResult>>
+    fun requestOneTapSignIn(): Flow<AchivitResult<BeginSignInResult>>
 
-    suspend fun googleSignInWithCredential(credential: SignInCredential): Flow<AchivitResult<UserData?>>
+    fun googleSignInWithCredential(credential: SignInCredential): Flow<AchivitResult<UserData?>>
 
-    suspend fun signOut(): Flow<AchivitResult<Nothing?>>
+    fun signOut(): Flow<AchivitResult<Nothing?>>
 
     fun getSignedInUser(): Flow<AchivitResult<UserData?>>
 
-    suspend fun updateUserProfile(photoUri: Uri, displayName: String): Flow<AchivitResult<Nothing?>>
+    fun updateUserProfile(photoUri: Uri, displayName: String): Flow<AchivitResult<Nothing?>>
 }

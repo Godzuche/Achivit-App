@@ -108,4 +108,7 @@ interface TaskDao {
     @Query("SELECT * FROM task_table WHERE status = :status ORDER BY due_date DESC, id DESC")
     fun getTaskByStatus(status: TaskStatus): Flow<List<TaskEntity>>
 
+    @Upsert
+    suspend fun upsertTasks(entities: List<TaskEntity>)
+
 }

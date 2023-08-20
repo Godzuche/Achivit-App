@@ -86,8 +86,6 @@ class TaskDetailViewModel @Inject constructor(
                 is TaskUiEvent.OnNavigateUp -> {
                     sendUiEvent(UiEvent.PopBackStack)
                 }
-
-                else -> Unit
             }
         }
     }

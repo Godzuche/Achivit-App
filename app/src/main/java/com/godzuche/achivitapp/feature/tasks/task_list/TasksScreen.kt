@@ -118,7 +118,7 @@ fun TasksScreen(
                 categories = tasksUiState.categories,
                 checkedCategoryId = tasksUiState.checkedCategoryFilterChipId,
                 scrollBehaviour = scrollBehaviour,
-                onSelectCategory = { index, title ->
+                onSelectCategory = { index, _ ->
                     onCategoryChipsCheckChanged(index)
                 },
                 onAddNewCategoryClick = onAddNewTaskCategory,
@@ -295,40 +295,8 @@ fun MCard(
                         content = supportingContent
                     )
                 }
-                /*Text(
-                    text = "In Progress",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Go home",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    text = "To go cook and then go to the market to get somethings before calling it a day. I'd sleep afterwards.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                AchivitAssistChip(
-                    onClick = { },
-                    label = { Text(text = "Wed, Jun 29, 11:01 am") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = AchivitIcons.AccessTime,
-                            contentDescription = null
-                        )
-                    },
-                    colors = AssistChipDefaults.assistChipColors(
-                        containerColor = MaterialTheme.colorScheme.onSurface
-                    )
-                )*/
             }
-//            TaskStatusColor(color = MOrange)
+
             if (trailingContent != null) {
                 trailingContent()
             }

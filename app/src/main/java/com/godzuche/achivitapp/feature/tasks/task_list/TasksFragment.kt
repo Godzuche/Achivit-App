@@ -179,6 +179,8 @@ class TasksFragment : Fragment() {
                                                         )
                                                     )
                                                 }
+
+                                                else -> Unit
                                             }
                                         }
                                     }
@@ -241,8 +243,6 @@ class TasksFragment : Fragment() {
                                         TasksFragmentDirections.actionGlobalFilterBottomSheetDialog()
                                     findNavController().navigate(action)
                                 }
-
-                                else -> Unit
                             }
                         }
                     )

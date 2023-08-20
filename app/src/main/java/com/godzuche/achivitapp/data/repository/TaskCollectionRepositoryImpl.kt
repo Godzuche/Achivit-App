@@ -2,10 +2,12 @@ package com.godzuche.achivitapp.data.repository
 
 import androidx.paging.*
 import com.godzuche.achivitapp.data.local.database.dao.TaskCollectionDao
-import com.godzuche.achivitapp.data.local.database.model.TaskCollection
+import com.godzuche.achivitapp.data.local.database.model.TaskCollectionEntity
 import com.godzuche.achivitapp.data.local.database.model.asExternalModel
-import com.godzuche.achivitapp.data.local.database.relations.CollectionWithTasks
+import com.godzuche.achivitapp.data.local.database.relations.CollectionWithTasksEntities
 import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.domain.model.TaskCollection
+import com.godzuche.achivitapp.domain.model.asEntity
 import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -18,23 +20,22 @@ class TaskCollectionRepositoryImpl @Inject constructor(
     private val collectionDao: TaskCollectionDao
 ) : TaskCollectionRepository {
     override fun getCollection(title: String): Flow<TaskCollection> =
-        collectionDao.getCollection(title = title).map { it.toTaskCollection() }
+        collectionDao.getCollection(title = title).map(TaskCollectionEntity::asExternalModel)
 
     override fun getAllCollection(): Flow<List<TaskCollection>> {
-        return collectionDao.getAllCollection().map { collectionEntities ->
-            collectionEntities.map { it.toTaskCollection() }
-        }
+        return collectionDao.getAllCollection()
+            .map { it.map(TaskCollectionEntity::asExternalModel) }
     }
 
     override suspend fun insertCollection(collection: TaskCollection) {
-        collectionDao.insert(collection = collection.toTaskCollectionEntity())
+        collectionDao.insert(collection = collection.asEntity())
     }
 
     override suspend fun updateCollection(collection: TaskCollection) {
-        collectionDao.update(collection = collection.toTaskCollectionEntity())
+        collectionDao.update(collection = collection.asEntity())
     }
 
-    override fun getCollectionsWithTasksByCategoryTitle(categoryTitle: String): Flow<List<CollectionWithTasks>> {
+    override fun getCollectionsWithTasksByCategoryTitle(categoryTitle: String): Flow<List<CollectionWithTasksEntities>> {
         return collectionDao.getCollectionWithTasksByCategoryTitle(categoryTitle = categoryTitle)
     }
 

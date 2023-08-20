@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,7 +61,10 @@ fun TodayTaskCard(
     onTaskClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val statusColor by animateColorAsState(targetValue = task.status.name.statusColor())
+    val statusColor by animateColorAsState(
+        targetValue = task.status.name.statusColor(),
+        label = "Task Status Color"
+    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -80,7 +83,7 @@ fun TodayTaskCard(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 3.dp,
                 color = statusColor

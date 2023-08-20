@@ -17,6 +17,8 @@ import com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailFragmentArgs
 import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
 import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
 import com.godzuche.achivitapp.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
+import timber.log.Timber
+import kotlin.coroutines.cancellation.CancellationException
 
 const val DAILY_NOTIFICATION_CHANNEL_NAME = "Daily Task Reminder"
 const val DAILY_NOTIFICATION_CHANNEL_DESCRIPTION =
@@ -138,4 +140,18 @@ fun makeDailyTaskNotification(context: Context, tasks: List<Task>) {
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setDefaults(DEFAULT_ALL)
         .build()
+}
+
+/**
+ * Attempts [block], returning a successful [Result] if it succeeds, otherwise a [Result.Failure]
+ * taking care not to break structured concurrency
+ */
+suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
+    Result.success(block())
+} catch (cancellationException: CancellationException) {
+    throw cancellationException
+} catch (exception: Exception) {
+    Timber.tag("suspendRunCatching")
+        .i(exception, "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result")
+    Result.failure(exception)
 }

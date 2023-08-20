@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.data.local.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.domain.model.RecentSearchQuery
 import kotlinx.datetime.Instant
 
 /**
@@ -17,4 +18,9 @@ data class RecentSearchQueryEntity(
     val query: String,
     @ColumnInfo(name = "query_date")
     val queriedDate: Instant
+)
+
+fun RecentSearchQueryEntity.asExternalModel() = RecentSearchQuery(
+    query = query,
+    queryDate = queriedDate
 )

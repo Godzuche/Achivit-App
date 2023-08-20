@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.data.remote.model.NetworkTask
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
@@ -55,6 +56,18 @@ data class TaskEntity(
 )
 
 fun TaskEntity.asExternalModel() = Task(
+    id = id,
+    title = title,
+    description = description,
+    isCompleted = isCompleted,
+    created = created,
+    dueDate = dueDate,
+    status = status,
+    collectionTitle = collectionTitle,
+    categoryTitle = categoryTitle
+)
+
+fun TaskEntity.asNetworkModel() = NetworkTask(
     id = id,
     title = title,
     description = description,

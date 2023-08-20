@@ -12,6 +12,7 @@ import com.godzuche.achivitapp.domain.util.DueTaskAlarmScheduler
 import com.godzuche.achivitapp.feature.tasks.ui_state.ModalBottomSheetUiState
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
+import com.godzuche.achivitapp.worker.FirebaseWorkHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,7 +28,8 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val dueTaskAlarmScheduler: DueTaskAlarmScheduler,
     private val taskRepository: TaskRepository,
     private val taskCategoryRepository: TaskCategoryRepository,
-    private val taskCollectionRepository: TaskCollectionRepository
+    taskCollectionRepository: TaskCollectionRepository,
+    private val firebaseWorkHelper: FirebaseWorkHelper,
 ) : ViewModel() {
 
     private val taskId = MutableStateFlow(-1)
@@ -41,7 +43,7 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<UiEvent>()
 //    val uiEvent = _uiEvent.asSharedFlow()
 
-    val categories = taskCategoryRepository.getAllCategory()
+    val categories = taskCategoryRepository.getAllCategories()
         .map {
             it.map { category ->
                 category.title
@@ -179,31 +181,13 @@ class ModalBottomSheetViewModel @Inject constructor(
         viewModelScope.launch {
             taskRepository.updateTask(task)
 
+            firebaseWorkHelper.updateTask(task)
+
             if (shouldReschedule) {
                 dueTaskAlarmScheduler.schedule(task)
             }
         }
     }
-
-    fun getCollectionCategory(collectionTitle: String, onGetCategoryTitle: ((String) -> Unit)) {
-        viewModelScope.launch {
-            taskCollectionRepository.getCollection(collectionTitle).collectLatest {
-                onGetCategoryTitle(it.categoryTitle)
-            }
-        }
-    }
-
-    /* fun getCategoryCollections(categoryTitle: String, onGetCollections: (List<String>) -> Unit) {
-         viewModelScope.launch(Dispatchers.IO) {
-             taskCategoryRepository.getCategoryWithCollectionsByTitle(categoryTitle)
-                 .collectLatest { listOfCategoryWithCollection ->
-                     listOfCategoryWithCollection.map { categoryWithCollections ->
-                         val collectionList = categoryWithCollections.collections.map { it.title }
-                         categoryCollections.emit(collectionList)
-                     }
-                 }
-         }
-     }*/
 
     fun getCategoryCollections(categoryTitle: String) {
         viewModelScope.launch(Dispatchers.IO) {

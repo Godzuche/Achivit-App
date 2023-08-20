@@ -5,12 +5,12 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQuery
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.data.local.database.dao.TaskDao
 import com.godzuche.achivitapp.data.local.database.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.domain.model.asEntity
+import com.godzuche.achivitapp.domain.model.asNewEntity
 import com.godzuche.achivitapp.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
@@ -90,24 +90,24 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertTask(task: Task) {
-        taskDao.insert(task.toNewTaskEntity())
+        taskDao.insert(task.asNewEntity())
     }
 
     override suspend fun insertAndGetTaskId(task: Task): Int =
-        taskDao.insertAndGetId(task.toNewTaskEntity()).toInt()
+        taskDao.insertAndGetId(task.asNewEntity()).toInt()
 
     override suspend fun reInsertTask(task: Task) {
-        taskDao.reInsert(task.toTaskEntity())
+        taskDao.reInsert(task.asEntity())
     }
 
     override suspend fun deleteTask(task: Task) {
-        taskDao.delete(task.toTaskEntity())
+        taskDao.delete(task.asEntity())
     }
 
     override suspend fun updateTask(task: Task) {
         Timber.tag("CheckBox")
             .i("updateTask called in repo with completed status: ${task.isCompleted}")
-        taskDao.update(task.toTaskEntity())
+        taskDao.update(task.asEntity())
     }
 
     override fun getTodayTasks(): Flow<List<Task>> {
@@ -141,21 +141,21 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     // Get filtered query
-    private fun getFilteredQuery(filter: TaskFilter): SupportSQLiteQuery {
-        val query = StringBuilder()
+    /*    private fun getFilteredQuery(filter: TaskFilter): SupportSQLiteQuery {
+            val query = StringBuilder()
 
-        val categoryFilter = filter.category?.title
-        val collectionFilter = filter.collection?.title
+            val categoryFilter = filter.category?.title
+            val collectionFilter = filter.collection?.title
 
-        query.append("SELECT * FROM task_table WHERE status = ?")
+            query.append("SELECT * FROM task_table WHERE status = ?")
 
-        when (filter.status) {
-            TaskStatus.NONE -> {
-                /*query.append(
+            when (filter.status) {
+                TaskStatus.NONE -> {
+                    *//*query.append(
                     "SELECT * FROM task_categories WHERE title = categoryFilter" +
                             "AND task_collections = collectionFilter" +
                             "AND status = filter.status"
-                )*/
+                )*//*
                 query.append(
                     "SELECT * FROM task_table WHERE status = ${filter.status}"
                 )
@@ -184,6 +184,6 @@ class TaskRepositoryImpl @Inject constructor(
             "SELECT * FROM task_table WHERE status = ?",
             arrayOf<Any>(filter.status.name)
         )
-    }
+    }*/
 
 }

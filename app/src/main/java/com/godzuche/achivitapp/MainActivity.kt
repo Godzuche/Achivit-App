@@ -33,10 +33,12 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
 import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.feature.home.presentation.HomeViewModel
 import com.godzuche.achivitapp.feature.notifications.NotificationUiState
 import com.godzuche.achivitapp.feature.notifications.NotificationsViewModel
 import com.godzuche.achivitapp.feature.settings.DarkMode
 import com.godzuche.achivitapp.feature.settings.setDarkMode
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private val notificationsViewModel by viewModels<NotificationsViewModel>()
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
+    private val homeViewModel by viewModels<HomeViewModel>()
 
     /*    private val currentNavigationFragment: Fragment?
             get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
@@ -168,7 +171,6 @@ class MainActivity : AppCompatActivity() {
                         uiState = it
                     }.collect()
             }
-
         }
 
         splashScreen.setKeepOnScreenCondition {
@@ -262,6 +264,26 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavView.setOnItemReselectedListener { }
 
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                val snackbar = Snackbar.make(
+                    findViewById(R.id.root_main),
+                    "You aren't connected to the internet",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+//            .setAnchorView(R.id.bottom_nav_view)
+//            .setAnimationMode(ANIMATION_MODE_SLIDE)
+                    .setAction("OK") { }
+                homeViewModel.isOffline.collectLatest { isOffline ->
+                    if (isOffline) {
+                        snackbar.show()
+                    } else {
+                        snackbar.dismiss()
+                    }
+                }
+            }
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.action_home -> {
@@ -312,13 +334,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        //
-    }
+    /*    @OptIn(ExperimentalLayoutApi::class)
+        override fun onStart() {
+            super.onStart()
+
+            binding.composView.apply {
+
+                setContent {
+                    val snackbarHostState = remember { SnackbarHostState() }
+                    val isOffline by homeViewModel.isOffline.collectAsStateWithLifecycle()
+
+                    LaunchedEffect(isOffline) {
+                        if (isOffline) {
+                            snackbarHostState.showSnackbar(
+                                message = "You aren't connected to the internet",
+                                duration = SnackbarDuration.Indefinite
+                            )
+                        }
+                    }
+
+                    Scaffold(
+                        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                        snackbarHost = { SnackbarHost(snackbarHostState) }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(it)
+                                .consumeWindowInsets(it)
+                        )
+                    }
+
+                }
+            }
+
+        }*/
 
     override fun onResume() {
         super.onResume()
+
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(listener)
     }

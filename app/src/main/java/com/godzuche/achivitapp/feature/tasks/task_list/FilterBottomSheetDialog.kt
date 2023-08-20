@@ -148,7 +148,7 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
                     viewModel.setCheckedCategoryChip(checkedId = checkedId)
                     viewModel.getCategoryCollections(categoryTitle)
                 }
-                chipGroupCollections.setOnCheckedStateChangeListener { group, checkedIds ->
+                chipGroupCollections.setOnCheckedStateChangeListener { _, checkedIds ->
                     if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
                     // Take the first since it is single selection mode
                     val checkedId = checkedIds.first()

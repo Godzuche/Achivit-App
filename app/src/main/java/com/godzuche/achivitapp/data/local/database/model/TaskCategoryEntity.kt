@@ -3,6 +3,8 @@ package com.godzuche.achivitapp.data.local.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.data.remote.model.NetworkTaskCategory
+import com.godzuche.achivitapp.domain.model.TaskCategory
 
 /**
  * Defines a database entity that stores category of collections.
@@ -15,10 +17,8 @@ data class TaskCategoryEntity(
     val title: String,
     @ColumnInfo(name = "created")
     val created: Long
-) {
-    fun toTaskCategory() = TaskCategory(title = title, created = created)
-}
+)
 
-data class TaskCategory(val title: String, val created: Long) {
-    fun toCategoryEntity() = TaskCategoryEntity(title = title, created = created)
-}
+fun TaskCategoryEntity.asExternalModel() = TaskCategory(title = title, created = created)
+
+fun TaskCategoryEntity.asNetworkModel() = NetworkTaskCategory(title = title, created = created)

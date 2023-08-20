@@ -27,8 +27,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
@@ -37,10 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
@@ -56,6 +54,7 @@ import coil.size.Size
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.RecircuTopBar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
+import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.domain.model.UserData
 import com.godzuche.achivitapp.feature.auth.UserAuthState
 import com.godzuche.achivitapp.feature.auth.isNotNull
@@ -64,6 +63,7 @@ import timber.log.Timber
 @Composable
 fun ProfileRoute(
     navigateToAuth: () -> Unit,
+    onSignOutClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val userAuthState by profileViewModel.userAuthState.collectAsStateWithLifecycle()
@@ -73,7 +73,7 @@ fun ProfileRoute(
         userAuthState = userAuthState,
         profileUiState = profileUiState,
         onChangeProfilePhoto = profileViewModel::updateUserProfile,
-        onSignOutClick = profileViewModel::signOut,
+        onSignOutClick = onSignOutClick,
         onSignedOut = navigateToAuth
     )
 }
@@ -197,24 +197,24 @@ fun ProfileHeader(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            Text(
-                text = userData.displayName ?: "Unknown",
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+
+        Text(
+            text = userData.displayName ?: "Unknown",
+            style = MaterialTheme.typography.titleLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
         Spacer(modifier = Modifier.height(4.dp))
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            userData.email?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+
+        userData.email?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.alpha(Alpha.medium),
+            )
         }
     }
 }

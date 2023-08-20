@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.core.design_system.components.HomeTopAppBar
+import com.godzuche.achivitapp.core.design_system.components.OnlineStatusIndicator
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
+import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.model.UserData
@@ -55,13 +60,15 @@ fun HomeRoute(
 ) {
     val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val userAuthState by authViewModel.userAuthState.collectAsStateWithLifecycle()
+    val isOffline by homeViewModel.isOffline.collectAsStateWithLifecycle()
 
     HomeScreen(
         userAuthState = userAuthState,
         homeUiState = homeUiState,
         onTodayTaskClick = onNavigateToTaskDetail,
         modifier = modifier,
-        onTopBarAction = onTopBarAction
+        onTopBarAction = onTopBarAction,
+        isOnline = isOffline.not(),
     )
 }
 
@@ -72,7 +79,8 @@ fun HomeScreen(
     homeUiState: HomeUiState,
     onTodayTaskClick: (Int) -> Unit,
     onTopBarAction: (HomeTopBarActions) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOnline: Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         rememberTopAppBarState()
@@ -86,6 +94,7 @@ fun HomeScreen(
         topBar = {
             HomeTopAppBar(
                 userAuthState = userAuthState,
+                isOnline = isOnline,
                 todayTasks = homeUiState.todayTasks.size,
                 scrollBehavior = scrollBehavior,
                 onProfileIconClicked = {
@@ -96,49 +105,77 @@ fun HomeScreen(
                 },
                 onTopBarTitleClicked = {
                     onTopBarAction(HomeTopBarActions.PROFILE)
-                }
+                },
             )
         }
     ) { innerPadding ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(300.dp),
-            state = listState,
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(space = 24.dp),
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding)
                 .fillMaxSize()
                 .then(modifier)
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                TaskStatusGrid(
-                    state = homeUiState,
-                    modifier = Modifier.removeWidthConstraint(contentPadding = 16.dp)
-                )
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeSection(
-                    title = "Categories",
-                    viewMoreButtonText = "View All",
+            val onlineText = if (isOnline) "Online" else "Offline"
+
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(4.dp)
                 ) {
-                    CategoriesRow(
+                    OnlineStatusIndicator(isOnline = isOnline)
+                    Text(
+                        text = onlineText,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.alpha(Alpha.medium),
+                    )
+                }
+            }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(300.dp),
+                state = listState,
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(space = 24.dp),
+                modifier = Modifier/*
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)*/
+                    .fillMaxSize()
+//                    .then(modifier)
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    TaskStatusGrid(
                         state = homeUiState,
                         modifier = Modifier.removeWidthConstraint(contentPadding = 16.dp)
                     )
                 }
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeSection(
-                    title = "Today's tasks",
-                    viewMoreButtonText = "View All"
-                ) {
-                    TodayTasks(
-                        homeUiState = homeUiState,
-                        onTaskClick = onTodayTaskClick,
-                        modifier = Modifier.removeWidthConstraint(16.dp)
-                    )
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    HomeSection(
+                        title = "Categories",
+                        viewMoreButtonText = "View All",
+                    ) {
+                        CategoriesRow(
+                            state = homeUiState,
+                            modifier = Modifier.removeWidthConstraint(contentPadding = 16.dp)
+                        )
+                    }
+                }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    HomeSection(
+                        title = "Today's tasks",
+                        viewMoreButtonText = "View All"
+                    ) {
+                        TodayTasks(
+                            homeUiState = homeUiState,
+                            onTaskClick = onTodayTaskClick,
+                            modifier = Modifier.removeWidthConstraint(16.dp)
+                        )
+                    }
                 }
             }
         }
@@ -217,7 +254,8 @@ fun HomeScreenPreview() {
                 )
             ),
             onTopBarAction = {},
-            onTodayTaskClick = {}
+            onTodayTaskClick = {},
+            isOnline = false,
         )
     }
 }

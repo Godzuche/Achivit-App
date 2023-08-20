@@ -2,12 +2,22 @@ package com.godzuche.achivitapp.data.repository
 
 import android.net.Uri
 import com.godzuche.achivitapp.BuildConfig
+import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
+import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.core.ui.util.millisToString
-import com.godzuche.achivitapp.domain.model.ExternalUserData
+import com.godzuche.achivitapp.data.local.database.dao.TaskCategoryDao
+import com.godzuche.achivitapp.data.local.database.dao.TaskCollectionDao
+import com.godzuche.achivitapp.data.local.database.dao.TaskDao
+import com.godzuche.achivitapp.data.local.database.model.asNetworkModel
+import com.godzuche.achivitapp.data.remote.model.NetworkTask
+import com.godzuche.achivitapp.data.remote.model.NetworkTaskCategory
+import com.godzuche.achivitapp.data.remote.model.NetworkTaskCollection
+import com.godzuche.achivitapp.data.remote.model.NetworkUserData
+import com.godzuche.achivitapp.data.remote.model.asEntity
+import com.godzuche.achivitapp.data.remote.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.UserData
-import com.godzuche.achivitapp.domain.model.toNewExternalUserData
-import com.godzuche.achivitapp.domain.model.toUserData
+import com.godzuche.achivitapp.domain.model.asNewNetworkUserData
 import com.godzuche.achivitapp.domain.repository.AuthRepository
 import com.godzuche.achivitapp.domain.util.NetworkMonitor
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -21,12 +31,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,12 +47,16 @@ class DefaultAuthRepository @Inject constructor(
     private val oneTapClient: SignInClient,
     private val firestoreDb: FirebaseFirestore,
     private val networkMonitor: NetworkMonitor,
+    private val categoryDao: TaskCategoryDao,
+    private val collectionDao: TaskCollectionDao,
+    private val taskDao: TaskDao,
+    @Dispatcher(AchivitDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
 
     private val _isNewUser = MutableStateFlow(false)
-    val isNewUser = _isNewUser.asStateFlow()
+    private val isNewUser = _isNewUser.asStateFlow()
 
-    override suspend fun requestOneTapSignIn(): Flow<AchivitResult<BeginSignInResult>> =
+    override fun requestOneTapSignIn(): Flow<AchivitResult<BeginSignInResult>> =
         flow {
             // Try launching the One Tap sign-in flow
             try {
@@ -66,7 +82,7 @@ class DefaultAuthRepository @Inject constructor(
             }
         }
 
-    override suspend fun googleSignInWithCredential(credential: SignInCredential): Flow<AchivitResult<UserData?>> =
+    override fun googleSignInWithCredential(credential: SignInCredential): Flow<AchivitResult<UserData?>> =
         flow {
             emit(AchivitResult.Loading)
             try {
@@ -87,18 +103,76 @@ class DefaultAuthRepository @Inject constructor(
                     addUserToFirestore()
                 }
 
+
                 val userDocRef = firebaseUser?.let {
                     firestoreDb.collection(USERS_PATH).document(firebaseUser.uid)
                 }
-                val firestoreUser = userDocRef?.get()?.await()?.toObject<ExternalUserData>()
+
+                if (isNewUser.value) {
+                    Timber.d("Auth: New User")
+
+                    withContext(ioDispatcher) {
+                        categoryDao.retrieveCategoryWithCollectionsAndTasks().forEach {
+                            userDocRef?.collection(CATEGORY_PATH)
+                                ?.document(it.category.title)
+                                ?.set(it.category.asNetworkModel())
+                                ?.await()
+
+                            it.collectionWithTasks.map { it.collection }.forEach { collection ->
+                                userDocRef
+                                    ?.collection(CATEGORY_PATH)
+                                    ?.document(collection.categoryTitle)
+                                    ?.collection(COLLECTION_PATH)
+                                    ?.document(collection.title)
+                                    ?.set(collection.asNetworkModel())
+                                    ?.await()
+                            }
+
+                            it.collectionWithTasks.flatMap { it.tasks }.forEach { taskEntity ->
+                                userDocRef
+                                    ?.collection(CATEGORY_PATH)
+                                    ?.document(taskEntity.categoryTitle)
+                                    ?.collection(COLLECTION_PATH)
+                                    ?.document(taskEntity.collectionTitle)
+                                    ?.collection(TASKS_PATH)
+                                    ?.document(taskEntity.id.toString())
+                                    ?.set(taskEntity.asNetworkModel())
+                                    ?.await()
+                            }
+                        }
+                    }
+                } else {
+                    val categories = userDocRef
+                        ?.collection(CATEGORY_PATH)
+                        ?.get()?.await()
+                        ?.toObjects(NetworkTaskCategory::class.java)
+                        ?.toList() ?: emptyList()
+
+                    val collections = firestoreDb
+                        .collectionGroup(COLLECTION_PATH)
+                        .get().await().toObjects(NetworkTaskCollection::class.java)
+                        .toList()
+
+                    val tasks = firestoreDb
+                        .collectionGroup(TASKS_PATH)
+                        .get().await().toObjects(NetworkTask::class.java)
+                        .toList()
+
+
+                    categoryDao.upsertCategories(entities = categories.map(NetworkTaskCategory::asEntity))
+
+                    collectionDao.upsertCollections(entities = collections.map(NetworkTaskCollection::asEntity))
+
+                    taskDao.upsertTasks(entities = tasks.map(NetworkTask::asEntity))
+
+                }
+
+                val firestoreUser = userDocRef?.get()?.await()?.toObject<NetworkUserData>()
 
                 Timber.tag("DefaultAuthRepository")
                     .d("Firestore user creationDate: ${firestoreUser?.createdDate?.toDate()?.time?.millisToString()}")
-                emit(
-                    AchivitResult.Success(
-                        data = firestoreUser?.toUserData()
-                    )
-                )
+
+                emit(AchivitResult.Success(data = firestoreUser?.asExternalModel()))
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (e is CancellationException) throw e
@@ -109,7 +183,7 @@ class DefaultAuthRepository @Inject constructor(
     private suspend fun addUserToFirestore() {
         auth.currentUser?.let { firebaseUser ->
 
-            val userData = firebaseUser.toNewExternalUserData()
+            val userData = firebaseUser.asNewNetworkUserData()
 
             firestoreDb.collection(USERS_PATH)
                 .document(userData.userId)
@@ -118,7 +192,7 @@ class DefaultAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun signOut(): Flow<AchivitResult<Nothing?>> = flow {
+    override fun signOut(): Flow<AchivitResult<Nothing?>> = flow {
         try {
             emit(AchivitResult.Loading)
             oneTapClient.signOut().await()
@@ -137,8 +211,6 @@ class DefaultAuthRepository @Inject constructor(
         try {
             emit(AchivitResult.Loading)
 
-            Timber.d("GetSignedInUser: ${networkMonitor.isOnline}")
-
             val source = if (networkMonitor.isOnline) Source.SERVER else Source.CACHE
 
             val signedInUser = auth.currentUser
@@ -146,12 +218,12 @@ class DefaultAuthRepository @Inject constructor(
             val userDocRef = signedInUser?.let {
                 firestoreDb.collection(USERS_PATH).document(it.uid)
             }
-            val firestoreUser = userDocRef?.get(source)?.await()?.toObject<ExternalUserData>()
+            val firestoreUser = userDocRef?.get(source)?.await()?.toObject<NetworkUserData>()
 
             if (isUserSignedIn) {
                 emit(
                     AchivitResult.Success(
-                        data = firestoreUser?.toUserData()
+                        data = firestoreUser?.asExternalModel()
                     )
                 )
             } else {
@@ -164,7 +236,7 @@ class DefaultAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateUserProfile(
+    override fun updateUserProfile(
         photoUri: Uri,
         displayName: String
     ): Flow<AchivitResult<Nothing?>> = flow {
@@ -210,3 +282,6 @@ class DefaultAuthRepository @Inject constructor(
 }
 
 const val USERS_PATH = "users"
+const val TASKS_PATH = "tasks"
+const val CATEGORY_PATH = "category"
+const val COLLECTION_PATH = "collection"

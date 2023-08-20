@@ -10,6 +10,7 @@ import com.godzuche.achivitapp.domain.usecase.GetRecentSearchQueriesUseCase
 import com.godzuche.achivitapp.domain.usecase.GetSearchContentsCountUseCase
 import com.godzuche.achivitapp.domain.usecase.GetSearchContentsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -29,6 +30,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val searchResultUiState: StateFlow<SearchResultUiState> =
         getSearchContentsCountUseCase().flatMapLatest { totalCount ->
             if (totalCount < SEARCH_MIN_FTS_ENTITY_COUNT) {

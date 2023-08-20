@@ -93,6 +93,8 @@ class HomeFragment : Fragment() {
                                                         )
                                                     )
                                                 }
+
+                                                else -> Unit
                                             }
                                         }
                                     }

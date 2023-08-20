@@ -4,8 +4,8 @@ import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.data.local.database.dao.RecentSearchQueryDao
 import com.godzuche.achivitapp.data.local.database.model.RecentSearchQueryEntity
+import com.godzuche.achivitapp.data.local.database.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.RecentSearchQuery
-import com.godzuche.achivitapp.domain.model.asExternalModel
 import com.godzuche.achivitapp.domain.repository.RecentSearchRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -19,11 +19,8 @@ class DefaultRecentSearchRepository @Inject constructor(
     @Dispatcher(AchivitDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) : RecentSearchRepository {
     override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
-        recentSearchQueryDao.getRecentSearchQueryEntities(limit = limit).map { searchQueries ->
-            searchQueries.map {
-                it.asExternalModel()
-            }
-        }
+        recentSearchQueryDao.getRecentSearchQueryEntities(limit = limit)
+            .map { it.map(RecentSearchQueryEntity::asExternalModel) }
 
     override suspend fun saveOrReplaceRecentSearch(searchQuery: String) {
         withContext(ioDispatcher) {

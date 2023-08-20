@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.components.AchivitFilterChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
-import com.godzuche.achivitapp.data.local.database.model.TaskCategory
+import com.godzuche.achivitapp.domain.model.TaskCategory
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -82,7 +82,7 @@ fun TasksTopBar(
         val snappingLayout = remember(categoryFilterRowState) {
             SnapLayoutInfoProvider(
                 lazyListState = categoryFilterRowState,
-                positionInLayout = { layoutSize, itemSize, itemIndex ->
+                positionInLayout = { _, _, _ ->
                     0
                 }
             )
@@ -111,7 +111,7 @@ fun TasksTopBar(
 
                 AchivitFilterChip(
                     selected = chipChecked,
-                    onSelectedChange = { checked ->
+                    onSelectedChange = {
                         focusRequester.requestFocus()
                         onSelectCategory(
                             index,

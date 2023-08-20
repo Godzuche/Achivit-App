@@ -18,6 +18,8 @@ import com.godzuche.achivitapp.feature.tasks.util.Routes
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
+import com.godzuche.achivitapp.worker.FirebaseWorkHelper
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,7 +50,9 @@ class TasksViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskCategoryRepository: TaskCategoryRepository,
     private val taskCollectionRepository: TaskCollectionRepository,
-    private val dueTaskAlarmScheduler: DueTaskAlarmScheduler
+    private val dueTaskAlarmScheduler: DueTaskAlarmScheduler,
+    private val firebaseDb: FirebaseFirestore,
+    private val firebaseWorkHelper: FirebaseWorkHelper,
 ) : ViewModel() {
 
     private var created = 0L
@@ -79,7 +83,7 @@ class TasksViewModel @Inject constructor(
     private val _categoryCollections = MutableStateFlow<List<String>>(emptyList())
     val categoryCollections: StateFlow<List<String>> get() = _categoryCollections.asStateFlow()
 
-    val categories = taskCategoryRepository.getAllCategory()
+    val categories = taskCategoryRepository.getAllCategories()
         .map {
             it.map { category ->
                 category.title
@@ -203,13 +207,11 @@ class TasksViewModel @Inject constructor(
                 is TasksUiEvent.OnTaskClick -> {
                     sendUiEvent(UiEvent.Navigate(Routes.EDIT_TASK))
                 }
-
-                else -> Unit
             }
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            taskCategoryRepository.getAllCategory()
+            taskCategoryRepository.getAllCategories()
                 .collectLatest { taskCategories ->
                     _uiState.update {
                         it.copy(
@@ -304,8 +306,7 @@ class TasksViewModel @Inject constructor(
     ) {
 
         created = Clock.System.now().toEpochMilliseconds()
-        /*val category = getCategoryEntry(categoryTitle)
-        val collection = getCollectionEntry(collectionTitle, categoryTitle)*/
+
         val newTask = getNewTaskEntry(
             taskTitle,
             taskDescription,
@@ -317,6 +318,8 @@ class TasksViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             val insertedTaskId = taskRepository.insertAndGetTaskId(newTask)
+
+            firebaseWorkHelper.addTask(newTask.copy(id = insertedTaskId))
 
             dueTaskAlarmScheduler.schedule(
                 newTask.copy(id = insertedTaskId)
@@ -466,4 +469,6 @@ class ConfirmationDialog(
 
 sealed interface ConfirmActions {
     data class DeleteTask(val task: Task) : ConfirmActions
+
+    data object SignOut : ConfirmActions
 }

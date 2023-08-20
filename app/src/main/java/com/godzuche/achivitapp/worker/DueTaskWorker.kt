@@ -15,12 +15,10 @@ import com.godzuche.achivitapp.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import timber.log.Timber
 
 @HiltWorker
 class DueTaskWorker @AssistedInject constructor(
@@ -81,18 +79,4 @@ class DueTaskWorker @AssistedInject constructor(
             .addTag("due_task")
             .build()
     }
-}
-
-/**
- * Attempts [block], returning a successful [Result] if it succeeds, otherwise a [Result.Failure]
- * taking care not to break structured concurrency
- */
-private suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
-    Result.success(block())
-} catch (cancellationException: CancellationException) {
-    throw cancellationException
-} catch (exception: Exception) {
-    Timber.tag("suspendRunCatching")
-        .i(exception, "Failed to evaluate a suspendRunCatchingBlock. Returning failure Result")
-    Result.failure(exception)
 }

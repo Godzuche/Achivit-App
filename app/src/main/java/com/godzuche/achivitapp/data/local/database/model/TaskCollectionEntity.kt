@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.domain.model.TaskCollection
 
 /**
  * Defines a database entity that stores task collections.
@@ -30,14 +31,10 @@ data class TaskCollectionEntity(
     val title: String,
     @ColumnInfo(name = "category_title")
     val categoryTitle: String,
-) {
-    fun toTaskCollection() = TaskCollection(title = title, categoryTitle = categoryTitle)
-}
+)
 
-data class TaskCollection(
-    val title: String,
-    val categoryTitle: String
-) {
-    fun toTaskCollectionEntity() =
-        TaskCollectionEntity(title = title, categoryTitle = categoryTitle)
-}
+fun TaskCollectionEntity.asExternalModel() =
+    TaskCollection(title = title, categoryTitle = categoryTitle)
+
+fun TaskCollectionEntity.asNetworkModel() =
+    TaskCollection(title = title, categoryTitle = categoryTitle)

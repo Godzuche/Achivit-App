@@ -7,6 +7,8 @@ import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.domain.repository.AuthRepository
 import com.godzuche.achivitapp.feature.auth.UserAuthState
 import com.godzuche.achivitapp.feature.auth.isNotNull
+import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
+import com.godzuche.achivitapp.feature.tasks.task_list.DialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,9 @@ class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
+    private val _dialogState = MutableStateFlow(DialogState())
+    val dialogState = _dialogState.asStateFlow()
+
     private val _uiState: MutableStateFlow<ProfileUiState> =
         MutableStateFlow(ProfileUiState.Success())
     val uiState = _uiState.asStateFlow()
@@ -34,15 +39,9 @@ class ProfileViewModel @Inject constructor(
 
     init {
         getSignedInUser()
-
-        /*        isOffline.onEach {
-        //            Timber.d("GetSignedInUser: $it")
-                    getSignedInUser()
-                }.launchIn(viewModelScope)*/
     }
 
     private fun getSignedInUser() {
-//        viewModelScope.launch {
         authRepository.getSignedInUser().onEach { result ->
             when (result) {
                 AchivitResult.Loading -> {
@@ -64,7 +63,6 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-//        }
     }
 
     fun updateUserProfile(photoUri: Uri, displayName: String) {
@@ -110,6 +108,12 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             }.launchIn(viewModelScope)
+        }
+    }
+
+    fun setDialogState(shouldShow: Boolean, dialog: AchivitDialog? = null) {
+        _dialogState.update {
+            it.copy(shouldShow = shouldShow, dialog = dialog)
         }
     }
 }

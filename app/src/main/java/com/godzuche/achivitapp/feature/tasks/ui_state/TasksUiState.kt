@@ -1,8 +1,8 @@
 package com.godzuche.achivitapp.feature.tasks.ui_state
 
-import com.godzuche.achivitapp.data.local.database.model.TaskCategory
-import com.godzuche.achivitapp.data.local.database.relations.CollectionWithTasks
+import com.godzuche.achivitapp.data.local.database.relations.CollectionWithTasksEntities
 import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.domain.model.TaskCategory
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 data class TasksUiState(
@@ -14,5 +14,5 @@ data class TasksUiState(
     val collectionFilter: String = "",
     val categories: List<TaskCategory> = emptyList(),
     val categoryFilter: String = "",
-    val categoryAndCollectionsWithTasksPairs: List<Pair<TaskCategory, List<CollectionWithTasks>>>? = null
+    val categoryAndCollectionsWithTasksPairs: List<Pair<TaskCategory, List<CollectionWithTasksEntities>>>? = null
 )

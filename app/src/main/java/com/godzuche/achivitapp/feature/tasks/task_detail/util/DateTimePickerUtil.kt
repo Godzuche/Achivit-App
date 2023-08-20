@@ -36,8 +36,8 @@ object DateTimePickerUtil {
         val day = cal[Calendar.DAY_OF_MONTH]
         val hour = cal[Calendar.MINUTE]
         val minute = cal[Calendar.MINUTE]
-        val second = cal[Calendar.SECOND]
-        val millis = cal[Calendar.MILLISECOND]
+//        val second = cal[Calendar.SECOND]
+//        val millis = cal[Calendar.MILLISECOND]
 
         /*       val dueDate = Calendar.getInstance().apply {
                    set(Calendar.YEAR, year)

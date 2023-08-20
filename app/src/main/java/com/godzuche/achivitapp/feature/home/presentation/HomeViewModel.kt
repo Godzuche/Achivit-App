@@ -3,17 +3,19 @@ package com.godzuche.achivitapp.feature.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
-import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
 import com.godzuche.achivitapp.domain.repository.TaskRepository
+import com.godzuche.achivitapp.domain.util.NetworkMonitor
 import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,11 +24,19 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskCategoryRepository: TaskCategoryRepository,
-    private val taskCollectionRepository: TaskCollectionRepository
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> get() = _uiState.asStateFlow()
+
+    val isOffline = networkMonitor.isOnlineFlow
+        .map(Boolean::not)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
 
     init {
 

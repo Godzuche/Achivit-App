@@ -1,11 +1,13 @@
 package com.godzuche.achivitapp.core.design_system.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -22,6 +25,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,8 +35,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +53,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
+import com.godzuche.achivitapp.core.design_system.theme.MOrange
 import com.godzuche.achivitapp.core.ui.util.shimmerEffect
 import com.godzuche.achivitapp.feature.auth.UserAuthState
 
@@ -58,7 +66,8 @@ fun HomeTopAppBar(
     onProfileIconClicked: () -> Unit,
     onTopBarTitleClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    todayTasks: Int = 0
+    todayTasks: Int = 0,
+    isOnline: Boolean
 ) {
     val context = LocalContext.current
 
@@ -94,26 +103,11 @@ fun HomeTopAppBar(
                     }
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onProfileIconClicked,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        val imageRequest = ImageRequest.Builder(context)
-                            .data(userAuthState.data.profilePictureUrl ?: R.drawable.avatar_12)
-                            .size(Size.ORIGINAL)
-                            .crossfade(true)
-                            .build()
-                        AsyncImage(
-                            model = imageRequest,
-//                            placeholder = painterResource(id = R.drawable.avatar_12),
-                            contentDescription = "Profile picture",
-                            contentScale = ContentScale.Crop,
-                            filterQuality = FilterQuality.High,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                        )
-                    }
+                    ProfilePhotoIcon(
+                        profilePhotoUrl = userAuthState.data.profilePictureUrl,
+                        onProfileIconClicked = onProfileIconClicked,
+                        isOnline = isOnline
+                    )
                 },
                 actions = {
                     IconButton(onClick = onSettingsActionClicked) {
@@ -138,6 +132,74 @@ fun HomeTopAppBar(
 
 }
 
+@Composable
+fun ProfilePhotoIcon(
+    profilePhotoUrl: String?,
+    onProfileIconClicked: () -> Unit,
+    isOnline: Boolean,
+) {
+    val context = LocalContext.current
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(60.dp)
+            .padding(6.dp)
+    ) {
+        IconButton(
+            onClick = onProfileIconClicked,
+            modifier = Modifier.size(48.dp)
+        ) {
+            val imageRequest = ImageRequest.Builder(context)
+                .data(profilePhotoUrl ?: R.drawable.avatar_12)
+                .size(Size.ORIGINAL)
+                .crossfade(true)
+                .build()
+            AsyncImage(
+                model = imageRequest,
+//                            placeholder = painterResource(id = R.drawable.avatar_12),
+                contentDescription = "Profile picture",
+                contentScale = ContentScale.Crop,
+                filterQuality = FilterQuality.High,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        OnlineStatusIndicator(
+            isOnline = isOnline,
+            modifier = Modifier.align(Alignment.BottomEnd),
+        )
+    }
+}
+
+@Composable
+fun OnlineStatusIndicator(
+    modifier: Modifier = Modifier,
+    isOnline: Boolean,
+) {
+    val color by animateColorAsState(
+        targetValue = if (isOnline) Color.Green else MOrange,
+        label = "Online Indicator Color",
+    )
+
+    val backgroundColor = MaterialTheme.colorScheme.background
+
+    Box(
+        modifier = Modifier
+            .size(12.dp)
+            .drawWithCache {
+                onDrawBehind {
+                    drawCircle(color = backgroundColor)
+                }
+            }
+            .padding(2.dp)
+            .clip(CircleShape)
+            .background(color)
+            .then(modifier),
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
