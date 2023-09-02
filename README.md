@@ -5,4 +5,3 @@ A planner app...
 | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | ![Auth](https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/auth_screen.png) | ![Home](https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/img.png) |
 
-![Uploading Screen_recording_Recircu_01.gif…]()
