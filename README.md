@@ -1,4 +1,7 @@
 # Achivit-App
+
+It is a work in progress 🚧.
+
 A planner app...
 
 | Google Sign-in                                                                           |  Home Screen                                                                             |
