@@ -36,15 +36,22 @@ class TaskDetailViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val detail = taskId.transformLatest { taskId ->
-        emitAll(getTaskUseCase(taskId).map { result ->
-            if (result is AchivitResult.Success) {
-                result.data
-            } else null
-        })
+        emitAll(
+            getTaskUseCase(taskId).map { result ->
+                /*if (result is AchivitResult.Success) {
+                    result.data
+                } else null*/
+                when (result) {
+                    is AchivitResult.Loading -> TaskDetailUiState.Loading
+                    is AchivitResult.Success -> TaskDetailUiState.Success(data = result.data)
+                    is AchivitResult.Error -> TaskDetailUiState.Error(exception = result.exception)
+                }
+            }
+        )
     }.stateIn(
         scope = viewModelScope,
         started = WhileSubscribed(),
-        initialValue = null
+        initialValue = TaskDetailUiState.Loading
     )
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
@@ -107,44 +114,44 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     // Todo: Create a method to update just the due date instead
-    fun updateTask(
-        taskId: Int,
-        taskTitle: String,
-        taskDescription: String,
-        dueDate: Long,
-        collectionTitle: String,
-        categoryTitle: String
-    ) {
-        val updatedTask =
-            getUpdatedTaskEntry(
-                taskId,
-                taskTitle,
-                taskDescription,
-                dueDate,
-                collectionTitle,
-                categoryTitle
-            )
-        updateTask(updatedTask)
-    }
+    /*    fun updateTask(
+            taskId: Int,
+            taskTitle: String,
+            taskDescription: String,
+            dueDate: Long,
+            collectionTitle: String,
+            categoryTitle: String
+        ) {
+            val updatedTask =
+                getUpdatedTaskEntry(
+                    taskId,
+                    taskTitle,
+                    taskDescription,
+                    dueDate,
+                    collectionTitle,
+                    categoryTitle
+                )
+            updateTask(updatedTask)
+        }
 
-    private fun getUpdatedTaskEntry(
-        taskId: Int,
-        taskTitle: String,
-        taskDescription: String,
-        dueDate: Long,
-        collectionTitle: String,
-        categoryTitle: String
-    ): Task {
-        return Task(
-            id = taskId,
-            title = taskTitle,
-            description = taskDescription,
-            created = detail.value?.created!!,
-            dueDate = dueDate,
-            collectionTitle = collectionTitle,
-            categoryTitle = categoryTitle
-        )
-    }
+        private fun getUpdatedTaskEntry(
+            taskId: Int,
+            taskTitle: String,
+            taskDescription: String,
+            dueDate: Long,
+            collectionTitle: String,
+            categoryTitle: String
+        ): Task {
+            return Task(
+                id = taskId,
+                title = taskTitle,
+                description = taskDescription,
+                created = detail.value?.created!!,
+                dueDate = dueDate,
+                collectionTitle = collectionTitle,
+                categoryTitle = categoryTitle
+            )
+        }*/
 
     private fun updateTask(task: Task) {
         viewModelScope.launch {
@@ -152,5 +159,10 @@ class TaskDetailViewModel @Inject constructor(
         }
     }
 
+}
 
+sealed interface TaskDetailUiState {
+    data object Loading : TaskDetailUiState
+    data class Success(val data: Task) : TaskDetailUiState
+    data class Error(val exception: Throwable?) : TaskDetailUiState
 }

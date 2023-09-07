@@ -11,7 +11,7 @@ interface TaskRepository {
 
     fun getTask(id: Int): Flow<AchivitResult<Task>>
 
-    fun retrieveTask(id: Int): Task
+    fun retrieveTask(id: Int): Task?
 
     //    fun getAllTask(): Flow<Resource<List<Task>>>
     fun getAllTask(

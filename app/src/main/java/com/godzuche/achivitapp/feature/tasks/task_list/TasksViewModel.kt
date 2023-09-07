@@ -1,12 +1,10 @@
 package com.godzuche.achivitapp.feature.tasks.task_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.data.local.database.model.TaskCollectionEntity
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
 import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
@@ -18,8 +16,6 @@ import com.godzuche.achivitapp.feature.tasks.util.Routes
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
-import com.godzuche.achivitapp.worker.FirebaseWorkHelper
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,13 +45,9 @@ import javax.inject.Inject
 class TasksViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskCategoryRepository: TaskCategoryRepository,
-    private val taskCollectionRepository: TaskCollectionRepository,
+    taskCollectionRepository: TaskCollectionRepository,
     private val dueTaskAlarmScheduler: DueTaskAlarmScheduler,
-    private val firebaseDb: FirebaseFirestore,
-    private val firebaseWorkHelper: FirebaseWorkHelper,
 ) : ViewModel() {
-
-    private var created = 0L
 
     val bottomSheetAction = MutableStateFlow("")
     val bottomSheetTaskId = MutableStateFlow(-1)
@@ -165,33 +157,11 @@ class TasksViewModel @Inject constructor(
                 }
 
                 is TasksUiEvent.OnDeleteConfirm -> {
-                    deletedTask = action.task
-                    viewModelScope.launch {
-                        /*if (action.shouldPopBackStack) {
-                            sendUiEvent(UiEvent.PopBackStack)
-                        }*/
-                        taskRepository.deleteTask(action.task)
-                        deletedTask?.let { dueTaskAlarmScheduler.cancel(it) }
-                        sendUiEvent(
-                            UiEvent.ShowSnackBar(
-                                "Task deleted!",
-                                SnackBarActions.UNDO
-                            )
-                        )
-                    }
+                    deleteTask(action.task)
                 }
 
                 is TasksUiEvent.OnUndoDeleteClick -> {
-                    deletedTask?.let { task ->
-                        viewModelScope.launch {
-                            taskRepository.reInsertTask(task)
-                            val timeNow = Clock.System.now()
-                            val dueDate = Instant.fromEpochMilliseconds(task.dueDate)
-                            if (timeNow < dueDate) {
-                                dueTaskAlarmScheduler.schedule(task)
-                            }
-                        }
-                    }
+                    undoDelete(task = deletedTask)
                 }
 
                 is TasksUiEvent.OnDoneChange -> {
@@ -291,95 +261,49 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    private fun insertTask(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
-            taskRepository.insertTask(task)
-        }
-    }
-
-    fun addNewTask(
-        categoryTitle: String,
-        collectionTitle: String,
-        taskTitle: String,
-        taskDescription: String,
-        dueDate: Long,
-    ) {
-
-        created = Clock.System.now().toEpochMilliseconds()
-
-        val newTask = getNewTaskEntry(
-            taskTitle,
-            taskDescription,
-            created = created,
-            dueDate = dueDate,
-            collectionTitle,
-            categoryTitle
-        )
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val insertedTaskId = taskRepository.insertAndGetTaskId(newTask)
-
-            firebaseWorkHelper.addTask(newTask.copy(id = insertedTaskId))
-
-            dueTaskAlarmScheduler.schedule(
-                newTask.copy(id = insertedTaskId)
+    /*    private fun getCollectionEntry(
+            collectionTitle: String,
+            categoryTitle: String,
+        ): TaskCollectionEntity {
+            return TaskCollectionEntity(
+                title = collectionTitle,
+                categoryTitle = categoryTitle
             )
-        }
-
-        viewModelScope.launch {
-            delay(300L)
-            sendUiEvent(UiEvent.ScrollToTop)
-        }
-    }
-
-    private fun getCollectionEntry(
-        collectionTitle: String,
-        categoryTitle: String,
-    ): TaskCollectionEntity {
-        return TaskCollectionEntity(
-            title = collectionTitle,
-            categoryTitle = categoryTitle
-        )
-    }
-
-    private fun getNewTaskEntry(
-        taskTitle: String,
-        taskDescription: String,
-        created: Long,
-        dueDate: Long,
-        collectionTitle: String,
-        categoryTitle: String,
-    ): Task {
-        return Task(
-            title = taskTitle,
-            description = taskDescription,
-            created = created,
-            dueDate = dueDate,
-            collectionTitle = collectionTitle,
-            categoryTitle = categoryTitle
-        )
-    }
+        }*/
 
     // Input title validation
-    fun isEntryValid(taskTitle: String, chipCount: Int): Boolean {
-        return taskTitle.isNotBlank() && chipCount > 0
-    }
+    /*    fun isEntryValid(taskTitle: String, chipCount: Int): Boolean {
+            return taskTitle.isNotBlank() && chipCount > 0
+        }*/
 
-    /*fun retrieveTask(id: Int): Flow<Task> {
-        return taskRepository.getTask(id).mapLatest {
-            it.data!!
-        }
-    }*/
-
-    fun deleteTask(task: Task) {
-        Log.d("Delete task", "called in VM, ${task.title}")
+    private fun deleteTask(task: Task) {
+        deletedTask = task
         viewModelScope.launch {
+            /*if (action.shouldPopBackStack) {
+                sendUiEvent(UiEvent.PopBackStack)
+            }*/
             taskRepository.deleteTask(task)
+            deletedTask?.let { dueTaskAlarmScheduler.cancel(it) }
+            sendUiEvent(
+                UiEvent.ShowSnackBar(
+                    "Task deleted!",
+                    SnackBarActions.UNDO
+                )
+            )
         }
     }
 
-    fun undoDelete(task: Task) {
-        insertTask(task)
+    private fun undoDelete(task: Task?) {
+        task?.let {
+            viewModelScope.launch {
+                taskRepository.reInsertTask(task)
+                val timeNow = Clock.System.now()
+                val dueDate = Instant.fromEpochMilliseconds(task.dueDate)
+                if (timeNow < dueDate) {
+                    dueTaskAlarmScheduler.schedule(task)
+                }
+            }
+        }
     }
 
     private fun updateTask(task: Task) {

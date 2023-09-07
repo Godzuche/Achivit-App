@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.godzuche.achivitapp.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksFragment.Companion.NOT_SET
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -54,7 +52,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     private var taskId: Int = NOT_SET
 
     private val viewModel: ModalBottomSheetViewModel by viewModels()
-    private val activityViewModel: TasksViewModel by activityViewModels()
+//    private val activityViewModel: TasksViewModel by activityViewModels()
 
     private var _binding: ModalBottomSheetContentBinding? = null
     private val binding get() = _binding!!
@@ -381,7 +379,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         val categoryDropDown = binding.ilCategory.editText as? MaterialAutoCompleteTextView
         val collectionDropDown = binding.ilCollection.editText as? MaterialAutoCompleteTextView
         if (isEntryValid()) {
-            activityViewModel.addNewTask(
+            viewModel.addNewTask(
                 categoryDropDown?.text.toString(),
                 collectionDropDown?.text.toString(),
                 binding.etTitle.text.toString(),

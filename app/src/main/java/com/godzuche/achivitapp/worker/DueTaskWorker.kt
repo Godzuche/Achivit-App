@@ -37,28 +37,30 @@ class DueTaskWorker @AssistedInject constructor(
             val isSuccessful = suspendRunCatching {
                 val task = async {
                     taskRepository.retrieveTask(taskId)
-                }
+                }.await()
 
-                taskRepository.updateTask(
-                    task.await().copy(
-                        status = TaskStatus.IN_PROGRESS
-                    )
-                )
-
-                appContext.makeDueTaskNotification(
-                    taskId = taskId,
-                    taskTitle = task.await().title,
-                    taskDescription = task.await().description
-                )
-
-                notificationRepository.insertOrReplaceNotification(
-                    notification = task.await()
-                        .toNotification()
-                        .copy(
-                            isRead = false,
-                            date = Clock.System.now()
+                task?.let {
+                    taskRepository.updateTask(
+                        task.copy(
+                            status = TaskStatus.IN_PROGRESS
                         )
-                )
+                    )
+
+                    appContext.makeDueTaskNotification(
+                        taskId = taskId,
+                        taskTitle = task.title,
+                        taskDescription = task.description
+                    )
+
+                    notificationRepository.insertOrReplaceNotification(
+                        notification = task
+                            .toNotification()
+                            .copy(
+                                isRead = false,
+                                date = Clock.System.now()
+                            )
+                    )
+                }
             }.isSuccess
 
             if (isSuccessful) Result.success() else Result.retry()

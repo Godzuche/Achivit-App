@@ -48,28 +48,35 @@ class FirebaseWorker @AssistedInject constructor(
 
                 val task = async(ioDispatcher) { taskRepository.retrieveTask(taskId) }.await()
 
-                firebaseAuth.currentUser?.let {
-                    val taskDocRef = firestoreDb.collection(USERS_PATH).document(it.uid)
-                        .collection(CATEGORY_PATH)
-                        .document(task.categoryTitle)
-                        .collection(COLLECTION_PATH)
-                        .document(task.collectionTitle)
-                        .collection(TASKS_PATH)
-                        .document(task.id.toString())
+                task?.let {
+                    firebaseAuth.currentUser?.let {
+                        val taskDocRef = firestoreDb.collection(USERS_PATH).document(it.uid)
+                            .collection(CATEGORY_PATH)
+                            .document(task.categoryTitle)
+                            .collection(COLLECTION_PATH)
+                            .document(task.collectionTitle)
+                            .collection(TASKS_PATH)
+                            .document(task.id.toString())
 
-                    when (workName) {
-                        FirebaseWorkHelper.FirebaseWorkerName.ADD.name -> {
-                            taskDocRef.set(task.asEntity().asNetworkModel()).await()
+                        when (workName) {
+                            FirebaseWorkHelper.FirebaseWorkerName.ADD.name -> {
+                                taskDocRef.set(task.asEntity().asNetworkModel()).await()
+                            }
+
+                            FirebaseWorkHelper.FirebaseWorkerName.UPDATE.name -> {
+                                taskDocRef
+                                    .set(task.asEntity().asNetworkModel(), SetOptions.merge())
+                                    .await()
+                            }
+
+                            FirebaseWorkHelper.FirebaseWorkerName.DELETE.name -> {
+                                taskDocRef.delete().await()
+                            }
+
+                            else -> Unit
                         }
 
-                        FirebaseWorkHelper.FirebaseWorkerName.UPDATE.name -> {
-                            taskDocRef.set(task.asEntity().asNetworkModel(), SetOptions.merge())
-                                .await()
-                        }
-
-                        else -> Unit
                     }
-
                 }
 
             }.isSuccess
@@ -83,7 +90,7 @@ class FirebaseWorker @AssistedInject constructor(
     }
 
     companion object {
-        fun buildAddTaskWork(taskId: Int, firebaseWorkerName: String) =
+        fun buildFirebaseWork(taskId: Int, firebaseWorkerName: String) =
             OneTimeWorkRequestBuilder<FirebaseWorker>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setConstraints(FirebaseWorkConstraints)

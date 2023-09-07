@@ -12,13 +12,14 @@ import com.godzuche.achivitapp.domain.util.DueTaskAlarmScheduler
 import com.godzuche.achivitapp.feature.tasks.ui_state.ModalBottomSheetUiState
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
-import com.godzuche.achivitapp.worker.FirebaseWorkHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -29,7 +30,6 @@ class ModalBottomSheetViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskCategoryRepository: TaskCategoryRepository,
     taskCollectionRepository: TaskCollectionRepository,
-    private val firebaseWorkHelper: FirebaseWorkHelper,
 ) : ViewModel() {
 
     private val taskId = MutableStateFlow(-1)
@@ -130,6 +130,40 @@ class ModalBottomSheetViewModel @Inject constructor(
         }
     }
 
+    fun addNewTask(
+        categoryTitle: String,
+        collectionTitle: String,
+        taskTitle: String,
+        taskDescription: String,
+        dueDate: Long,
+    ) {
+
+        val created = Clock.System.now().toEpochMilliseconds()
+
+        val newTask = Task(
+            title = taskTitle,
+            description = taskDescription,
+            created = created,
+            dueDate = dueDate,
+            collectionTitle = collectionTitle,
+            categoryTitle = categoryTitle
+        )
+
+        viewModelScope.launch {
+            val insertedTaskId = async { taskRepository.insertAndGetTaskId(newTask) }.await()
+
+            dueTaskAlarmScheduler.schedule(
+                newTask.copy(id = insertedTaskId)
+            )
+            Timber.tag("Add Task").d("schedule() fun called in VM")
+        }
+
+        /*        viewModelScope.launch {
+                    delay(300L)
+                    sendUiEvent(UiEvent.ScrollToTop)
+                }*/
+    }
+
     fun updateTask(
         taskId: Int,
         taskTitle: String,
@@ -180,8 +214,6 @@ class ModalBottomSheetViewModel @Inject constructor(
     private fun updateTask(task: Task, shouldReschedule: Boolean) {
         viewModelScope.launch {
             taskRepository.updateTask(task)
-
-            firebaseWorkHelper.updateTask(task)
 
             if (shouldReschedule) {
                 dueTaskAlarmScheduler.schedule(task)

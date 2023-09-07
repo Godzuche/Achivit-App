@@ -1,4 +1,5 @@
 package com.godzuche.achivitapp.feature.tasks.task_detail.util
+/*
 
 import androidx.fragment.app.Fragment
 import com.godzuche.achivitapp.core.ui.util.millisToString
@@ -39,7 +40,8 @@ object DateTimePickerUtil {
 //        val second = cal[Calendar.SECOND]
 //        val millis = cal[Calendar.MILLISECOND]
 
-        /*       val dueDate = Calendar.getInstance().apply {
+        */
+/*       val dueDate = Calendar.getInstance().apply {
                    set(Calendar.YEAR, year)
                    set(Calendar.MONTH, month)
                    set(Calendar.DAY_OF_MONTH, day)
@@ -47,7 +49,8 @@ object DateTimePickerUtil {
                    set(Calendar.HOUR_OF_DAY, sHour)
                    set(Calendar.SECOND, 0)
                    set(Calendar.MILLISECOND, 0)
-               }.timeInMillis*/
+               }.timeInMillis*//*
+
 
         // bind time
         val timePicker = MaterialTimePicker.Builder()
@@ -116,7 +119,7 @@ object DateTimePickerUtil {
                             this.description,
                             taskDueDate,
                             this.collectionTitle,
-                            this.categoryTitle
+                            this.categoryTitle,
                         )
                     }
                 }
@@ -156,4 +159,4 @@ object DateTimePickerUtil {
 
     }
 
-}
+}*/

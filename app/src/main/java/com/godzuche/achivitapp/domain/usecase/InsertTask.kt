@@ -1,12 +1,13 @@
 package com.godzuche.achivitapp.domain.usecase
 
-import com.godzuche.achivitapp.data.repository.TaskRepositoryImpl
 import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.domain.repository.TaskRepository
+import javax.inject.Inject
 
-class InsertTask(
-    private val repositoryImpl: TaskRepositoryImpl,
+class InsertTask @Inject constructor(
+    private val taskRepository: TaskRepository,
 ) {
     suspend operator fun invoke(task: Task) {
-        repositoryImpl.insertTask(task)
+        taskRepository.insertTask(task)
     }
 }

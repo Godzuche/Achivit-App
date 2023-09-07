@@ -5,7 +5,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
+import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.data.local.database.dao.TaskDao
 import com.godzuche.achivitapp.data.local.database.model.asExternalModel
 import com.godzuche.achivitapp.domain.model.Task
@@ -14,25 +16,39 @@ import com.godzuche.achivitapp.domain.model.asNewEntity
 import com.godzuche.achivitapp.domain.repository.TaskRepository
 import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.worker.FirebaseWorkHelper
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-class TaskRepositoryImpl @Inject constructor(
-    private val taskDao: TaskDao
+class OfflineFirstTaskRepository @Inject constructor(
+    private val taskDao: TaskDao,
+    private val firebaseWorkHelper: FirebaseWorkHelper,
+    @Dispatcher(AchivitDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : TaskRepository {
 
     override fun getTask(id: Int): Flow<AchivitResult<Task>> = flow {
         emit(AchivitResult.Loading)
-        taskDao.getTask(id).collect {
-            emit(AchivitResult.Success(data = it.asExternalModel()))
-        }
+        taskDao.getTask(id)
+            .catch {
+                if (it is CancellationException) throw it else emit(AchivitResult.Error(it))
+            }
+            .collect {
+                it?.let {
+                    emit(AchivitResult.Success(data = it.asExternalModel()))
+                } ?: emit(AchivitResult.Error(Throwable(message = "Not found.")))
+            }
+//        }
     }
 
-    override fun retrieveTask(id: Int): Task {
-        return taskDao.getOneOffTask(id).asExternalModel()
+    override fun retrieveTask(id: Int): Task? {
+        return taskDao.getOneOffTask(id)?.asExternalModel()
     }
 
     override fun getAllTask(
@@ -90,24 +106,36 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertTask(task: Task) {
-        taskDao.insert(task.asNewEntity())
+        withContext(ioDispatcher) {
+            taskDao.insert(task.asNewEntity())
+        }
     }
 
-    override suspend fun insertAndGetTaskId(task: Task): Int =
-        taskDao.insertAndGetId(task.asNewEntity()).toInt()
+    override suspend fun insertAndGetTaskId(task: Task): Int {
+        val insertedTaskId = taskDao.insertAndGetId(task.asNewEntity()).toInt()
+
+        Timber.tag("Add Task").d("insertedTaskId = $insertedTaskId")
+
+        firebaseWorkHelper.addTask(task.copy(id = insertedTaskId))
+        return insertedTaskId
+    }
 
     override suspend fun reInsertTask(task: Task) {
-        taskDao.reInsert(task.asEntity())
+        withContext(ioDispatcher) {
+            taskDao.reInsert(task.asEntity())
+        }
     }
 
     override suspend fun deleteTask(task: Task) {
-        taskDao.delete(task.asEntity())
+        withContext(ioDispatcher) {
+            taskDao.delete(task.asEntity())
+            firebaseWorkHelper.deleteTask(task)
+        }
     }
 
     override suspend fun updateTask(task: Task) {
-        Timber.tag("CheckBox")
-            .i("updateTask called in repo with completed status: ${task.isCompleted}")
         taskDao.update(task.asEntity())
+        firebaseWorkHelper.updateTask(task)
     }
 
     override fun getTodayTasks(): Flow<List<Task>> {

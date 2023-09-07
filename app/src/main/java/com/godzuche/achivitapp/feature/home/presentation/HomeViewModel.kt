@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.feature.home.presentation
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
@@ -37,6 +38,8 @@ class HomeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false,
         )
+
+    val visiblePermissionDialogQueue = mutableStateListOf<String>()
 
     init {
 
@@ -121,6 +124,19 @@ class HomeViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun dismissPermissionDialog() {
+        visiblePermissionDialogQueue.removeFirst()
+    }
+
+    fun onPermissionResult(
+        permission: String,
+        isGranted: Boolean
+    ) {
+        if (!isGranted) {
+            visiblePermissionDialogQueue.add(permission)
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import androidx.work.NetworkType
 import androidx.work.WorkManager
 import com.godzuche.achivitapp.domain.model.Task
 import dagger.hilt.android.qualifiers.ApplicationContext
+import timber.log.Timber
 import javax.inject.Inject
 
 const val TASK_ID = "TaskId"
@@ -21,12 +22,14 @@ class FirebaseWorkHelper @Inject constructor(
 ) {
 
     fun addTask(task: Task) {
+        Timber.tag("Add Task").d("addTask() fun called in FirebaseWorkHelper")
         task.id?.let {
+            Timber.tag("Add Task").d("in addTask() id not null")
             WorkManager.getInstance(context).apply {
                 enqueueUniqueWork(
                     FirebaseWorkerName.ADD.name + task.id,
                     ExistingWorkPolicy.REPLACE,
-                    FirebaseWorker.buildAddTaskWork(it, FirebaseWorkerName.ADD.name)
+                    FirebaseWorker.buildFirebaseWork(taskId = it, FirebaseWorkerName.ADD.name)
                 )
             }
         }
@@ -38,7 +41,19 @@ class FirebaseWorkHelper @Inject constructor(
                 enqueueUniqueWork(
                     FirebaseWorkerName.UPDATE.name + task.id,
                     ExistingWorkPolicy.REPLACE,
-                    FirebaseWorker.buildAddTaskWork(it, FirebaseWorkerName.UPDATE.name)
+                    FirebaseWorker.buildFirebaseWork(taskId = it, FirebaseWorkerName.UPDATE.name)
+                )
+            }
+        }
+    }
+
+    fun deleteTask(task: Task) {
+        task.id?.let {
+            WorkManager.getInstance(context).apply {
+                enqueueUniqueWork(
+                    FirebaseWorkerName.DELETE.name + task.id,
+                    ExistingWorkPolicy.REPLACE,
+                    FirebaseWorker.buildFirebaseWork(taskId = it, FirebaseWorkerName.DELETE.name)
                 )
             }
         }

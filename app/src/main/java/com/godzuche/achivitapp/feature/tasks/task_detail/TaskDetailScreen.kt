@@ -48,10 +48,10 @@ fun TaskDetailRoute(
     onDeleteTask: (Task) -> Unit,
     taskDetailViewModel: TaskDetailViewModel = hiltViewModel()
 ) {
-    val taskDetail by taskDetailViewModel.detail.collectAsStateWithLifecycle()
+    val taskDetailUiState by taskDetailViewModel.detail.collectAsStateWithLifecycle()
 
     TaskDetailScreen(
-        detail = taskDetail,
+        detailUiState = taskDetailUiState,
         navigateBack = onNavigateBack,
         onDeleteTask = onDeleteTask
     )
@@ -63,7 +63,7 @@ fun TaskDetailRoute(
 )
 @Composable
 fun TaskDetailScreen(
-    detail: Task?,
+    detailUiState: TaskDetailUiState,
     navigateBack: () -> Unit,
     onDeleteTask: (Task) -> Unit,
     modifier: Modifier = Modifier
@@ -84,15 +84,21 @@ fun TaskDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            detail?.let(onDeleteTask)
+                    when (detailUiState) {
+                        is TaskDetailUiState.Success -> {
+                            IconButton(
+                                onClick = {
+                                    detailUiState.data.let(onDeleteTask)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = AchivitIcons.Delete,
+                                    contentDescription = "Delete task"
+                                )
+                            }
                         }
-                    ) {
-                        Icon(
-                            imageVector = AchivitIcons.Delete,
-                            contentDescription = "Delete task"
-                        )
+
+                        else -> Unit
                     }
                 }
             )
@@ -108,15 +114,23 @@ fun TaskDetailScreen(
                 .consumeWindowInsets(it)
                 .fillMaxSize()
         ) {
-            when (detail) {
+            when (detailUiState) {
                 // Todo: create a taskUiState with Loading and Success instead of nullable detail
-                null -> {
+                is TaskDetailUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                         CircularProgressIndicator()
                     }
                 }
 
-                else -> {
+                is TaskDetailUiState.Error -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            text = detailUiState.exception?.localizedMessage ?: "An error occured!"
+                        )
+                    }
+                }
+
+                is TaskDetailUiState.Success -> {
                     LazyVerticalGrid(
                         state = lazyGridState,
                         columns = GridCells.Adaptive(300.dp),
@@ -126,13 +140,13 @@ fun TaskDetailScreen(
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(
-                                text = detail.title,
+                                text = detailUiState.data.title,
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(top = 16.dp),
                                 fontSize = 28.sp
                             )
                         }
-                        if (detail.description.isNotBlank()) {
+                        if (detailUiState.data.description.isNotBlank()) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 Row(
                                     modifier = Modifier
@@ -146,7 +160,7 @@ fun TaskDetailScreen(
                                         contentDescription = null
                                     )
                                     Text(
-                                        text = detail.description,
+                                        text = detailUiState.data.description,
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                 }
@@ -165,7 +179,7 @@ fun TaskDetailScreen(
                                 AchivitAssistChip(
                                     onClick = {},
                                     label = {
-                                        Text(text = detail.dueDate.millisToString())
+                                        Text(text = detailUiState.data.dueDate.millisToString())
                                     }
                                 )
                             }
@@ -179,7 +193,7 @@ fun TaskDetailScreen(
                                 Text(
                                     text = stringResource(
                                         id = R.string.created,
-                                        detail.created.millisToString()
+                                        detailUiState.data.created.millisToString()
                                     ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
@@ -197,7 +211,7 @@ fun TaskDetailScreen(
 fun TaskDetailScreenPreview() {
     AchivitTheme {
         TaskDetailScreen(
-            detail = Task(
+            detailUiState = /*Task(
                 id = null,
                 title = "Read a book",
                 description = "An Android Dev related book",
@@ -205,6 +219,16 @@ fun TaskDetailScreenPreview() {
                 dueDate = 0L,
                 collectionTitle = "All Tasks",
                 categoryTitle = "My Tasks"
+            )*/ TaskDetailUiState.Success(
+                data = Task(
+                    id = null,
+                    title = "Read a book",
+                    description = "An Android Dev related book",
+                    created = 0L,
+                    dueDate = 0L,
+                    collectionTitle = "All Tasks",
+                    categoryTitle = "My Tasks"
+                )
             ),
             navigateBack = {},
             onDeleteTask = {}

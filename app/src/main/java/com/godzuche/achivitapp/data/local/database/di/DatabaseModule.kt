@@ -18,7 +18,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
@@ -51,21 +50,19 @@ object DatabaseModule {
                 super.onCreate(db)
                 val scope = CoroutineScope(ioDispatcher)
                 scope.launch {
-                    val categoryDeferred = async {
+                    async {
                         db.insert(
                             table = "task_categories",
                             conflictAlgorithm = CONFLICT_REPLACE,
                             values = categoryContentValue
                         )
-                    }
-                    val collectionDeferred = async {
+
                         db.insert(
                             table = "task_collections",
                             conflictAlgorithm = CONFLICT_REPLACE,
                             values = collectionContentValue
                         )
-                    }
-                    awaitAll(categoryDeferred, collectionDeferred)
+                    }.await()
                 }
             }
         }

@@ -1,24 +1,14 @@
 package com.godzuche.achivitapp
 
-import android.Manifest
-import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -108,55 +98,57 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    private val requestNotificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            // Granted
-        } else {
-            // Denied
-            // Check if the permission has been denied twice by the user
-            val isNotificationPermissionPermanentlyDeclined =
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ).not()
-            val title = "Permission Required"
-            val okButtonLabel = if (isNotificationPermissionPermanentlyDeclined) {
-                "Grant Permission"
+    /*
+        private val requestNotificationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Granted
             } else {
-                "OK"
-            }
-            val message = if (isNotificationPermissionPermanentlyDeclined) {
-                "It seems you permanently declined fine location permission." +
-                        "You can go to the app settings to grant it."
-            } else {
-                "This app needs access to send notification for proper functioning"
-            }
-            val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.apply {
-                this.setTitle(title)
-                setMessage(message)
-                setPositiveButton(okButtonLabel) { dialog, _ ->
-                    if (isNotificationPermissionPermanentlyDeclined) {
-                        goToAppSettings()
-                    } else {
-                        requestNotificationPermission()
-                    }
-                    dialog.dismiss()
+                // Denied
+                // Check if the permission has been denied twice by the user
+                val isNotificationPermissionPermanentlyDeclined =
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ).not()
+                val title = "Permission Required"
+                val okButtonLabel = if (isNotificationPermissionPermanentlyDeclined) {
+                    "Grant Permission"
+                } else {
+                    "OK"
                 }
-                setNegativeButton(
-                    "Cancel"
-                ) { dialog, _ ->
-                    if (isNotificationPermissionPermanentlyDeclined.not()) {
-                        requestNotificationPermission()
-                    }
-                    dialog.dismiss()
+                val message = if (isNotificationPermissionPermanentlyDeclined) {
+                    "It seems you permanently declined notifications permission." +
+                            "You can go to the app settings to grant it."
+                } else {
+                    "This app needs access to send notification for proper functioning"
                 }
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.apply {
+                    this.setTitle(title)
+                    setMessage(message)
+                    setPositiveButton(okButtonLabel) { dialog, _ ->
+                        if (isNotificationPermissionPermanentlyDeclined) {
+                            goToAppSettings()
+                        } else {
+                            requestNotificationPermission()
+                        }
+                        dialog.dismiss()
+                    }
+                    setNegativeButton(
+                        "Cancel"
+                    ) { dialog, _ ->
+                        if (isNotificationPermissionPermanentlyDeclined.not()) {
+                            requestNotificationPermission()
+                        }
+                        dialog.dismiss()
+                    }
+                }
+                alertDialogBuilder.show()
             }
-            alertDialogBuilder.show()
         }
-    }
+    */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -329,9 +321,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
+        /*if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
             requestNotificationPermission()
-        }
+        }*/
     }
 
     /*    @OptIn(ExperimentalLayoutApi::class)
@@ -388,34 +380,34 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    private fun goToAppSettings() {
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", packageName, null)
-        ).also(this@MainActivity::startActivity)
-    }
+    /*    private fun goToAppSettings() {
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", packageName, null)
+            ).also(this@MainActivity::startActivity)
+        }*/
 
-    private fun requestNotificationPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                // Permission is granted
-            }
+    /*    private fun requestNotificationPermission() {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is granted
+                }
 
-            /*ActivityCompat.shouldShowRequestPermissionRationale(
+                *//*ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
             ) -> {
                 // Permission was denied and additional rationale should be displayed
-            }*/
+            }*//*
 
             else -> {
                 // Permission has not been asked yet or it has been denied
                 requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    }
+    }*/
 
 }

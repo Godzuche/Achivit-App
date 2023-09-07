@@ -5,9 +5,9 @@ import com.godzuche.achivitapp.data.repository.DefaultNotificationRepository
 import com.godzuche.achivitapp.data.repository.DefaultRecentSearchRepository
 import com.godzuche.achivitapp.data.repository.DefaultSearchContentsRepository
 import com.godzuche.achivitapp.data.repository.DefaultUserDataRepository
+import com.godzuche.achivitapp.data.repository.OfflineFirstTaskRepository
 import com.godzuche.achivitapp.data.repository.TaskCategoryRepositoryImpl
 import com.godzuche.achivitapp.data.repository.TaskCollectionRepositoryImpl
-import com.godzuche.achivitapp.data.repository.TaskRepositoryImpl
 import com.godzuche.achivitapp.data.util.ConnectivityManagerNetworkMonitor
 import com.godzuche.achivitapp.data.util.DueTaskAndroidAlarmScheduler
 import com.godzuche.achivitapp.domain.repository.AuthRepository
@@ -30,7 +30,7 @@ import dagger.hilt.components.SingletonComponent
 interface DataModule {
     @Binds
     fun bindsTaskRepository(
-        taskRepository: TaskRepositoryImpl
+        taskRepository: OfflineFirstTaskRepository
     ): TaskRepository
 
     @Binds

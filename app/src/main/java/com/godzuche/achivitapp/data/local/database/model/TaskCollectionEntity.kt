@@ -12,18 +12,19 @@ import com.godzuche.achivitapp.domain.model.TaskCollection
  *It has one to many relationship with [TaskEntity]
  */
 @Entity(
-    tableName = "task_collections", foreignKeys = [
+    tableName = "task_collections",
+    foreignKeys = [
         ForeignKey(
             entity = TaskCategoryEntity::class,
             parentColumns = ["title"],
             childColumns = ["category_title"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         )
     ],
     indices = [
         Index(value = ["title"]),
         Index(value = ["category_title"])
-    ]
+    ],
 )
 data class TaskCollectionEntity(
     @PrimaryKey(autoGenerate = false)
