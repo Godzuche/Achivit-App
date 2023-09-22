@@ -1,6 +1,7 @@
 package com.godzuche.achivitapp.data.repository
 
 import android.net.Uri
+import androidx.room.Transaction
 import com.godzuche.achivitapp.BuildConfig
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
@@ -158,12 +159,17 @@ class DefaultAuthRepository @Inject constructor(
                         .get().await().toObjects(NetworkTask::class.java)
                         .toList()
 
-
-                    categoryDao.upsertCategories(entities = categories.map(NetworkTaskCategory::asEntity))
+                    /*categoryDao.upsertCategories(entities = categories.map(NetworkTaskCategory::asEntity))
 
                     collectionDao.upsertCollections(entities = collections.map(NetworkTaskCollection::asEntity))
 
-                    taskDao.upsertTasks(entities = tasks.map(NetworkTask::asEntity))
+                    taskDao.upsertTasks(entities = tasks.map(NetworkTask::asEntity))*/
+
+                    upsertCategoryWithCollectionsAndTasks(
+                        categories,
+                        collections,
+                        tasks,
+                    )
 
                 }
 
@@ -179,6 +185,19 @@ class DefaultAuthRepository @Inject constructor(
                 emit(AchivitResult.Error(exception = e))
             }
         }
+
+    @Transaction
+    private suspend fun upsertCategoryWithCollectionsAndTasks(
+        categories: List<NetworkTaskCategory>,
+        collections: List<NetworkTaskCollection>,
+        tasks: List<NetworkTask>,
+    ) {
+        categoryDao.upsertCategories(entities = categories.map(NetworkTaskCategory::asEntity))
+
+        collectionDao.upsertCollections(entities = collections.map(NetworkTaskCollection::asEntity))
+
+        taskDao.upsertTasks(entities = tasks.map(NetworkTask::asEntity))
+    }
 
     private suspend fun addUserToFirestore() {
         auth.currentUser?.let { firebaseUser ->

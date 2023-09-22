@@ -41,7 +41,7 @@ data class TaskEntity(
     @ColumnInfo(name = "description")
     val description: String,
     @ColumnInfo(name = "completed")
-    val isCompleted: Boolean = false,
+    val completed: Boolean = false,
     @ColumnInfo(name = "created")
     val created: Long = 0L,
     @ColumnInfo(name = "due_date")
@@ -59,7 +59,7 @@ fun TaskEntity.asExternalModel() = Task(
     id = id,
     title = title,
     description = description,
-    isCompleted = isCompleted,
+    isCompleted = completed,
     created = created,
     dueDate = dueDate,
     status = status,
@@ -71,7 +71,7 @@ fun TaskEntity.asNetworkModel() = NetworkTask(
     id = id,
     title = title,
     description = description,
-    isCompleted = isCompleted,
+    completed = completed,
     created = created,
     dueDate = dueDate,
     status = status,

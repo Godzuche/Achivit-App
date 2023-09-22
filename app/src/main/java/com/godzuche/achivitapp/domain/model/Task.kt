@@ -18,7 +18,7 @@ data class Task(
 fun Task.asNewEntity() = TaskEntity(
     title = title,
     description = description,
-    isCompleted = isCompleted,
+    completed = isCompleted,
     created = created,
     dueDate = dueDate,
     status = status,
@@ -29,7 +29,7 @@ fun Task.asNewEntity() = TaskEntity(
 fun Task.asEntity() = TaskEntity(
     id = id!!,
     title = title,
-    isCompleted = isCompleted,
+    completed = isCompleted,
     created = created,
     description = description,
     dueDate = dueDate,
