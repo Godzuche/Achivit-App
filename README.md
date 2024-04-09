@@ -32,4 +32,18 @@ A planner app...
   </tr> -->
 </table>
 
-   
+## Features
+- Offline-first data using Roome Database and Cloud Firestore
+- Asynchronous work with Coroutines
+- Persistent work with Work Manager
+- Schedules/Reminders with Alarm Manager
+- Beautiful and minimalistic UI with Jetpack Compose
+
+## Tech Stack, API and Libraries used:
++ Room Database
++ Firebase Firestore & Google Auth
++ XML plus Jetpack Compose Migration
++ Alarm Manager
++ Coroutines
++ Work Manager
++ In-App Notification
