@@ -39,7 +39,7 @@ A planner app...
 - Schedules/Reminders with Alarm Manager
 - Beautiful and minimalistic UI with Jetpack Compose
 
-## Tech Stack, API and Libraries used:
+## Tech Stack, API and Libraries used
 + Room Database
 + Firebase Firestore & Google Auth
 + XML plus Jetpack Compose Migration
