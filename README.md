@@ -40,6 +40,8 @@ A planner app...
 - Schedules/Reminders with Alarm Manager
 - In-App Notifications
 - Beautiful and minimalistic UI with Jetpack Compose
+- Filter Tasks
+- Dark/Light Themes
 
 ## Tech Stack, API and Libraries used
 + Room Database
