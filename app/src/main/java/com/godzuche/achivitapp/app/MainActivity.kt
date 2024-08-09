@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.app
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
 import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 import com.godzuche.achivitapp.feature.home.presentation.HomeViewModel

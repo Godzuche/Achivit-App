@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

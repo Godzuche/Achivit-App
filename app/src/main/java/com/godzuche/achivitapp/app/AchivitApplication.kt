@@ -1,8 +1,9 @@
-package com.godzuche.achivitapp
+package com.godzuche.achivitapp.app
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.godzuche.achivitapp.BuildConfig
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.core.domain.repository.UserDataRepository
