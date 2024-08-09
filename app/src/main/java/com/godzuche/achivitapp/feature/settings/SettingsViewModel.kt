@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
-import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
-import com.godzuche.achivitapp.domain.repository.UserDataRepository
+import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.core.domain.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted

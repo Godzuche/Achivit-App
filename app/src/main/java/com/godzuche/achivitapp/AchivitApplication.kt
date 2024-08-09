@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
-import com.godzuche.achivitapp.domain.repository.UserDataRepository
-import com.godzuche.achivitapp.worker.createDailyTaskNotificationChannel
-import com.godzuche.achivitapp.worker.createDueTaskNotificationChannel
+import com.godzuche.achivitapp.core.domain.repository.UserDataRepository
+import com.godzuche.achivitapp.feature.tasks.worker.createDailyTaskNotificationChannel
+import com.godzuche.achivitapp.feature.tasks.worker.createDueTaskNotificationChannel
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
@@ -25,8 +25,8 @@ class AchivitApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return if (BuildConfig.DEBUG) {
+    override val workManagerConfiguration: Configuration
+        get() = if (BuildConfig.DEBUG) {
             Configuration.Builder()
                 .setMinimumLoggingLevel(android.util.Log.DEBUG)
                 .setWorkerFactory(workerFactory)
@@ -37,7 +37,6 @@ class AchivitApplication : Application(), Configuration.Provider {
                 .setWorkerFactory(workerFactory)
                 .build()
         }
-    }
 
     override fun onCreate() {
         super.onCreate()

@@ -2,9 +2,9 @@ package com.godzuche.achivitapp.feature.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.godzuche.achivitapp.domain.model.Notification
-import com.godzuche.achivitapp.domain.repository.NotificationRepository
-import com.godzuche.achivitapp.domain.usecase.GetNotificationsUseCase
+import com.godzuche.achivitapp.core.domain.model.Notification
+import com.godzuche.achivitapp.core.domain.repository.NotificationRepository
+import com.godzuche.achivitapp.core.domain.usecase.GetNotificationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ class NotificationsViewModel @Inject constructor(
                 initialValue = NotificationUiState.Loading
             )
 
-    fun readNotification(notification: Notification) {
+    fun readNotification(notification: com.godzuche.achivitapp.core.domain.model.Notification) {
         viewModelScope.launch {
             notificationRepository.readNotification(notification)
         }
@@ -48,6 +48,6 @@ sealed interface NotificationUiState {
     object Loading : NotificationUiState
 
     data class Success(
-        val notifications: List<Notification>
+        val notifications: List<com.godzuche.achivitapp.core.domain.model.Notification>
     ) : NotificationUiState
 }

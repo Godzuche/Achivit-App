@@ -47,7 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.SearchToolbar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
 
 @Composable

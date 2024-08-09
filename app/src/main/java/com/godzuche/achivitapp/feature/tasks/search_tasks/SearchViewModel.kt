@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.common.asResult
-import com.godzuche.achivitapp.domain.repository.RecentSearchRepository
-import com.godzuche.achivitapp.domain.usecase.GetRecentSearchQueriesUseCase
-import com.godzuche.achivitapp.domain.usecase.GetSearchContentsCountUseCase
-import com.godzuche.achivitapp.domain.usecase.GetSearchContentsUseCase
+import com.godzuche.achivitapp.core.domain.repository.RecentSearchRepository
+import com.godzuche.achivitapp.core.domain.usecase.GetRecentSearchQueriesUseCase
+import com.godzuche.achivitapp.core.domain.usecase.GetSearchContentsCountUseCase
+import com.godzuche.achivitapp.core.domain.usecase.GetSearchContentsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted

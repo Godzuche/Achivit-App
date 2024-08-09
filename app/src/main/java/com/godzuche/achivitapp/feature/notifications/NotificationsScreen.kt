@@ -41,13 +41,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
-import com.godzuche.achivitapp.domain.model.Notification
+import com.godzuche.achivitapp.core.domain.model.Notification
 import kotlinx.datetime.Instant
 
 @Composable
 fun NotificationRoute(
     modifier: Modifier = Modifier,
-    onNotificationClick: (Notification) -> Unit,
+    onNotificationClick: (com.godzuche.achivitapp.core.domain.model.Notification) -> Unit,
     notificationsViewModel: NotificationsViewModel = hiltViewModel()
 ) {
     val notificationUiState by notificationsViewModel.notificationUiState.collectAsStateWithLifecycle()
@@ -66,7 +66,7 @@ fun NotificationRoute(
 @Composable
 fun NotificationScreen(
     notificationUiState: NotificationUiState,
-    onNotificationClick: (Notification) -> Unit,
+    onNotificationClick: (com.godzuche.achivitapp.core.domain.model.Notification) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isNotificationLoading = notificationUiState is NotificationUiState.Loading
@@ -125,7 +125,7 @@ fun NotificationScreen(
 @Composable
 fun NotificationsGrid(
     notificationUiState: NotificationUiState,
-    onNotificationClick: (Notification) -> Unit,
+    onNotificationClick: (com.godzuche.achivitapp.core.domain.model.Notification) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()

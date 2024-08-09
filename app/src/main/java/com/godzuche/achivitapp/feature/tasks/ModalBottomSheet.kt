@@ -14,7 +14,7 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksFragment.Companion.NOT_SET
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip

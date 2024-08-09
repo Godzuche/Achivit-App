@@ -22,7 +22,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
-import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 import com.godzuche.achivitapp.feature.home.presentation.HomeViewModel
 import com.godzuche.achivitapp.feature.notifications.NotificationUiState
 import com.godzuche.achivitapp.feature.notifications.NotificationsViewModel

@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.domain.repository.AuthRepository
+import com.godzuche.achivitapp.core.domain.repository.AuthRepository
 import com.godzuche.achivitapp.feature.auth.UserAuthState
 import com.godzuche.achivitapp.feature.auth.isNotNull
 import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog

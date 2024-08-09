@@ -40,8 +40,8 @@ import com.godzuche.achivitapp.core.design_system.components.OnlineStatusIndicat
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
-import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.domain.model.UserData
+import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.UserData
 import com.godzuche.achivitapp.feature.auth.AuthViewModel
 import com.godzuche.achivitapp.feature.auth.UserAuthState
 

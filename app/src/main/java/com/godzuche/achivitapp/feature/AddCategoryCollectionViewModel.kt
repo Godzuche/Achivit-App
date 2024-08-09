@@ -3,10 +3,10 @@ package com.godzuche.achivitapp.feature
 import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.godzuche.achivitapp.domain.model.TaskCategory
-import com.godzuche.achivitapp.domain.model.TaskCollection
-import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
-import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
+import com.godzuche.achivitapp.core.domain.model.TaskCategory
+import com.godzuche.achivitapp.core.domain.model.TaskCollection
+import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
+import com.godzuche.achivitapp.core.domain.repository.TaskCollectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

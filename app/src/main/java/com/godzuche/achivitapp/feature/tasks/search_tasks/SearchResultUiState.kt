@@ -1,6 +1,6 @@
 package com.godzuche.achivitapp.feature.tasks.search_tasks
 
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 
 sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState

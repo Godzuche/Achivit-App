@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.feature.home.presentation
 
-import com.godzuche.achivitapp.domain.model.CategoryWithCollectionsAndTasks
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.CategoryWithCollectionsAndTasks
+import com.godzuche.achivitapp.core.domain.model.Task
 
 data class HomeUiState(
     val todayTasks: List<Task> = emptyList(),
@@ -13,5 +13,5 @@ data class HomeUiState(
 //    val taskStatus: MutableMap<String, Int>? = null,
 //    val categories: List<TaskCategory> = emptyList(),
 //    val categoryWithCollectionsPairs: List<Pair<TaskCategory, List<TaskCollection>>>? = null
-    val categoryWithCollectionsAndTasks: List<CategoryWithCollectionsAndTasks> = emptyList()
+    val categoryWithCollectionsAndTasks: List<com.godzuche.achivitapp.core.domain.model.CategoryWithCollectionsAndTasks> = emptyList()
 )

@@ -12,7 +12,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

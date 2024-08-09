@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
-import com.godzuche.achivitapp.domain.repository.TaskCollectionRepository
-import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.domain.util.DueTaskAlarmScheduler
+import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
+import com.godzuche.achivitapp.core.domain.repository.TaskCollectionRepository
+import com.godzuche.achivitapp.core.domain.repository.TaskRepository
+import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
 import com.godzuche.achivitapp.feature.home.presentation.fromModifiedStatusText
 import com.godzuche.achivitapp.feature.tasks.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature.tasks.util.Routes

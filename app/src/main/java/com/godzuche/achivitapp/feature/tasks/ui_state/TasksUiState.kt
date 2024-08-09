@@ -1,8 +1,8 @@
 package com.godzuche.achivitapp.feature.tasks.ui_state
 
-import com.godzuche.achivitapp.data.local.database.relations.CollectionWithTasksEntities
-import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.domain.model.TaskCategory
+import com.godzuche.achivitapp.core.data.local.database.relations.CollectionWithTasksEntities
+import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.TaskCategory
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 data class TasksUiState(

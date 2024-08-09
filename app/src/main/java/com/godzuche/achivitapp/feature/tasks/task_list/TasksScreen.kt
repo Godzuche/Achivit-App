@@ -29,9 +29,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+//import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,12 +51,13 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.MGreen
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
 import com.godzuche.achivitapp.core.ui.util.millisToString
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.home.presentation.toModifiedStatusText
 import com.godzuche.achivitapp.feature.tasks.ui_state.TasksUiState
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
@@ -179,10 +183,10 @@ fun SwipeToDismissTaskCard(
     onTaskClick: (Task) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val dismissState = rememberDismissState(
-        confirmValueChange = { dismissValue: DismissValue ->
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue: SwipeToDismissBoxValue ->
             when (dismissValue) {
-                DismissValue.DismissedToStart -> {
+                SwipeToDismissBoxValue.EndToStart -> {
                     onSwipeToDelete()
                     false
                 }
@@ -198,42 +202,54 @@ fun SwipeToDismissTaskCard(
     )
     val color by animateColorAsState(
         targetValue = when (dismissState.targetValue) {
-            DismissValue.Default -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6F)
-            DismissValue.DismissedToEnd -> MGreen
-            DismissValue.DismissedToStart -> Color.Red
+            SwipeToDismissBoxValue.Settled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6F)
+            SwipeToDismissBoxValue.StartToEnd -> MGreen
+            SwipeToDismissBoxValue.EndToStart -> Color.Red
         }
     )
 
     SwipeToDismiss(
         state = dismissState,
         modifier = modifier,
-        background = {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = color)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(imageVector = Icons.Rounded.Snooze, contentDescription = null)
-                    Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-                }
-            }
-        },
+        background = { TaskDismissBackground(color = color) },
         dismissContent = {
             TaskCard(
                 task = task,
                 onTaskClick = onTaskClick,
-                onDoneCheck = onDoneCheck
+                onDoneCheck = onDoneCheck,
             )
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskDismissBackground(
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = color)
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Todo: Maybe change snooze to swipe to mark completed.
+            Icon(
+                imageVector = Icons.Rounded.Snooze,
+                contentDescription = stringResource(R.string.snooze_task),
+            )
+            Icon(
+                imageVector = Icons.Rounded.Delete,
+                contentDescription = stringResource(R.string.delete_task),
+            )
+        }
+    }
+}
+
 @Composable
 fun MCard(
     onClick: () -> Unit,
@@ -315,10 +331,10 @@ fun TaskCard(
             TaskStatus.IN_PROGRESS -> MOrange
             TaskStatus.COMPLETED -> MGreen
             else -> Color.Gray
-        }
+        }, label = "Task Status Color"
     )
 
-    var isTaskChecked = task.isCompleted
+//    var isTaskChecked = task.isCompleted
 
     MCard(onClick = { onTaskClick(task) },
         headlineContent = {
@@ -354,10 +370,10 @@ fun TaskCard(
         },
         leadingContent = {
             DoneCheckBox(
-                checked = isTaskChecked,
+                checked = /*isTaskChecked*/ task.isCompleted,
                 onCheckChanged = { isChecked ->
                     onDoneCheck(task, isChecked)
-                    isTaskChecked = isChecked
+//                    isTaskChecked = isChecked
                 }
             )
         },
@@ -365,66 +381,6 @@ fun TaskCard(
             TaskStatusColor(color = statusColor)
         }
     )
-
-    /*    Card(
-            onClick = { onTaskClick(task) },
-            modifier = Modifier.fillMaxSize(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            ListItem(
-                headlineContent = {
-                    Text(
-                        text = task.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                supportingContent = {
-                    Column {
-                        Text(
-                            text = task.description,
-                            maxLines = 2,
-                            style = MaterialTheme.typography.bodyMedium,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        AchivitAssistChip(
-                            onClick = {},
-                            label = {
-                                Text(text = task.dueDate.millisToString())
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = AchivitIcons.AccessTime,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(AssistChipDefaults.IconSize)
-                                )
-                            }
-                        )
-                    }
-                },
-                overlineContent = {
-                    Text(text = task.status.name)
-                },
-                colors = ListItemDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.padding(8.dp),
-                leadingContent = {
-                    DoneCheckBox(
-                        checked = isTaskChecked,
-                        onCheckChanged = { isChecked ->
-                            onDoneCheck(task, isChecked)
-                            isTaskChecked = isChecked
-                        }
-                    )
-                },
-                trailingContent = {
-                    TaskStatusColor(color = statusColor)
-                }
-            )
-        }*/
 }
 
 @Preview

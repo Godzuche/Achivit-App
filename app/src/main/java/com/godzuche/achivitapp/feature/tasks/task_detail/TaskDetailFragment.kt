@@ -17,7 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent

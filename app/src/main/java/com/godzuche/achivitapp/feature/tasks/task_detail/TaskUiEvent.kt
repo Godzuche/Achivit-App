@@ -1,6 +1,6 @@
 package com.godzuche.achivitapp.feature.tasks.task_detail
 
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 
 sealed class TaskUiEvent {
     data class OnRetrieveTask(val taskId: Int) : TaskUiEvent()

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import timber.log.Timber

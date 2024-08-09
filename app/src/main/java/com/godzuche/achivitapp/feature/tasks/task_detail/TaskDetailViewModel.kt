@@ -3,9 +3,9 @@ package com.godzuche.achivitapp.feature.tasks.task_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.domain.model.Task
-import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.domain.usecase.GetTaskUseCase
+import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.repository.TaskRepository
+import com.godzuche.achivitapp.core.domain.usecase.GetTaskUseCase
 import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog

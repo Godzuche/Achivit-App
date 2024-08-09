@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.feature.settings
 
 import androidx.appcompat.app.AppCompatDelegate
-import com.godzuche.achivitapp.domain.repository.DarkThemeConfig
+import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 
 fun setDarkMode(darkMode: String?) {
     when (darkMode) {

@@ -27,7 +27,7 @@ class NotificationsPrefFragment : PreferenceFragmentCompat() {
                     ?.isVisible = newValue as Boolean
 
                 findPreference<MultiSelectListPreference>("key_filter_push_notifications")
-                    ?.isVisible = newValue
+                    ?.isVisible = newValue as Boolean
 
                 true
             }

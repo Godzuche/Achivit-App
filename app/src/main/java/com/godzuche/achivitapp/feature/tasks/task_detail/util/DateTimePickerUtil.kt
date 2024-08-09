@@ -4,7 +4,7 @@ package com.godzuche.achivitapp.feature.tasks.task_detail.util
 import androidx.fragment.app.Fragment
 import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker

@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.ui.util.millisToString
-import com.godzuche.achivitapp.domain.model.TaskCategory
+import com.godzuche.achivitapp.core.domain.model.TaskCategory
 
 @Composable
 fun CategoriesRow(

@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.components.AchivitFilterChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
-import com.godzuche.achivitapp.domain.model.TaskCategory
+import com.godzuche.achivitapp.core.domain.model.TaskCategory
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -79,15 +79,15 @@ fun TasksTopBar(
             windowInsets = WindowInsets(0, 0, 0, 0)
         )
         val categoryFilterRowState = rememberLazyListState()
-        val snappingLayout = remember(categoryFilterRowState) {
+        /*val snappingLayout = remember(categoryFilterRowState) {
             SnapLayoutInfoProvider(
                 lazyListState = categoryFilterRowState,
                 positionInLayout = { _, _, _ ->
                     0
                 }
             )
-        }
-        val flingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider = snappingLayout)
+        }*/
+//        val flingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider = snappingLayout)
 
         LazyRow(
             state = categoryFilterRowState,
@@ -96,7 +96,7 @@ fun TasksTopBar(
             contentPadding = PaddingValues(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            flingBehavior = flingBehavior
+//            flingBehavior = flingBehavior
         ) {
             items(items = categories) { taskCategory ->
                 val index = categories.indexOf(taskCategory)

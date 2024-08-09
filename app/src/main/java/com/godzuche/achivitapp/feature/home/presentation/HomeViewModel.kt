@@ -3,9 +3,9 @@ package com.godzuche.achivitapp.feature.home.presentation
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.godzuche.achivitapp.domain.repository.TaskCategoryRepository
-import com.godzuche.achivitapp.domain.repository.TaskRepository
-import com.godzuche.achivitapp.domain.util.NetworkMonitor
+import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
+import com.godzuche.achivitapp.core.domain.repository.TaskRepository
+import com.godzuche.achivitapp.core.domain.util.NetworkMonitor
 import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
 import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel

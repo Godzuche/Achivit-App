@@ -3,8 +3,8 @@ package com.godzuche.achivitapp.feature.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
-import com.godzuche.achivitapp.domain.model.UserData
-import com.godzuche.achivitapp.domain.repository.AuthRepository
+import com.godzuche.achivitapp.core.domain.model.UserData
+import com.godzuche.achivitapp.core.domain.repository.AuthRepository
 import com.google.android.gms.auth.api.identity.SignInCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException

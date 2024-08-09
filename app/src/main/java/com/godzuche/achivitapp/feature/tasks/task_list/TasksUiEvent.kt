@@ -1,6 +1,6 @@
 package com.godzuche.achivitapp.feature.tasks.task_list
 
-import com.godzuche.achivitapp.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.Task
 
 sealed interface TasksUiEvent {
     data class Search(val query: String) : TasksUiEvent

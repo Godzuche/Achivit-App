@@ -1,6 +1,6 @@
 package com.godzuche.achivitapp.feature.tasks.search_tasks
 
-import com.godzuche.achivitapp.domain.model.RecentSearchQuery
+import com.godzuche.achivitapp.core.domain.model.RecentSearchQuery
 
 sealed interface RecentSearchQueriesUiState {
     object Loading : RecentSearchQueriesUiState
