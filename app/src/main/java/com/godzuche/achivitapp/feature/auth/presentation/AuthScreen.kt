@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.auth
+package com.godzuche.achivitapp.feature.auth.presentation
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult

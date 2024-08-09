@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.auth
+package com.godzuche.achivitapp.feature.auth.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater

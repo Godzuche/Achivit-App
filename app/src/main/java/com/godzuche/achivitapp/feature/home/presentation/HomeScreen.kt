@@ -42,8 +42,8 @@ import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.model.UserData
-import com.godzuche.achivitapp.feature.auth.AuthViewModel
-import com.godzuche.achivitapp.feature.auth.UserAuthState
+import com.godzuche.achivitapp.feature.auth.presentation.AuthViewModel
+import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 
 enum class HomeTopBarActions {
     PROFILE,

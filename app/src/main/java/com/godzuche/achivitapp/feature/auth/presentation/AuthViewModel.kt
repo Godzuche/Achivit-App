@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.auth
+package com.godzuche.achivitapp.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

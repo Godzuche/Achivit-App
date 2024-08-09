@@ -56,8 +56,8 @@ import com.godzuche.achivitapp.core.design_system.components.RecircuTopBar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.core.domain.model.UserData
-import com.godzuche.achivitapp.feature.auth.UserAuthState
-import com.godzuche.achivitapp.feature.auth.isNotNull
+import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
+import com.godzuche.achivitapp.feature.auth.presentation.isNotNull
 import timber.log.Timber
 
 @Composable
