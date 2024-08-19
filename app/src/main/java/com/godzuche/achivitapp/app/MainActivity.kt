@@ -25,8 +25,8 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.ActivityMainBinding
 import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 import com.godzuche.achivitapp.feature.home.presentation.HomeViewModel
-import com.godzuche.achivitapp.feature.notifications.NotificationUiState
-import com.godzuche.achivitapp.feature.notifications.NotificationsViewModel
+import com.godzuche.achivitapp.feature.notifications.presentation.NotificationUiState
+import com.godzuche.achivitapp.feature.notifications.presentation.NotificationsViewModel
 import com.godzuche.achivitapp.feature.settings.DarkMode
 import com.godzuche.achivitapp.feature.settings.setDarkMode
 import com.google.android.material.snackbar.Snackbar

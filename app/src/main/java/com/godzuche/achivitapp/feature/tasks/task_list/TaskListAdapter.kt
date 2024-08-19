@@ -12,10 +12,12 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.design_system.theme.CompletedColor
+import com.godzuche.achivitapp.core.design_system.theme.InProgressColor
+import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.databinding.ItemTaskListBinding
-import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import timber.log.Timber
 
@@ -83,8 +85,8 @@ class TaskListAdapter(
                             val statusColor by remember(task.status) {
                                 mutableStateOf(
                                     when (task.status) {
-                                        TaskStatus.IN_PROGRESS -> Color(0xFFFFA500)
-                                        TaskStatus.COMPLETED -> Color(0xFF52D726)
+                                        TaskStatus.IN_PROGRESS -> InProgressColor
+                                        TaskStatus.COMPLETED -> CompletedColor
                                         else -> Color.Gray
                                     }
                                 )

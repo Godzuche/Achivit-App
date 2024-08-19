@@ -8,7 +8,8 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
- *
+ * A utility function that formats a String to title case by
+ * capitalizing only the first character of each word
  * */
 fun String.capitalizeEachWord(): String = split("_").joinToString(" ") {
     it.lowercase().replaceFirstChar { char -> char.uppercase() }

@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.core.data.local.database.util
 
 import androidx.room.TypeConverter
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import kotlinx.datetime.Instant
 
 

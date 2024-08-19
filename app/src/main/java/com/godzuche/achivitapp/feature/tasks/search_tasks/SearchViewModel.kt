@@ -26,7 +26,7 @@ class SearchViewModel @Inject constructor(
     getSearchContentsCountUseCase: GetSearchContentsCountUseCase,
     getSearchContentsUseCase: GetSearchContentsUseCase,
     private val savedStateHandle: SavedStateHandle,
-    private val recentSearchRepository: RecentSearchRepository
+    private val recentSearchRepository: RecentSearchRepository,
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(SEARCH_QUERY, "")
 

@@ -6,15 +6,14 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskCollectionRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
-import com.godzuche.achivitapp.feature.home.presentation.fromModifiedStatusText
-import com.godzuche.achivitapp.feature.tasks.ui_state.TasksUiState
+import com.godzuche.achivitapp.core.ui.util.fromModifiedStatusText
 import com.godzuche.achivitapp.feature.tasks.util.Routes
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +62,7 @@ class TasksViewModel @Inject constructor(
             .getAllTask(
                 it.categoryFilter,
                 it.collectionFilter,
-                it.statusFilter
+                it.statusFilter,
             )
     }.cachedIn(viewModelScope)
 
@@ -222,6 +221,7 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    // Todo: Remove this function
     private fun onSearch(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
@@ -239,6 +239,7 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    // Todo: Remove this function
     private fun search(query: String) {
         _searchQuery.value = query
         searchJob?.cancel()
@@ -260,21 +261,6 @@ class TasksViewModel @Inject constructor(
             _uiEvent.emit(event)
         }
     }
-
-    /*    private fun getCollectionEntry(
-            collectionTitle: String,
-            categoryTitle: String,
-        ): TaskCollectionEntity {
-            return TaskCollectionEntity(
-                title = collectionTitle,
-                categoryTitle = categoryTitle
-            )
-        }*/
-
-    // Input title validation
-    /*    fun isEntryValid(taskTitle: String, chipCount: Int): Boolean {
-            return taskTitle.isNotBlank() && chipCount > 0
-        }*/
 
     private fun deleteTask(task: Task) {
         deletedTask = task
@@ -323,7 +309,7 @@ class TasksViewModel @Inject constructor(
             it.copy(
                 checkedCategoryFilterChipId = checkedId,
                 categoryFilter = category.title,
-                checkedCollectionFilterChipId = -1
+                checkedCollectionFilterChipId = -1,
             )
         }
     }

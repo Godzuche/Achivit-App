@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import com.godzuche.achivitapp.core.domain.model.TaskCollection
 
 /**
@@ -12,7 +13,7 @@ import com.godzuche.achivitapp.core.domain.model.TaskCollection
  *It has one to many relationship with [TaskEntity]
  */
 @Entity(
-    tableName = "task_collections",
+    tableName = DatabaseConstants.COLLECTION_TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = TaskCategoryEntity::class,
@@ -32,7 +33,12 @@ data class TaskCollectionEntity(
     val title: String,
     @ColumnInfo(name = "category_title")
     val categoryTitle: String,
-)
+) {
+    companion object {
+        const val COLUMN_TITLE = "title"
+        const val COLUMN_CATEGORY_TITLE = "category_title"
+    }
+}
 
 fun TaskCollectionEntity.asExternalModel() =
     TaskCollection(title = title, categoryTitle = categoryTitle)

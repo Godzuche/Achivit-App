@@ -1,7 +1,7 @@
 package com.godzuche.achivitapp.core.data.local.datastore.model
 
 import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

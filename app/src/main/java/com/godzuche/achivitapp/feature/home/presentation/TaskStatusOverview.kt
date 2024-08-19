@@ -2,35 +2,52 @@ package com.godzuche.achivitapp.feature.home.presentation
 
 import android.graphics.drawable.Icon
 import androidx.compose.ui.graphics.Color
-import com.godzuche.achivitapp.core.ui.util.capitalizeEachWord
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.design_system.theme.Alpha
+import com.godzuche.achivitapp.core.design_system.theme.CompletedColor
+import com.godzuche.achivitapp.core.design_system.theme.InProgressColor
+import com.godzuche.achivitapp.core.design_system.theme.NoneColor
+import com.godzuche.achivitapp.core.design_system.theme.RunningLateColor
+import com.godzuche.achivitapp.core.design_system.theme.TodoColor
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 
-data class TaskStatusOverview(
+sealed class TaskStatusOverview(
     val taskCount: Int,
-    val status: String,
+    val taskStatus: TaskStatus,
     val taskColor: Color,
-    val statusIcon: Icon? = null
-)
+    val statusIcon: Icon? = null,
+) {
+    data class None(
+        val count: Int = 0,
+        val status: TaskStatus = TaskStatus.NONE,
+        val color: Color = NoneColor,
+        val icon: Icon? = null,
+    ) : TaskStatusOverview(count, status, color, icon)
 
-val TASK_STATUS_OVERVIEWS = listOf(
-    TaskStatusOverview(
-        taskCount = 12,
-        status = TaskStatus.TODO.name.lowercase().replaceFirstChar { it.uppercase() },
-        taskColor = Color.Gray
-    ),
-    TaskStatusOverview(
-        taskCount = 8,
-        status = TaskStatus.IN_PROGRESS.name.capitalizeEachWord(),
-        taskColor = Color(0xFFFFA500)
-    ),
-    TaskStatusOverview(
-        taskCount = 4,
-        status = TaskStatus.RUNNING_LATE.name.capitalizeEachWord(),
-        taskColor = Color.Red
-    ),
-    TaskStatusOverview(
-        taskCount = 27,
-        status = TaskStatus.COMPLETED.name.lowercase().replaceFirstChar { it.uppercase() },
-        taskColor = Color(0xFF52D726)
-    )
-)
+    data class Todo(
+        val count: Int = 0,
+        val status: TaskStatus = TaskStatus.TODO,
+        val color: Color = TodoColor.copy(Alpha.MEDIUM),
+        val icon: Icon? = null,
+    ) : TaskStatusOverview(count, status, color, icon)
+
+    data class InProgress(
+        val count: Int = 0,
+        val status: TaskStatus = TaskStatus.IN_PROGRESS,
+        val color: Color = InProgressColor.copy(Alpha.MEDIUM),
+        val icon: Icon? = null,
+    ) : TaskStatusOverview(count, status, color, icon)
+
+    data class RunningLate(
+        val count: Int = 0,
+        val status: TaskStatus = TaskStatus.RUNNING_LATE,
+        val color: Color = RunningLateColor.copy(Alpha.MEDIUM),
+        val icon: Icon? = null,
+    ) : TaskStatusOverview(count, status, color, icon)
+
+    data class Completed(
+        val count: Int = 0,
+        val status: TaskStatus = TaskStatus.COMPLETED,
+        val color: Color = CompletedColor.copy(Alpha.MEDIUM),
+        val icon: Icon? = null,
+    ) : TaskStatusOverview(count, status, color, icon)
+}

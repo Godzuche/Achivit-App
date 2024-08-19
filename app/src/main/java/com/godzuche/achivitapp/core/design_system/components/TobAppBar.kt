@@ -55,7 +55,7 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
 import com.godzuche.achivitapp.core.ui.util.shimmerEffect
-import com.godzuche.achivitapp.feature.auth.UserAuthState
+import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,6 +139,13 @@ fun ProfilePhotoIcon(
     isOnline: Boolean,
 ) {
     val context = LocalContext.current
+    val imageRequest = remember {
+        ImageRequest.Builder(context)
+            .data(profilePhotoUrl ?: R.drawable.avatar_12)
+            .size(Size.ORIGINAL)
+            .crossfade(true)
+            .build()
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -150,11 +157,6 @@ fun ProfilePhotoIcon(
             onClick = onProfileIconClicked,
             modifier = Modifier.size(48.dp)
         ) {
-            val imageRequest = ImageRequest.Builder(context)
-                .data(profilePhotoUrl ?: R.drawable.avatar_12)
-                .size(Size.ORIGINAL)
-                .crossfade(true)
-                .build()
             AsyncImage(
                 model = imageRequest,
 //                            placeholder = painterResource(id = R.drawable.avatar_12),

@@ -3,13 +3,11 @@ package com.godzuche.achivitapp.feature.home.presentation
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.util.NetworkMonitor
-import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -42,79 +41,30 @@ class HomeViewModel @Inject constructor(
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
 
     init {
+        getTodayTasks()
 
-        viewModelScope.launch(Dispatchers.IO) {
-            taskRepository.getTodayTasks().collectLatest { tasks ->
-                _uiState.update {
-                    it.copy(todayTasks = tasks)
-                }
-            }
-        }
+        getTaskStatusCount(
+            status = TaskStatus.NONE,
+            statusOverviewType = TaskStatusOverview.None::class,
+        )
+        getTaskStatusCount(
+            status = TaskStatus.TODO,
+            statusOverviewType = TaskStatusOverview.Todo::class,
+        )
+        getTaskStatusCount(
+            status = TaskStatus.IN_PROGRESS,
+            statusOverviewType = TaskStatusOverview.InProgress::class,
+        )
+        getTaskStatusCount(
+            status = TaskStatus.RUNNING_LATE,
+            statusOverviewType = TaskStatusOverview.RunningLate::class,
+        )
+        getTaskStatusCount(
+            status = TaskStatus.COMPLETED,
+            statusOverviewType = TaskStatusOverview.Completed::class,
+        )
 
-        viewModelScope.launch(context = Dispatchers.IO) {
-            taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.NONE)).map {
-                it.size
-            }.collectLatest { noneStatusCount ->
-                _uiState.update {
-                    it.copy(
-                        noneStatusCount = noneStatusCount
-                    )
-                }
-            }
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.TODO)).map {
-                it.size
-            }.collectLatest { todosCount ->
-                _uiState.update {
-                    it.copy(
-                        todosTaskCount = todosCount
-                    )
-                }
-            }
-        }
-
-        viewModelScope.launch(context = Dispatchers.IO) {
-            taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.IN_PROGRESS))
-                .map {
-                    it.size
-                }.collectLatest { inProgressCount ->
-                    _uiState.update {
-                        it.copy(
-                            inProgressTaskCount = inProgressCount
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch(context = Dispatchers.IO) {
-            taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.RUNNING_LATE))
-                .map {
-                    it.size
-                }.collectLatest { lateTasksCount ->
-                    _uiState.update {
-                        it.copy(
-                            lateTasksCount = lateTasksCount
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch(context = Dispatchers.IO) {
-            taskRepository.getFilteredTasks(filter = TaskFilter(status = TaskStatus.COMPLETED))
-                .map {
-                    it.size
-                }.collectLatest { completedTasksCount ->
-                    _uiState.update {
-                        it.copy(
-                            completedTasksCount = completedTasksCount
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             taskCategoryRepository.getCategoryWithCollectionsAndTasks()
                 .collectLatest { categoryWithCollectionsAndTasks ->
                     _uiState.update {
@@ -126,14 +76,76 @@ class HomeViewModel @Inject constructor(
 
     }
 
+    private fun getTodayTasks() {
+        viewModelScope.launch {
+            taskRepository.getTodayTasks().collectLatest { tasks ->
+                _uiState.update {
+                    it.copy(todayTasks = tasks)
+                }
+            }
+        }
+    }
+
+    private fun <T : TaskStatusOverview> getTaskStatusCount(
+        status: TaskStatus,
+        statusOverviewType: KClass<T>,
+    ) {
+        viewModelScope.launch {
+            taskRepository.getTasksCountByStatus(status = status).collectLatest { count ->
+                _uiState.update {
+                    val updatedOverview = when (statusOverviewType) {
+                        TaskStatusOverview.None::class -> {
+                            (it.noneStatusOverview as TaskStatusOverview.None).copy(count = count)
+                        }
+
+                        TaskStatusOverview.Todo::class -> {
+                            (it.todoStatusOverview as TaskStatusOverview.Todo).copy(count = count)
+                        }
+
+                        TaskStatusOverview.InProgress::class -> {
+                            (it.inProgressStatusOverview as TaskStatusOverview.InProgress).copy(
+                                count = count
+                            )
+                        }
+
+                        TaskStatusOverview.RunningLate::class -> {
+                            (it.runningLateStatusOverview as TaskStatusOverview.RunningLate).copy(
+                                count = count
+                            )
+                        }
+
+                        TaskStatusOverview.Completed::class -> {
+                            (it.completedStatusOverview as TaskStatusOverview.Completed).copy(count = count)
+                        }
+
+                        else -> throw IllegalArgumentException("Unknown TaskStatusOverview class")
+                    }
+                    it.updateOverview(updatedOverview)
+                }
+            }
+        }
+    }
+
+    private fun HomeUiState.updateOverview(updatedOverview: TaskStatusOverview): HomeUiState {
+        return when (updatedOverview) {
+            is TaskStatusOverview.None -> copy(noneStatusOverview = updatedOverview)
+
+            is TaskStatusOverview.Todo -> copy(todoStatusOverview = updatedOverview)
+
+            is TaskStatusOverview.InProgress -> copy(inProgressStatusOverview = updatedOverview)
+
+            is TaskStatusOverview.RunningLate -> copy(runningLateStatusOverview = updatedOverview)
+
+            is TaskStatusOverview.Completed -> copy(completedStatusOverview = updatedOverview)
+
+        }
+    }
+
     fun dismissPermissionDialog() {
         visiblePermissionDialogQueue.removeFirst()
     }
 
-    fun onPermissionResult(
-        permission: String,
-        isGranted: Boolean
-    ) {
+    fun onPermissionResult(permission: String, isGranted: Boolean) {
         if (!isGranted) {
             visiblePermissionDialogQueue.add(permission)
         }

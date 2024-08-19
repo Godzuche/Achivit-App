@@ -12,3 +12,10 @@ val Pink40 = Color(0xFF7D5260)
 
 val MOrange = Color(0xFFFFA500)
 val MGreen = Color(0xFF52D726)
+
+// Task Status
+val NoneColor = Color.Transparent
+val TodoColor = Color.Gray
+val InProgressColor = MOrange
+val RunningLateColor = Color.Red
+val CompletedColor = MGreen

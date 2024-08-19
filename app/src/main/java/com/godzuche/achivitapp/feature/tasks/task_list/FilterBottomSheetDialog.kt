@@ -11,10 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.databinding.FilterModalBottomSheetContentBinding
-import com.godzuche.achivitapp.feature.home.presentation.toModifiedStatusText
+import com.godzuche.achivitapp.core.ui.util.toModifiedStatusText
 import com.godzuche.achivitapp.feature.tasks.util.DialogTitle
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -116,7 +116,7 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
 
                 val statusChipGroup = binding.chipGroupStatus
                 statusChipGroup.removeAllViews()
-                val statusList = TaskStatus.values().map { it.name }
+                val statusList = TaskStatus.entries.map { it.name }
                 statusList.forEachIndexed { index, name ->
                     val chip = layoutInflater.inflate(
                         R.layout.single_chip_layout,

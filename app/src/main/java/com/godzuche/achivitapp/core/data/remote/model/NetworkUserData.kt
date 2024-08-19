@@ -10,7 +10,7 @@ data class NetworkUserData(
     val displayName: String?,
     val email: String?,
     val profilePictureUrl: String?,
-    val createdDate: Timestamp
+    val createdDate: Timestamp,
 ) {
     // Empty constructor needed for deserialization of firestore data to this class
     @Suppress("unused")

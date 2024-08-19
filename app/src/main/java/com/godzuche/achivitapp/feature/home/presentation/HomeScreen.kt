@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,20 +29,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.HomeTopAppBar
 import com.godzuche.achivitapp.core.design_system.components.OnlineStatusIndicator
+import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.core.design_system.theme.Alpha
-import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.model.UserData
-import com.godzuche.achivitapp.feature.auth.AuthViewModel
-import com.godzuche.achivitapp.feature.auth.UserAuthState
+import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
+import com.godzuche.achivitapp.feature.auth.presentation.AuthViewModel
+import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
+import com.godzuche.achivitapp.feature.home.presentation.component.CategoriesRow
+import com.godzuche.achivitapp.feature.home.presentation.component.TaskStatusGrid
+import com.godzuche.achivitapp.feature.home.presentation.component.TodayTasks
 
 enum class HomeTopBarActions {
     PROFILE,
@@ -64,7 +69,7 @@ fun HomeRoute(
 
     HomeScreen(
         userAuthState = userAuthState,
-        homeUiState = homeUiState,
+        state = homeUiState,
         onTodayTaskClick = onNavigateToTaskDetail,
         modifier = modifier,
         onTopBarAction = onTopBarAction,
@@ -72,11 +77,11 @@ fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     userAuthState: UserAuthState,
-    homeUiState: HomeUiState,
+    state: HomeUiState,
     onTodayTaskClick: (Int) -> Unit,
     onTopBarAction: (HomeTopBarActions) -> Unit,
     modifier: Modifier = Modifier,
@@ -95,7 +100,7 @@ fun HomeScreen(
             HomeTopAppBar(
                 userAuthState = userAuthState,
                 isOnline = isOnline,
-                todayTasks = homeUiState.todayTasks.size,
+                todayTasks = state.todayTasks.size,
                 scrollBehavior = scrollBehavior,
                 onProfileIconClicked = {
                     onTopBarAction(HomeTopBarActions.PROFILE)
@@ -132,46 +137,42 @@ fun HomeScreen(
                     Text(
                         text = onlineText,
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.alpha(Alpha.medium),
+                        modifier = Modifier.alpha(Alpha.MEDIUM_HIGH),
                     )
                 }
             }
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(300.dp),
+                columns = GridCells.Adaptive(AchivitDimension.minVerticalGridColumnWidth),
                 state = listState,
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(space = 24.dp),
-                modifier = Modifier/*
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding)*/
-                    .fillMaxSize()
-//                    .then(modifier)
+                modifier = Modifier.fillMaxSize()
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     TaskStatusGrid(
-                        state = homeUiState,
+                        taskStatusOverviews = state.taskStatusOverviews,
                         modifier = Modifier.removeWidthConstraint(contentPadding = 16.dp)
                     )
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     HomeSection(
-                        title = "Categories",
-                        viewMoreButtonText = "View All",
+                        title = stringResource(R.string.categories),
+                        viewMoreButtonText = stringResource(R.string.view_all),
                     ) {
                         CategoriesRow(
-                            state = homeUiState,
+                            categoryWithCollectionsAndTasks = state.categoryWithCollectionsAndTasks,
                             modifier = Modifier.removeWidthConstraint(contentPadding = 16.dp)
                         )
                     }
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     HomeSection(
-                        title = "Today's tasks",
-                        viewMoreButtonText = "View All"
+                        title = stringResource(R.string.today_s_tasks),
+                        viewMoreButtonText = stringResource(R.string.view_all),
                     ) {
                         TodayTasks(
-                            homeUiState = homeUiState,
+                            homeUiState = state,
                             onTaskClick = onTodayTaskClick,
                             modifier = Modifier.removeWidthConstraint(16.dp)
                         )
@@ -187,7 +188,7 @@ fun HomeSection(
     title: String,
     modifier: Modifier = Modifier,
     viewMoreButtonText: String? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -199,7 +200,7 @@ fun HomeSection(
         ) {
             Text(
                 text = title,
-                fontSize = 18.sp
+                fontSize = 18.sp,
             )
             if (viewMoreButtonText != null) {
                 Text(
@@ -208,7 +209,7 @@ fun HomeSection(
                     style = AchivitTypography.labelLarge,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .clickable { }
+                        .clickable { },
                 )
             }
         }
@@ -220,8 +221,11 @@ fun HomeSection(
 @Composable
 fun HomeSectionPreview() {
     Surface {
-        HomeSection(title = "Categories", viewMoreButtonText = "View All") {
-            CategoriesRow(state = HomeUiState())
+        HomeSection(
+            title = stringResource(R.string.categories),
+            viewMoreButtonText = stringResource(R.string.view_all),
+        ) {
+            CategoriesRow(categoryWithCollectionsAndTasks = HomeUiState().categoryWithCollectionsAndTasks)
         }
     }
 }
@@ -237,10 +241,10 @@ fun HomeScreenPreview() {
                     displayName = null,
                     email = null,
                     profilePictureUrl = null,
-                    createdDate = 0L
+                    createdDate = 0L,
                 )
             ),
-            homeUiState = HomeUiState(
+            state = HomeUiState(
                 todayTasks = listOf(
                     Task(
                         id = 0,

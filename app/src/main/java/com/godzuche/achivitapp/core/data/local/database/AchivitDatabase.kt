@@ -16,6 +16,7 @@ import com.godzuche.achivitapp.core.data.local.database.model.TaskCategoryEntity
 import com.godzuche.achivitapp.core.data.local.database.model.TaskCollectionEntity
 import com.godzuche.achivitapp.core.data.local.database.model.TaskEntity
 import com.godzuche.achivitapp.core.data.local.database.model.TaskFtsEntity
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import com.godzuche.achivitapp.core.data.local.database.util.InstantConverter
 import com.godzuche.achivitapp.core.data.local.database.util.TaskStatusConverter
 
@@ -28,8 +29,8 @@ import com.godzuche.achivitapp.core.data.local.database.util.TaskStatusConverter
         RecentSearchQueryEntity::class,
         NotificationEntity::class
     ],
-    version = 2,
-    exportSchema = false
+    version = DatabaseConstants.DATABASE_VERSION,
+    exportSchema = false,
 )
 @TypeConverters(
     TaskStatusConverter::class,

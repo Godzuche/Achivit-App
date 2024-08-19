@@ -27,8 +27,11 @@ class DefaultSearchContentsRepository @Inject constructor(
     override fun searchContents(searchQuery: String): Flow<SearchResult> {
         val taskIds = taskFtsDao.searchAllTasks(appendFtsDbQuery(searchQuery))
 
+//        Only fetch the necessary TaskEntity objects based on the retrieved IDs,
+//        potentially reducing database load.
         val tasksFlow = taskIds.mapLatest { it.toSet() }
-            .distinctUntilChanged().flatMapLatest(taskDao::getTaskEntitiesByIds)
+            .distinctUntilChanged()
+            .flatMapLatest(taskDao::getTaskEntitiesByIds)
 
         return tasksFlow.mapLatest {
             it.map(TaskEntity::asExternalModel)

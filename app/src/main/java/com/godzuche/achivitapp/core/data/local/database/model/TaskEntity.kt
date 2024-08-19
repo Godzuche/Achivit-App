@@ -5,16 +5,17 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import com.godzuche.achivitapp.core.data.remote.model.NetworkTask
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 
 /**
  * Defines a database entity that stores task.
  *It has one to many relationship with [TaskCollectionEntity]
  */
 @Entity(
-    tableName = "task_table",
+    tableName = DatabaseConstants.TASK_TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = TaskCollectionEntity::class,
@@ -46,7 +47,6 @@ data class TaskEntity(
     val created: Long = 0L,
     @ColumnInfo(name = "due_date")
     val dueDate: Long,
-    // TODO: Allow users to set/change the status of a task
     @ColumnInfo(name = "status")
     val status: TaskStatus = TaskStatus.TODO,
     @ColumnInfo(name = "collection_title")

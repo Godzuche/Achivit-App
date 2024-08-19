@@ -10,6 +10,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.core.data.local.database.AchivitDatabase
+import com.godzuche.achivitapp.core.data.local.database.model.TaskCategoryEntity
+import com.godzuche.achivitapp.core.data.local.database.model.TaskCollectionEntity
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +20,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
@@ -26,13 +28,22 @@ import javax.inject.Singleton
 object DatabaseModule {
 
     val categoryContentValue = ContentValues().apply {
-        put("title", "My Tasks")
-        put("created", Calendar.getInstance().timeInMillis)
+        put(
+            TaskCategoryEntity.COLUMN_TITLE,
+            DatabaseConstants.PrepopulatedData.DEFAULT_CATEGORY_TITLE,
+        )
+        put(TaskCategoryEntity.COLUMN_CREATED, Calendar.getInstance().timeInMillis)
     }
 
     val collectionContentValue = ContentValues().apply {
-        put("title", "All Tasks")
-        put("category_title", "My Tasks")
+        put(
+            TaskCollectionEntity.COLUMN_TITLE,
+            DatabaseConstants.PrepopulatedData.DEFAULT_COLLECTION_TITLE,
+        )
+        put(
+            TaskCollectionEntity.COLUMN_CATEGORY_TITLE,
+            DatabaseConstants.PrepopulatedData.DEFAULT_CATEGORY_TITLE,
+        )
     }
 
     @Provides
@@ -43,26 +54,24 @@ object DatabaseModule {
     ): AchivitDatabase = Room.databaseBuilder(
         context,
         AchivitDatabase::class.java,
-        "achivit-database"
+        DatabaseConstants.DATABASE_NAME,
     ).addCallback(
         object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 val scope = CoroutineScope(ioDispatcher)
                 scope.launch {
-//                    async {
-                        db.insert(
-                            table = "task_categories",
-                            conflictAlgorithm = CONFLICT_REPLACE,
-                            values = categoryContentValue
-                        )
+                    db.insert(
+                        table = DatabaseConstants.CATEGORY_TABLE_NAME,
+                        conflictAlgorithm = CONFLICT_REPLACE,
+                        values = categoryContentValue,
+                    )
 
-                        db.insert(
-                            table = "task_collections",
-                            conflictAlgorithm = CONFLICT_REPLACE,
-                            values = collectionContentValue
-                        )
-//                    }.await()
+                    db.insert(
+                        table = DatabaseConstants.COLLECTION_TABLE_NAME,
+                        conflictAlgorithm = CONFLICT_REPLACE,
+                        values = collectionContentValue,
+                    )
                 }
             }
         }

@@ -7,7 +7,7 @@ data class NetworkTaskCategory(
     val created: Long,
 ) {
     @Suppress("unused")
-    constructor() : this("", 0L)
+    constructor() : this("", 0L,)
 }
 
 fun NetworkTaskCategory.asEntity() = TaskCategoryEntity(

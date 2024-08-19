@@ -1,9 +1,16 @@
 package com.godzuche.achivitapp.core.data.local.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.godzuche.achivitapp.core.data.local.database.model.TaskCategoryEntity
 import com.godzuche.achivitapp.core.data.local.database.relations.CategoryWithCollectionsAndTasksEntities
 import com.godzuche.achivitapp.core.data.local.database.relations.CategoryWithCollectionsEntities
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,36 +27,52 @@ interface TaskCategoryDao {
     @Delete
     suspend fun deleteCategory(category: TaskCategoryEntity)
 
-    @Query("SELECT * FROM task_categories ORDER BY title")
+    @Query(
+        """
+            SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}
+            ORDER BY ${TaskCategoryEntity.COLUMN_TITLE}
+        """
+    )
     fun getAllCategories(): Flow<List<TaskCategoryEntity>>
 
     @Query(
         """
-            SELECT * FROM task_categories ORDER BY title
+            SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME} 
+            ORDER BY ${TaskCategoryEntity.COLUMN_TITLE}
         """
     )
     fun retrieveAllCategories(): List<TaskCategoryEntity>
 
-    @Query("SELECT * FROM task_categories WHERE title = :title")
+    @Query(
+        """
+            SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}
+            WHERE ${TaskCategoryEntity.COLUMN_TITLE} = :title
+        """
+    )
     fun getCategory(title: String): Flow<TaskCategoryEntity>
 
     @Transaction
-    @Query("SELECT * FROM task_categories")
+    @Query("SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}")
     fun getCategoriesWithCollections(): Flow<List<CategoryWithCollectionsEntities>>
 
     @Transaction
-    @Query("SELECT * FROM task_categories WHERE title = :categoryTitle")
+    @Query(
+        """
+            SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}
+            WHERE ${TaskCategoryEntity.COLUMN_TITLE} = :categoryTitle
+        """
+    )
     fun getCategoryWithCollectionsByTitle(categoryTitle: String): Flow<List<CategoryWithCollectionsEntities>>
 
     @Transaction
-    @Query("SELECT * FROM task_categories")
+    @Query("SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}")
     fun getCategoryWithCollectionsAndTasks(): Flow<List<CategoryWithCollectionsAndTasksEntities>>
 
     @Transaction
-    @Query("SELECT * FROM task_categories")
+    @Query("SELECT * FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}")
     fun retrieveCategoryWithCollectionsAndTasks(): List<CategoryWithCollectionsAndTasksEntities>
 
-    @Query("DELETE FROM task_categories")
+    @Query("DELETE FROM ${DatabaseConstants.CATEGORY_TABLE_NAME}")
     suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

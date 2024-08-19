@@ -1,7 +1,6 @@
 package com.godzuche.achivitapp.core.domain.model
 
 import com.godzuche.achivitapp.core.data.local.database.model.TaskEntity
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
 
 data class Task(
     val id: Int? = null,

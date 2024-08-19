@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.SearchToolbar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
+import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
 
@@ -203,7 +204,7 @@ fun EmptySearchResultBody(
                 append(tasks)
             }
             append(" ")
-            append("to browse topics")
+            append(stringResource(R.string.to_browse_tasks))
         }
         ClickableText(
             text = tryAnotherSearchString,
@@ -323,7 +324,7 @@ fun SearchResultBody(
 ) {
     val state = rememberLazyGridState()
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(AchivitDimension.minVerticalGridColumnWidth),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),

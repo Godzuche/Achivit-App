@@ -5,15 +5,16 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -22,7 +23,7 @@ import androidx.compose.material.icons.rounded.Snooze
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DismissValue
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,6 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-//import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,12 +41,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -56,11 +59,11 @@ import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.MGreen
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
-import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.home.presentation.toModifiedStatusText
-import com.godzuche.achivitapp.feature.tasks.ui_state.TasksUiState
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
+import com.godzuche.achivitapp.core.ui.util.millisToString
+import com.godzuche.achivitapp.core.ui.util.toModifiedStatusText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 enum class TasksTopBarActions {
@@ -77,12 +80,13 @@ fun TasksRoute(
     onNavigateToTaskDetail: (Int) -> Unit,
     onAddNewTaskCategory: () -> Unit
 ) {
-    val pagedTaskList = tasksViewModel.tasksPagingDataFlow.collectAsLazyPagingItems()
+    val pagedTaskList = tasksViewModel.tasksPagingDataFlow
+        .collectAsLazyPagingItems(tasksViewModel.viewModelScope.coroutineContext)
     val tasksUiState by tasksViewModel.uiState.collectAsStateWithLifecycle()
 
     TasksScreen(
         tasksUiState = tasksUiState,
-        tasks = pagedTaskList,
+        taskLazyPagingItems = pagedTaskList,
         onTopBarAction = onTopBarAction,
         onNavigateToTaskDetail = onNavigateToTaskDetail,
         onAddNewTaskCategory = onAddNewTaskCategory,
@@ -93,25 +97,26 @@ fun TasksRoute(
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class,
 )
 @Composable
 fun TasksScreen(
     tasksUiState: TasksUiState,
-    tasks: LazyPagingItems<Task>,
+    taskLazyPagingItems: LazyPagingItems<Task>,
     onTopBarAction: (TasksTopBarActions) -> Unit,
     onNavigateToTaskDetail: (Int) -> Unit,
     onAddNewTaskCategory: () -> Unit,
     onCategoryChipsCheckChanged: (Int) -> Unit,
     onTaskCheck: (Task, Boolean) -> Unit,
-    onSwipeToDeleteTask: (Task) -> Unit
+    onSwipeToDeleteTask: (Task) -> Unit,
 ) {
 
     val topBarState = rememberTopAppBarState()
     val scrollBehaviour =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val taskListState = rememberLazyListState()
+    val context = LocalContext.current
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -133,11 +138,33 @@ fun TasksScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehaviour.nestedScrollConnection)
     ) { padding ->
-        if (tasks.itemCount == 0) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "No task created yet.")
-            }
-        }
+
+//        LaunchedEffect(key1 = taskLazyPagingItems.loadState) {
+//            taskLazyPagingItems.loadState.run {
+//                if (refresh is LoadState.Error) {
+//                    Toast.makeText(
+//                        context,
+//                        (this.refresh as LoadState.Error).error.message,
+//                        Toast.LENGTH_LONG,
+//                    ).show()
+//                }
+//                if (append is LoadState.Error) {
+//                    Toast.makeText(
+//                        context,
+//                        (this.append as LoadState.Error).error.message,
+//                        Toast.LENGTH_LONG,
+//                    ).show()
+//                }
+//            }
+//        }
+
+//        if (taskLazyPagingItems.itemCount == 0) {
+//            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//                Text(text = "No task created yet.")
+//            }
+//        }
+
+        // Todo: Add Shimmer Effect for refresh Loading state
         LazyColumn(
             state = taskListState,
             modifier = Modifier
@@ -149,28 +176,87 @@ fun TasksScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
-            // Todo: Use a when statement for the different load states
-            items(
-                count = tasks.itemCount,
-                key = tasks.itemKey(key = { it.id!! }),
-                contentType = tasks.itemContentType()
-            ) { index ->
-                val task = tasks[index]
-                task?.let {
-                    SwipeToDismissTaskCard(
-                        task = task,
-                        onSwipeToDelete = {
-                            onSwipeToDeleteTask(task)
-                        },
-                        onDoneCheck = { task, isChecked -> onTaskCheck(task, isChecked) },
-                        onTaskClick = {
-                            onNavigateToTaskDetail(it.id!!)
-                        },
-                        modifier = Modifier.animateItemPlacement()
+            if (taskLazyPagingItems.itemCount == 0) {
+                item { MessageItem(message = "Your tasks will appear here.") }
+            } else {
+                items(
+                    count = taskLazyPagingItems.itemCount,
+                    key = taskLazyPagingItems.itemKey { it.id!! },
+                    contentType = taskLazyPagingItems.itemContentType { "TaskPagingItems" }
+                ) { index ->
+                    val task = taskLazyPagingItems[index]
+                    task?.let {
+                        SwipeToDismissTaskCard(
+                            task = task,
+                            onSwipeToDelete = { onSwipeToDeleteTask(task) },
+                            onDoneCheck = { task, isChecked -> onTaskCheck(task, isChecked) },
+                            onTaskClick = { onNavigateToTaskDetail(it.id!!) },
+                            modifier = Modifier.animateItemPlacement()
+                        )
+                    }
+                }
+            }
+
+            taskLazyPagingItems.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item { LoadingItem(modifier = Modifier.fillParentMaxSize()) }
+                    }
+
+                    loadState.append is LoadState.Loading -> {
+                        item { LoadingItem(modifier = Modifier.fillMaxWidth()) }
+                    }
+
+                    loadState.refresh is LoadState.Error -> {
+                        val e = loadState.refresh as LoadState.Error
+                        item { ErrorItem(message = e.error.localizedMessage!!) }
+                    }
+
+                    loadState.append is LoadState.Error -> {
+                        val e = loadState.append as LoadState.Error
+                        item { ErrorItem(message = e.error.localizedMessage!!) }
+                    }
+                }
+            }
+
+            if (taskLazyPagingItems.loadState.append is LoadState.Loading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally),
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LoadingItem(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.padding(16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorItem(message: String) {
+    Text(text = "Error: $message")
+}
+
+@Composable
+fun MessageItem(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.padding(16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = message)
     }
 }
 
@@ -202,7 +288,10 @@ fun SwipeToDismissTaskCard(
     )
     val color by animateColorAsState(
         targetValue = when (dismissState.targetValue) {
-            SwipeToDismissBoxValue.Settled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6F)
+            SwipeToDismissBoxValue.Settled -> MaterialTheme.colorScheme.surfaceVariant.copy(
+                alpha = 0.6F
+            )
+
             SwipeToDismissBoxValue.StartToEnd -> MGreen
             SwipeToDismissBoxValue.EndToStart -> Color.Red
         }

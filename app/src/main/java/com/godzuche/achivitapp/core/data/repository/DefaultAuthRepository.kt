@@ -1,13 +1,10 @@
 package com.godzuche.achivitapp.core.data.repository
 
 import android.net.Uri
-import android.util.Log
-import androidx.room.Transaction
 import com.godzuche.achivitapp.BuildConfig
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.common.Dispatcher
-import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskCategoryDao
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskCollectionDao
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskDao
@@ -22,6 +19,7 @@ import com.godzuche.achivitapp.core.domain.model.UserData
 import com.godzuche.achivitapp.core.domain.model.asNewNetworkUserData
 import com.godzuche.achivitapp.core.domain.repository.AuthRepository
 import com.godzuche.achivitapp.core.domain.util.NetworkMonitor
+import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -29,17 +27,17 @@ import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -111,77 +109,10 @@ class DefaultAuthRepository @Inject constructor(
                     firestoreDb.collection(USERS_PATH).document(firebaseUser.uid)
                 }
 
-                if (isNewUser.value) {
-                    Timber.d("Auth: New User")
+                syncUserData(userDocRef)
 
-                    withContext(ioDispatcher) {
-                        categoryDao.retrieveCategoryWithCollectionsAndTasks().forEach {
-                            userDocRef?.collection(CATEGORY_PATH)
-                                ?.document(it.category.title)
-                                ?.set(it.category.asNetworkModel())
-                                ?.await()
-
-                            it.collectionWithTasks.map { it.collection }.forEach { collection ->
-                                userDocRef
-                                    ?.collection(CATEGORY_PATH)
-                                    ?.document(collection.categoryTitle)
-                                    ?.collection(COLLECTION_PATH)
-                                    ?.document(collection.title)
-                                    ?.set(collection.asNetworkModel())
-                                    ?.await()
-                            }
-
-                            it.collectionWithTasks.flatMap { it.tasks }.forEach { taskEntity ->
-                                userDocRef
-                                    ?.collection(CATEGORY_PATH)
-                                    ?.document(taskEntity.categoryTitle)
-                                    ?.collection(COLLECTION_PATH)
-                                    ?.document(taskEntity.collectionTitle)
-                                    ?.collection(TASKS_PATH)
-                                    ?.document(taskEntity.id.toString())
-                                    ?.set(taskEntity.asNetworkModel())
-                                    ?.await()
-                            }
-                        }
-                    }
-                } else {
-                    Timber.d("Auth: Old User")
-
-                    val categories = userDocRef
-                        ?.collection(CATEGORY_PATH)
-                        ?.get()?.await()
-                        ?.toObjects(NetworkTaskCategory::class.java)
-                        ?.toList() ?: emptyList()
-
-                    val collections = firestoreDb
-                        .collectionGroup(COLLECTION_PATH)
-                        .get().await().toObjects(NetworkTaskCollection::class.java)
-                        .toList()
-
-                    val tasks = firestoreDb
-                        .collectionGroup(TASKS_PATH)
-                        .get().await().toObjects(NetworkTask::class.java)
-                        .toList()
-
-                    Timber.tag("Auth").d("categories: %s", categories)
-                    Timber.tag("Auth").d("collections: %s", collections)
-                    Timber.tag("Auth").d("tasks: %s", tasks)
-
-                    /*categoryDao.upsertCategories(entities = categories.map(NetworkTaskCategory::asEntity))
-
-                    collectionDao.upsertCollections(entities = collections.map(NetworkTaskCollection::asEntity))
-
-                    taskDao.upsertTasks(entities = tasks.map(NetworkTask::asEntity))*/
-
-                    upsertCategoryWithCollectionsAndTasks(
-                        categories,
-                        collections,
-                        tasks,
-                    )
-
-                }
-
-                val firestoreUser = userDocRef?.get()?.await()?.toObject<NetworkUserData>()
+                val firestoreUser =
+                    userDocRef?.get()?.await()?.toObject(NetworkUserData::class.java)
 
                 Timber.tag("DefaultAuthRepository")
                     .d("Firestore user creationDate: ${firestoreUser?.createdDate?.toDate()?.time?.millisToString()}")
@@ -193,8 +124,74 @@ class DefaultAuthRepository @Inject constructor(
                 emit(AchivitResult.Error(exception = e))
             }
         }
+            .flowOn(ioDispatcher)
 
-//    @Transaction
+    private suspend fun syncUserData(userDocRef: DocumentReference?) {
+        if (isNewUser.value) {
+            Timber.d("Auth: New User")
+
+            withContext(ioDispatcher) {
+                categoryDao.retrieveCategoryWithCollectionsAndTasks().forEach {
+                    userDocRef?.collection(CATEGORY_PATH)
+                        ?.document(it.category.title)
+                        ?.set(it.category.asNetworkModel())
+                        ?.await()
+
+                    it.collectionWithTasks.map { it.collection }.forEach { collection ->
+                        userDocRef
+                            ?.collection(CATEGORY_PATH)
+                            ?.document(collection.categoryTitle)
+                            ?.collection(COLLECTION_PATH)
+                            ?.document(collection.title)
+                            ?.set(collection.asNetworkModel())
+                            ?.await()
+                    }
+
+                    it.collectionWithTasks.flatMap { it.tasks }.forEach { taskEntity ->
+                        userDocRef
+                            ?.collection(CATEGORY_PATH)
+                            ?.document(taskEntity.categoryTitle)
+                            ?.collection(COLLECTION_PATH)
+                            ?.document(taskEntity.collectionTitle)
+                            ?.collection(TASKS_PATH)
+                            ?.document(taskEntity.id.toString())
+                            ?.set(taskEntity.asNetworkModel())
+                            ?.await()
+                    }
+                }
+            }
+        } else {
+            Timber.d("Auth: Old User")
+
+            val categories = userDocRef
+                ?.collection(CATEGORY_PATH)
+                ?.get()?.await()
+                ?.toObjects(NetworkTaskCategory::class.java)
+                ?.toList() ?: emptyList()
+
+            val collections = firestoreDb
+                .collectionGroup(COLLECTION_PATH)
+                .get().await().toObjects(NetworkTaskCollection::class.java)
+                .toList()
+
+            val tasks = firestoreDb
+                .collectionGroup(TASKS_PATH)
+                .get().await().toObjects(NetworkTask::class.java)
+                .toList()
+
+            Timber.tag("Auth").d("categories: %s", categories)
+            Timber.tag("Auth").d("collections: %s", collections)
+            Timber.tag("Auth").d("tasks: %s", tasks)
+
+            upsertCategoryWithCollectionsAndTasks(
+                categories,
+                collections,
+                tasks,
+            )
+
+        }
+    }
+
     private suspend fun upsertCategoryWithCollectionsAndTasks(
         categories: List<NetworkTaskCategory>,
         collections: List<NetworkTaskCollection>,
@@ -202,56 +199,56 @@ class DefaultAuthRepository @Inject constructor(
     ) {
         withContext(ioDispatcher) {
             try {
-                Log.d("TaskRepository", "Starting upsert operation")
+                Timber.tag("TaskRepository").d("Starting upsert operation")
 
                 // Verify data integrity
                 val isValid = verifyDataIntegrity(categories, collections, tasks)
                 if (!isValid) {
-                    Log.e("TaskRepository", "Data integrity check failed")
+                    Timber.tag("TaskRepository").e("Data integrity check failed")
                     return@withContext
                 }
 
                 // Upsert categories first
                 val categoryEntities = categories.map(NetworkTaskCategory::asEntity)
-                Log.d("TaskRepository", "Upserting categories: $categoryEntities")
+                Timber.tag("TaskRepository").d("Upserting categories: %s", categoryEntities)
                 categoryDao.upsertCategories(categoryEntities)
 
                 // Upsert collections next
                 val collectionEntities = collections.map(NetworkTaskCollection::asEntity)
-                Log.d("TaskRepository", "Upserting collections: $collectionEntities")
+                Timber.tag("TaskRepository").d("Upserting collections: %s", collectionEntities)
                 collectionDao.upsertCollections(collectionEntities)
 
                 // Upsert tasks last
                 val taskEntities = tasks.map(NetworkTask::asEntity)
-                Log.d("TaskRepository", "Upserting tasks: $taskEntities")
+                Timber.tag("TaskRepository").d("Upserting tasks: %s", taskEntities)
                 taskDao.upsertTasks(taskEntities)
 
-                Log.d("TaskRepository", "Upsert operation completed successfully")
+                Timber.tag("TaskRepository").d("Upsert operation completed successfully")
             } catch (e: Exception) {
-                Log.e("TaskRepository", "Error during upsert operation", e)
+                Timber.tag("TaskRepository").e(e, "Error during upsert operation")
                 throw e
             }
         }
     }
 
-    fun verifyDataIntegrity(
+    private fun verifyDataIntegrity(
         categories: List<NetworkTaskCategory>,
         collections: List<NetworkTaskCollection>,
         tasks: List<NetworkTask>
     ): Boolean {
         val categoryIds = categories.map { it.title }.toSet()
-        Log.d("TaskRepository", "cat ids: $categoryIds")
+        Timber.tag("TaskRepository").d("cat ids: %s", categoryIds)
         val collectionIds = collections.map { it.title }.toSet()
-        Log.d("TaskRepository", "coll ids: $collectionIds")
+        Timber.tag("TaskRepository").d("coll ids: %s", collectionIds)
         val collectionCategoryIds = collections.map { it.categoryTitle }.toSet()
-        Log.d("TaskRepository", "collCat ids: $collectionCategoryIds")
+        Timber.tag("TaskRepository").d("collCat ids: %s", collectionCategoryIds)
         val taskCollectionIds = tasks.map { it.collectionTitle }.toSet()
-        Log.d("TaskRepository", "taskColl ids: $taskCollectionIds")
+        Timber.tag("TaskRepository").d("taskColl ids: %s", taskCollectionIds)
 
         val validCollections = collectionCategoryIds.all { it in categoryIds }
-        Log.d("TaskRepository", "isValidColls: $validCollections")
+        Timber.tag("TaskRepository").d("isValidColls: %s", validCollections)
         val validTasks = taskCollectionIds.all { it in collectionIds }
-        Log.d("TaskRepository", "isValidTasks: $validTasks")
+        Timber.tag("TaskRepository").d("isValidTasks: %s", validTasks)
 
         return validCollections && validTasks
     }
@@ -294,7 +291,8 @@ class DefaultAuthRepository @Inject constructor(
             val userDocRef = signedInUser?.let {
                 firestoreDb.collection(USERS_PATH).document(it.uid)
             }
-            val firestoreUser = userDocRef?.get(source)?.await()?.toObject<NetworkUserData>()
+            val firestoreUser =
+                userDocRef?.get(source)?.await()?.toObject(NetworkUserData::class.java)
 
             if (isUserSignedIn) {
                 emit(

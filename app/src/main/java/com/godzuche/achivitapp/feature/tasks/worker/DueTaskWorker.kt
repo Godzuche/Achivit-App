@@ -12,7 +12,7 @@ import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.core.domain.model.toNotification
 import com.godzuche.achivitapp.core.domain.repository.NotificationRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher

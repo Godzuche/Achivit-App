@@ -10,7 +10,7 @@ import com.godzuche.achivitapp.core.domain.repository.TaskCollectionRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
 import com.godzuche.achivitapp.feature.tasks.ui_state.ModalBottomSheetUiState
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
+import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.core.ui.util.millisToString
 import com.godzuche.achivitapp.core.domain.model.Task
@@ -133,7 +134,7 @@ fun TaskDetailScreen(
                 is TaskDetailUiState.Success -> {
                     LazyVerticalGrid(
                         state = lazyGridState,
-                        columns = GridCells.Adaptive(300.dp),
+                        columns = GridCells.Adaptive(AchivitDimension.minVerticalGridColumnWidth),
                         contentPadding = PaddingValues(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp)

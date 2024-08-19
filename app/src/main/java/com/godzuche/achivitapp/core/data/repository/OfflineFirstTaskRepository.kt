@@ -9,19 +9,22 @@ import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.common.Dispatcher
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskDao
+import com.godzuche.achivitapp.core.data.local.database.model.TaskEntity
 import com.godzuche.achivitapp.core.data.local.database.model.asExternalModel
+import com.godzuche.achivitapp.core.data.local.database.util.DatabaseConstants
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.model.asEntity
 import com.godzuche.achivitapp.core.domain.model.asNewEntity
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
-import com.godzuche.achivitapp.feature.tasks.util.TaskFilter
-import com.godzuche.achivitapp.feature.tasks.util.TaskStatus
+import com.godzuche.achivitapp.core.domain.model.TaskFilter
+import com.godzuche.achivitapp.core.domain.model.TaskStatus
 import com.godzuche.achivitapp.feature.tasks.worker.FirebaseWorkHelper
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -46,18 +49,21 @@ class OfflineFirstTaskRepository @Inject constructor(
             }
 //        }
     }
+        .flowOn(ioDispatcher)
 
-    override fun retrieveTask(id: Int): Task? {
-        return taskDao.getOneOffTask(id)?.asExternalModel()
+    override suspend fun retrieveTask(id: Int): Task? {
+        return withContext(ioDispatcher) {
+            taskDao.getOneOffTask(id)?.asExternalModel()
+        }
     }
 
     override fun getAllTask(
         categoryTitle: String,
         collectionTitle: String,
-        status: TaskStatus
+        status: TaskStatus,
     ): Flow<PagingData<Task>> {
         val pagingSourceFactory = {
-            if (categoryTitle == "My Tasks") {
+            if (categoryTitle == DatabaseConstants.PrepopulatedData.DEFAULT_CATEGORY_TITLE) {
                 if (status == TaskStatus.NONE) {
                     taskDao.getPagedTasks()
                 } else {
@@ -86,16 +92,20 @@ class OfflineFirstTaskRepository @Inject constructor(
 
         return Pager(
             config = PagingConfig(
-                pageSize = 30,
+                pageSize = 15,
+                prefetchDistance = 15,
                 enablePlaceholders = false,
-                maxSize = 100
+                maxSize = 45,
+                initialLoadSize = 22,
+//                jumpThreshold = 50,
             ),
             pagingSourceFactory = pagingSourceFactory
-        ).flow
+        )
+            .flow
             .map { pagingData ->
-                pagingData
-                    .map { it.asExternalModel() }
+                pagingData.map { it.asExternalModel() }
             }
+            .flowOn(ioDispatcher)
 
     }
 
@@ -104,6 +114,7 @@ class OfflineFirstTaskRepository @Inject constructor(
         val searchedTasks = taskDao.searchTasksByTitle(title).map { it.asExternalModel() }
         emit(AchivitResult.Success(data = searchedTasks))
     }
+        .flowOn(ioDispatcher)
 
     override suspend fun insertTask(task: Task) {
         withContext(ioDispatcher) {
@@ -112,12 +123,14 @@ class OfflineFirstTaskRepository @Inject constructor(
     }
 
     override suspend fun insertAndGetTaskId(task: Task): Int {
-        val insertedTaskId = taskDao.insertAndGetId(task.asNewEntity()).toInt()
+        return withContext(ioDispatcher) {
+            val insertedTaskId = taskDao.insertAndGetId(task.asNewEntity()).toInt()
 
-        Timber.tag("Add Task").d("insertedTaskId = $insertedTaskId")
+            Timber.tag("Add Task").d("insertedTaskId = $insertedTaskId")
 
-        firebaseWorkHelper.addTask(task.copy(id = insertedTaskId))
-        return insertedTaskId
+            firebaseWorkHelper.addTask(task.copy(id = insertedTaskId))
+            insertedTaskId
+        }
     }
 
     override suspend fun reInsertTask(task: Task) {
@@ -134,8 +147,10 @@ class OfflineFirstTaskRepository @Inject constructor(
     }
 
     override suspend fun updateTask(task: Task) {
-        taskDao.update(task.asEntity())
-        firebaseWorkHelper.updateTask(task)
+        withContext(ioDispatcher) {
+            taskDao.update(task.asEntity())
+            firebaseWorkHelper.updateTask(task)
+        }
     }
 
     override fun getTodayTasks(): Flow<List<Task>> {
@@ -146,27 +161,34 @@ class OfflineFirstTaskRepository @Inject constructor(
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        return taskDao.getTodayTasks().map { taskEntities ->
-            taskEntities.filter { taskEntity ->
-                taskDueDate.timeInMillis = taskEntity.dueDate
-                taskDueDate.apply {
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                }
-                taskDueDate == today
-            }.map { it.asExternalModel() }
-        }
+        return taskDao.getTodayTasks()
+            .map { taskEntities ->
+                taskEntities.filter { taskEntity ->
+                    taskDueDate.timeInMillis = taskEntity.dueDate
+                    taskDueDate.apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                    }
+                    taskDueDate == today
+                }.map(TaskEntity::asExternalModel)
+            }
+            .flowOn(ioDispatcher)
     }
 
-    override fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>> {
-        return taskDao.getTaskByStatus(filter.status)
-            /*   return taskDao.getFilteredTasks(
-               getFilteredQuery(filter = filter)
-           )*/
-            .map { taskEntities ->
-                taskEntities.map { it.asExternalModel() }
-            }
+    override fun getTasksCountByStatus(status: TaskStatus): Flow<Int> {
+        return taskDao.getTasksCountByStatus(status)
+            .flowOn(ioDispatcher)
     }
+
+    /*
+        override fun getFilteredTasks(filter: TaskFilter): Flow<List<Task>> {
+                */
+    /*   return taskDao.getFilteredTasks(
+                   getFilteredQuery(filter = filter)
+               )*//*
+
+    }
+*/
 
     // Get filtered query
     /*    private fun getFilteredQuery(filter: TaskFilter): SupportSQLiteQuery {
