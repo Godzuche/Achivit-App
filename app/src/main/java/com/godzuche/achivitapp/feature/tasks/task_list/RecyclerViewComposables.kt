@@ -19,7 +19,7 @@ fun TaskStatusColor(modifier: Modifier = Modifier, color: Color = Color.Transpar
         modifier = Modifier
             .size(48.dp)
             .clip(CircleShape)
-            .background(color = color.copy(alpha = 0.5f))
+            .background(color = color)
             .then(modifier)
     )
 }
@@ -37,9 +37,9 @@ fun DoneCheckBox(
 //                .size(48.dp)
             .then(modifier),
         colors = CheckboxDefaults.colors(
-            checkedColor = Color(0xFF52D726),
-            uncheckedColor = MaterialTheme.colorScheme.onBackground,
-            checkmarkColor = MaterialTheme.colorScheme.onBackground
+            checkedColor = Color(0xFF4CAF50),
+//            uncheckedColor = MaterialTheme.colorScheme.onBackground,
+//            checkmarkColor = MaterialTheme.colorScheme.onBackground
         )
     )
 }

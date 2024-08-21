@@ -9,13 +9,17 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
+import com.godzuche.achivitapp.core.common.util.Constants.CATEGORY_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.COLLECTION_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.TASKS_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.USERS_PATH
 import com.godzuche.achivitapp.core.data.local.database.model.asNetworkModel
-import com.godzuche.achivitapp.core.data.repository.CATEGORY_PATH
-import com.godzuche.achivitapp.core.data.repository.COLLECTION_PATH
-import com.godzuche.achivitapp.core.data.repository.TASKS_PATH
-import com.godzuche.achivitapp.core.data.repository.USERS_PATH
 import com.godzuche.achivitapp.core.domain.model.asEntity
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
+import com.godzuche.achivitapp.core.domain.usecase.RetrieveTaskUseCase
+import com.godzuche.achivitapp.feature.tasks.worker.FirebaseWorkHelper.Companion.FirebaseWorkConstraints
+import com.godzuche.achivitapp.feature.tasks.worker.FirebaseWorkHelper.Companion.TASK_ID
+import com.godzuche.achivitapp.feature.tasks.worker.FirebaseWorkHelper.Companion.WORK_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -34,7 +38,7 @@ class FirebaseWorker @AssistedInject constructor(
     @Dispatcher(AchivitDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val firestoreDb: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val taskRepository: TaskRepository,
+    private val retrieveTaskUseCase: RetrieveTaskUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Timber.tag(TAG).d("doWork() called")
@@ -46,7 +50,7 @@ class FirebaseWorker @AssistedInject constructor(
 
             val isWorkSuccessful = suspendRunCatching {
 
-                val task = async(ioDispatcher) { taskRepository.retrieveTask(taskId) }.await()
+                val task = async { retrieveTaskUseCase(taskId) }.await()
 
                 task?.let {
                     firebaseAuth.currentUser?.let {
@@ -91,7 +95,7 @@ class FirebaseWorker @AssistedInject constructor(
 
     companion object {
         private const val TAG = "FirebaseWorker"
-        
+
         fun buildFirebaseWork(taskId: Int, firebaseWorkerName: String) =
             OneTimeWorkRequestBuilder<FirebaseWorker>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

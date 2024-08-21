@@ -10,13 +10,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
 
-const val TASK_ID = "TaskId"
-const val WORK_NAME = "WorkName"
-
-val FirebaseWorkConstraints = Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.CONNECTED)
-    .build()
-
 class FirebaseWorkHelper @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
@@ -63,6 +56,16 @@ class FirebaseWorkHelper @Inject constructor(
         DELETE,
         ADD,
         UPDATE,
+    }
+
+    companion object {
+        const val TASK_ID = "TaskId"
+        const val WORK_NAME = "WorkName"
+
+        val FirebaseWorkConstraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
     }
 
 }

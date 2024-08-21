@@ -45,9 +45,9 @@ import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcon
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
+import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 import com.godzuche.achivitapp.core.ui.util.capitalizeEachWord
 import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
-import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
 
 @Composable
 fun SettingsRoute(
@@ -76,9 +76,10 @@ fun SettingsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
+            // TODO: Refactor to use AchivitTopBar with optional navigation icon
             TopAppBar(
                 title = {
-                    Text(text = "Settings")
+                    Text(text = stringResource(id = R.string.settings))
                 },
                 navigationIcon = {
                     IconButton(
@@ -114,7 +115,7 @@ fun SettingsScreen(
                         }
 
                         SettingsRow(
-                            title = "Dark mode",
+                            title = stringResource(R.string.theme_mode),
                             startIcon = AchivitIcon.DrawableResourceIcon(
                                 id = AchivitIcons.DeviceTheme
                             ),

@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis
@@ -55,12 +56,8 @@ class SearchFragment : Fragment() {
         isTransitionGroup = true
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
-            Mdc3Theme {
+            AchivitTheme {
                 SearchRoute(
-//                    tasksViewModel = tasksViewModel,
-                    /*onBackClick = {
-                        findNavController().popBackStack()
-                    },*/
                     onExploreTasksClick = {
                         val action = SearchFragmentDirections.actionGlobalActionTasks()
                         findNavController().navigate(action)

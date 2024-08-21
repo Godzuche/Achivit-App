@@ -53,8 +53,6 @@ import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
 
 @Composable
 fun SearchRoute(
-//    tasksViewModel: TasksViewModel,
-//    onBackClick: () -> Unit,
     onExploreTasksClick: () -> Unit,
     onTaskClick: (Int) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel()

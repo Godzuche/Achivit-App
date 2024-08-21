@@ -16,13 +16,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
-import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.core.domain.model.Task
+import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.R.integer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -76,7 +76,7 @@ class TaskDetailFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
             setContent {
-                Mdc3Theme(setDefaultFontFamily = true) {
+                AchivitTheme {
                     val dialogState by taskDetailViewModel.dialogState.collectAsStateWithLifecycle()
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->

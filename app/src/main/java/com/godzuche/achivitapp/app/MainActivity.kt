@@ -1,6 +1,8 @@
 package com.godzuche.achivitapp.app
 
+import android.Manifest
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
@@ -9,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -29,6 +32,7 @@ import com.godzuche.achivitapp.feature.notifications.presentation.NotificationUi
 import com.godzuche.achivitapp.feature.notifications.presentation.NotificationsViewModel
 import com.godzuche.achivitapp.feature.settings.DarkMode
 import com.godzuche.achivitapp.feature.settings.setDarkMode
+import com.godzuche.achivitapp.feature.tasks.worker.makeDueTaskNotification
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -368,6 +372,14 @@ class MainActivity : AppCompatActivity() {
 
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(listener)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
     }
 
     override fun onPause() {

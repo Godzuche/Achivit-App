@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,10 +49,7 @@ class SettingsFragment : Fragment(/*R.layout.fragment_settings*/) {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
             setContent {
-                Mdc3Theme(
-                    context = this@SettingsFragment.requireContext(),
-                    setDefaultFontFamily = true
-                ) {
+                AchivitTheme {
                     SettingsRoute(
                         onNavigateUp = {
                             findNavController().navigateUp()

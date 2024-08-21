@@ -60,7 +60,11 @@ fun AchivitAssistChip(
 ) {
     AssistChip(
         onClick = onClick,
-        label = label,
+        label = {
+            ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
+                label()
+            }
+        },
         modifier = modifier,
         enabled = enabled,
         leadingIcon = leadingIcon,

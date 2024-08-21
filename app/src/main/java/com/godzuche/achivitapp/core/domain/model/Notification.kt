@@ -12,15 +12,15 @@ data class Notification(
     val date: Instant = Clock.System.now()
 )
 
-fun NotificationEntity.asExternalModel() = com.godzuche.achivitapp.core.domain.model.Notification(
+fun NotificationEntity.asExternalModel() = Notification(
     id = id,
     title = title,
     content = content,
     isRead = isRead
 )
 
-fun com.godzuche.achivitapp.core.domain.model.Task.toNotification() =
-    com.godzuche.achivitapp.core.domain.model.Notification(
+fun Task.toNotification() =
+    Notification(
         id = id!!,
         title = title,
         content = description,

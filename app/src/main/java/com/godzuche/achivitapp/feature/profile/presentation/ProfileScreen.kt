@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,7 +53,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.core.design_system.components.RecircuTopBar
+import com.godzuche.achivitapp.core.design_system.components.AchivitTopBar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.design_system.theme.Alpha
@@ -94,7 +95,7 @@ fun ProfileScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            RecircuTopBar(
+            AchivitTopBar(
                 title = {
                     Text(text = "Profile")
                 }
@@ -126,8 +127,11 @@ fun ProfileScreen(
                         }
                     }
 
-                    Button(onClick = onSignOutClick, modifier = Modifier.fillMaxWidth()) {
-                        Text(text = "Sign out")
+                    Button(
+                        onClick = onSignOutClick,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = stringResource(R.string.sign_out))
                     }
 
                 }

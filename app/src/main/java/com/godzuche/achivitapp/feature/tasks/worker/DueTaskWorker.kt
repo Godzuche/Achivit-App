@@ -9,55 +9,44 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.Dispatcher
-import com.godzuche.achivitapp.core.domain.model.toNotification
-import com.godzuche.achivitapp.core.domain.repository.NotificationRepository
-import com.godzuche.achivitapp.core.domain.repository.TaskRepository
+import com.godzuche.achivitapp.core.common.util.Constants.KEY_TASK_ID
 import com.godzuche.achivitapp.core.domain.model.TaskStatus
+import com.godzuche.achivitapp.core.domain.usecase.PersistNotificationUseCase
+import com.godzuche.achivitapp.core.domain.usecase.RetrieveTaskUseCase
+import com.godzuche.achivitapp.core.domain.usecase.UpdateTaskUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 
 @HiltWorker
 class DueTaskWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    @Dispatcher(AchivitDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
-    private val taskRepository: TaskRepository,
-    private val notificationRepository: NotificationRepository
+    @Dispatcher(AchivitDispatchers.DEFAULT) private val defaultDispatcher: CoroutineDispatcher,
+    private val retrieveTaskUseCase: RetrieveTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val persistNotificationUseCase: PersistNotificationUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        return withContext(ioDispatcher) {
-
-            val taskId = inputData.getInt("taskId", -1)
+        return withContext(defaultDispatcher) {
+            val taskId = inputData.getInt(KEY_TASK_ID, -1)
 
             val isSuccessful = suspendRunCatching {
-                val task = async {
-                    taskRepository.retrieveTask(taskId)
-                }.await()
+                val task = async { retrieveTaskUseCase(taskId) }
 
-                task?.let {
-                    taskRepository.updateTask(
-                        it.copy(status = TaskStatus.IN_PROGRESS)
-                    )
+                task.await()?.let {
+                    updateTaskUseCase(it.copy(status = TaskStatus.IN_PROGRESS))
 
                     appContext.makeDueTaskNotification(
                         taskId = taskId,
                         taskTitle = it.title,
-                        taskDescription = it.description
+                        taskDescription = it.description,
                     )
 
-                    notificationRepository.insertOrReplaceNotification(
-                        notification = task
-                            .toNotification()
-                            .copy(
-                                isRead = false,
-                                date = Clock.System.now()
-                            )
-                    )
+                    persistNotificationUseCase(it)
                 }
             }.isSuccess
 
@@ -71,11 +60,7 @@ class DueTaskWorker @AssistedInject constructor(
          * */
         fun buildDueTaskWork(taskId: Int) = OneTimeWorkRequestBuilder<DueTaskWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setInputData(
-                workDataOf(
-                    "taskId" to taskId
-                )
-            )
+            .setInputData(workDataOf(KEY_TASK_ID to taskId))
             .addTag("due_task")
             .build()
     }

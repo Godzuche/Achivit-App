@@ -13,9 +13,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +56,7 @@ class ProfileFragment : Fragment() {
 
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
-            Mdc3Theme {
+            AchivitTheme {
                 val dialogState by profileViewModel.dialogState.collectAsStateWithLifecycle()
                 if (dialogState.shouldShow) {
                     dialogState.dialog?.let { dialog ->

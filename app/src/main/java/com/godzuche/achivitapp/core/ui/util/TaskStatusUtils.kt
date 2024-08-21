@@ -1,7 +1,8 @@
 package com.godzuche.achivitapp.core.ui.util
 
 import androidx.compose.ui.graphics.Color
-import com.godzuche.achivitapp.core.design_system.theme.MGreen
+import com.godzuche.achivitapp.core.design_system.theme.CompletedColor
+import com.godzuche.achivitapp.core.design_system.theme.MGreenBright
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
 import com.godzuche.achivitapp.core.domain.model.TaskStatus
 
@@ -10,7 +11,7 @@ fun String.nameAndColor() = when (this) {
     "TODO" -> capitalizeEachWord() to Color.Gray.copy(alpha = 0.5f)
     "IN_PROGRESS" -> capitalizeEachWord() to MOrange.copy(alpha = 0.5f)
     "RUNNING_LATE" -> capitalizeEachWord() to Color.Red.copy(alpha = 0.5f)
-    "COMPLETED" -> capitalizeEachWord() to MGreen.copy(alpha = 0.5f)
+    "COMPLETED" -> capitalizeEachWord() to MGreenBright.copy(alpha = 0.5f)
     else -> "Null" to Color.Transparent
 }
 
@@ -48,6 +49,6 @@ fun String.statusColor() = when (this) {
     "TODO" -> Color.Gray.copy(alpha = 0.5f)
     "IN_PROGRESS" -> MOrange.copy(alpha = 0.5f)
     "RUNNING_LATE" -> Color.Red.copy(alpha = 0.5f)
-    "COMPLETED" -> MGreen.copy(alpha = 0.5f)
+    "COMPLETED" -> CompletedColor
     else -> Color.Transparent
 }

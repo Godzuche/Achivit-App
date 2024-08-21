@@ -8,8 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
-import com.godzuche.achivitapp.feature.tasks.receiver.Constants
-import com.godzuche.achivitapp.feature.tasks.receiver.DueTaskAlarmReceiver
+import com.godzuche.achivitapp.core.common.util.Constants
+import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DueTaskAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject

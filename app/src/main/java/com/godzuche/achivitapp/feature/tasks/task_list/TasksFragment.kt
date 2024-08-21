@@ -17,11 +17,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.databinding.FragmentTasksBinding
 import com.godzuche.achivitapp.feature.tasks.util.DialogTitle
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.R.integer
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -157,9 +157,7 @@ class TasksFragment : Fragment() {
         binding.composeTopBar.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                Mdc3Theme(
-                    setDefaultFontFamily = true
-                ) {
+                AchivitTheme {
                     val dialogState by tasksViewModel.dialogState.collectAsStateWithLifecycle()
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->

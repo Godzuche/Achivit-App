@@ -90,15 +90,15 @@ fun HomeTopAppBar(
                                 userAuthState.data.displayName ?: "No name"
                             ),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(
                             text = pluralStringResource(
                                 id = R.plurals.activeTasksMessage,
                                 count = todayTasks,
-                                formatArgs = arrayOf(todayTasks)
+                                formatArgs = arrayOf(todayTasks),
                             ),
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
                         )
                     }
                 },
@@ -106,7 +106,7 @@ fun HomeTopAppBar(
                     ProfilePhotoIcon(
                         profilePhotoUrl = userAuthState.data.profilePictureUrl,
                         onProfileIconClicked = onProfileIconClicked,
-                        isOnline = isOnline
+                        isOnline = isOnline,
                     )
                 },
                 actions = {
@@ -143,6 +143,7 @@ fun ProfilePhotoIcon(
         ImageRequest.Builder(context)
             .data(profilePhotoUrl ?: R.drawable.avatar_12)
             .size(Size.ORIGINAL)
+            .placeholder(R.drawable.avatar_12)
             .crossfade(true)
             .build()
     }
@@ -159,7 +160,6 @@ fun ProfilePhotoIcon(
         ) {
             AsyncImage(
                 model = imageRequest,
-//                            placeholder = painterResource(id = R.drawable.avatar_12),
                 contentDescription = "Profile picture",
                 contentScale = ContentScale.Crop,
                 filterQuality = FilterQuality.High,
@@ -287,7 +287,7 @@ fun SearchToolbar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecircuTopBar(
+fun AchivitTopBar(
     title: @Composable () -> Unit
 ) {
     TopAppBar(

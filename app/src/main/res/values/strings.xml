@@ -63,5 +63,7 @@
     <string name="today_s_tasks">Today\'s tasks</string>
     <string name="view_all">View All</string>
     <string name="to_browse_tasks">to browse tasks</string>
+    <string name="sign_out">Sign out</string>
+    <string name="theme_mode">Theme mode</string>
 
 </resources>

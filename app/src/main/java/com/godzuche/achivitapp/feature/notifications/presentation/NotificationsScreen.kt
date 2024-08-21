@@ -6,7 +6,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -20,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.design_system.components.AchivitTopBar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import kotlinx.datetime.Instant
@@ -58,11 +57,10 @@ fun NotificationRoute(
             notificationsViewModel.readNotification(notification)
             onNotificationClick(notification)
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(
     notificationUiState: NotificationUiState,
@@ -74,7 +72,7 @@ fun NotificationScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            CenterAlignedTopAppBar(
+            AchivitTopBar(
                 title = {
                     Text(text = stringResource(id = R.string.notifications))
                 }
@@ -139,10 +137,11 @@ fun NotificationsGrid(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
 //            verticalArrangement = Arrangement.spacedBy(24.dp),
             state = lazyGridState,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
         ) {
-            items(items = notificationUiState.notifications,
-                span = { GridItemSpan(maxLineSpan) }
+            items(
+                items = notificationUiState.notifications,
+                span = { GridItemSpan(maxLineSpan) },
             ) { notification ->
                 notification.run {
                     Notification(

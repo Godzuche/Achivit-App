@@ -13,8 +13,13 @@ import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,11 +37,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
 import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
 import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
@@ -83,12 +88,12 @@ class HomeFragment : Fragment() {
             id = R.id.home_fragment
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
             )
             isTransitionGroup = true
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                Mdc3Theme {
+                AchivitTheme {
                     val dialogState by tasksViewModel.dialogState.collectAsStateWithLifecycle()
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->
@@ -205,13 +210,12 @@ class HomeFragment : Fragment() {
                                 }
                             )
                         }
+
                     // Try to request permission once at the start of the app
-                    LaunchedEffect(true) {
-                        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
+                    LaunchedEffect(key1 = Unit) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             multiplePermissionsResultLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.POST_NOTIFICATIONS,
-                                )
+                                arrayOf(Manifest.permission.POST_NOTIFICATIONS)
                             )
                         } else {
                             //

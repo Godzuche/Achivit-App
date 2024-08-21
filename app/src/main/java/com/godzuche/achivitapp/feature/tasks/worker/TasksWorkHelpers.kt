@@ -14,9 +14,9 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailFragmentArgs
-import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
-import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
-import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
+import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
+import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -88,13 +88,13 @@ fun Context.makeDueTaskNotification(
         this,
         DUE_TASK_NOTIFICATION_CHANNEL_ID
     )
-        .setSmallIcon(R.drawable.ic_baseline_check_box_24)
+        .setSmallIcon(R.drawable.baseline_task_alt_24)
         .setContentTitle(NOTIFICATION_TITLE)
         .setContentText("\"${taskTitle}\" is due")
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setDefaults(DEFAULT_ALL)
-        .setColor(com.google.android.material.R.attr.colorPrimary)
+        .setColor(this.resources.getColor(R.color.md_theme_primary))
         .setCategory(NotificationCompat.CATEGORY_ALARM)
         .setVibrate(LongArray(0))
         .setAutoCancel(true)

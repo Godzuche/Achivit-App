@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
+import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
 import com.godzuche.achivitapp.feature.tasks.search_tasks.SearchFragmentDirections
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.transition.MaterialFadeThrough
@@ -55,10 +56,7 @@ class NotificationsFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
             setContent {
-                Mdc3Theme(
-                    context = this@NotificationsFragment.requireContext(),
-                    setDefaultFontFamily = true
-                ) {
+                AchivitTheme {
                     NotificationRoute(
                         onNotificationClick = { notification ->
                             val action =

@@ -5,6 +5,10 @@ import com.godzuche.achivitapp.BuildConfig
 import com.godzuche.achivitapp.core.common.AchivitDispatchers
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.common.Dispatcher
+import com.godzuche.achivitapp.core.common.util.Constants.CATEGORY_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.COLLECTION_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.TASKS_PATH
+import com.godzuche.achivitapp.core.common.util.Constants.USERS_PATH
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskCategoryDao
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskCollectionDao
 import com.godzuche.achivitapp.core.data.local.database.dao.TaskDao
@@ -354,8 +358,3 @@ class DefaultAuthRepository @Inject constructor(
             .build()
 
 }
-
-const val USERS_PATH = "users"
-const val TASKS_PATH = "tasks"
-const val CATEGORY_PATH = "category"
-const val COLLECTION_PATH = "collection"
