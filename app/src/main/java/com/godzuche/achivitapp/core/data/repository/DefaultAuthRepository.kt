@@ -23,7 +23,7 @@ import com.godzuche.achivitapp.core.domain.model.UserData
 import com.godzuche.achivitapp.core.domain.model.asNewNetworkUserData
 import com.godzuche.achivitapp.core.domain.repository.AuthRepository
 import com.godzuche.achivitapp.core.domain.util.NetworkMonitor
-import com.godzuche.achivitapp.core.ui.util.millisToString
+import com.godzuche.achivitapp.core.presentation.util.ext.millisToString
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient

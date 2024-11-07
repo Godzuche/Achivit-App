@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.domain.repository.AuthRepository
+import com.godzuche.achivitapp.core.presentation.state.DialogState
 import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 import com.godzuche.achivitapp.feature.auth.presentation.isNotNull
-import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
-import com.godzuche.achivitapp.feature.tasks.task_list.DialogState
+import com.godzuche.achivitapp.core.domain.model.AchivitDialog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

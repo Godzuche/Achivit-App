@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.feature.home.presentation.HomeUiState
 import com.godzuche.achivitapp.feature.home.presentation.TaskStatusOverview
-import com.godzuche.achivitapp.core.ui.util.getFormattedName
+import com.godzuche.achivitapp.core.presentation.util.ext.getFormattedName
 
 @Composable
 fun TaskStatusGrid(

@@ -17,12 +17,13 @@ import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
+import com.godzuche.achivitapp.core.domain.model.AchivitDialog
+import com.godzuche.achivitapp.core.domain.model.ConfirmAction
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature.home.presentation.getDialogResource
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksUiEvent
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksViewModel
 import com.google.android.material.R.integer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -81,14 +82,14 @@ class TaskDetailFragment : Fragment() {
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->
                             AchivitDialog(
-                                achivitDialog = dialog,
+                                dialogResource = dialog.getDialogResource(),
                                 onDismiss = { taskDetailViewModel.setDialogState(shouldShow = false) },
                                 onDismissRequest = { taskDetailViewModel.setDialogState(shouldShow = false) },
                                 onConfirm = {
                                     when (dialog) {
-                                        is ConfirmationDialog -> {
+                                        is AchivitDialog.ConfirmationDialog -> {
                                             when (val action = dialog.action) {
-                                                is ConfirmActions.DeleteTask -> {
+                                                is ConfirmAction.DeleteTask -> {
                                                     taskDetailViewModel.setDialogState(shouldShow = false)
                                                     findNavController().popBackStack()
 

@@ -40,7 +40,7 @@ import com.godzuche.achivitapp.core.design_system.components.AchivitAssistChip
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
-import com.godzuche.achivitapp.core.ui.util.millisToString
+import com.godzuche.achivitapp.core.presentation.util.ext.millisToString
 import com.godzuche.achivitapp.core.domain.model.Task
 
 @Composable

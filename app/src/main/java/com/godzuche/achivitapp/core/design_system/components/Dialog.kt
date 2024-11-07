@@ -11,11 +11,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
+import com.godzuche.achivitapp.core.presentation.util.DialogResourceProvider
 
 @Composable
 fun AchivitDialog(
-    achivitDialog: AchivitDialog,
+    dialogResource: DialogResourceProvider,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     onDismissRequest: () -> Unit = {}
@@ -23,19 +23,19 @@ fun AchivitDialog(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
-            achivitDialog.title?.let {
+            dialogResource.title?.let {
                 Text(text = it)
             }
         },
         text = {
-            achivitDialog.description?.let {
+            dialogResource.description?.let {
                 Text(
                     text = it
                 )
             }
         },
         dismissButton = {
-            achivitDialog.dismissLabel?.let {
+            dialogResource.dismissLabel?.let {
                 Text(
                     text = it,
                     fontWeight = FontWeight.Bold,
@@ -48,7 +48,7 @@ fun AchivitDialog(
             }
         },
         confirmButton = {
-            achivitDialog.confirmLabel?.let {
+            dialogResource.confirmLabel?.let {
                 Text(
                     text = it.ifBlank { "OK" },
                     fontWeight = FontWeight.Bold,

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.domain.model.CategoryWithCollectionsAndTasks
 import com.godzuche.achivitapp.core.domain.model.TaskCategory
-import com.godzuche.achivitapp.core.ui.util.millisToString
+import com.godzuche.achivitapp.core.presentation.util.ext.millisToString
 import com.godzuche.achivitapp.feature.home.presentation.HomeUiState
 
 @Composable

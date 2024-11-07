@@ -46,8 +46,8 @@ import com.godzuche.achivitapp.core.design_system.icon.AchivitIcon
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.domain.repository.DarkThemeConfig
-import com.godzuche.achivitapp.core.ui.util.capitalizeEachWord
-import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
+import com.godzuche.achivitapp.core.presentation.util.ext.capitalizeEachWord
+import com.godzuche.achivitapp.core.presentation.util.ext.removeWidthConstraint
 
 @Composable
 fun SettingsRoute(

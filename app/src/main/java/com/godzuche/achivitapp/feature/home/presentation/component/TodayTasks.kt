@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.core.ui.util.millisToString
-import com.godzuche.achivitapp.core.ui.util.statusColor
+import com.godzuche.achivitapp.core.presentation.util.ext.millisToString
+import com.godzuche.achivitapp.core.presentation.util.ext.statusColor
 import com.godzuche.achivitapp.feature.home.presentation.HomeUiState
 
 @Composable

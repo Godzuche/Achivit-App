@@ -38,10 +38,12 @@ import androidx.navigation.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
+import com.godzuche.achivitapp.core.domain.model.AchivitDialog
+import com.godzuche.achivitapp.core.domain.model.ConfirmAction
+import com.godzuche.achivitapp.core.presentation.util.ConfirmationResourceProvider
+import com.godzuche.achivitapp.core.presentation.util.DialogResourceProvider
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksUiEvent
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksViewModel
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
@@ -92,20 +94,21 @@ class HomeFragment : Fragment() {
             )
             isTransitionGroup = true
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+
             setContent {
                 AchivitTheme {
                     val dialogState by tasksViewModel.dialogState.collectAsStateWithLifecycle()
                     if (dialogState.shouldShow) {
                         dialogState.dialog?.let { dialog ->
                             AchivitDialog(
-                                achivitDialog = dialog,
+                                dialogResource = dialog.getDialogResource(),
                                 onDismiss = { tasksViewModel.setDialogState(shouldShow = false) },
                                 onDismissRequest = { tasksViewModel.setDialogState(shouldShow = false) },
                                 onConfirm = {
                                     when (dialog) {
-                                        is ConfirmationDialog -> {
+                                        is AchivitDialog.ConfirmationDialog -> {
                                             when (val action = dialog.action) {
-                                                is ConfirmActions.DeleteTask -> {
+                                                is ConfirmAction.DeleteTask -> {
                                                     tasksViewModel.setDialogState(shouldShow = false)
                                                     tasksViewModel.accept(
                                                         TasksUiEvent.OnDeleteConfirm(
@@ -117,6 +120,8 @@ class HomeFragment : Fragment() {
                                                 else -> Unit
                                             }
                                         }
+
+                                        else -> Unit
                                     }
                                 }
                             )
@@ -259,6 +264,10 @@ class ExactAlarmsPermissionTextProvider : PermissionTextProvider {
             "This app needs access to your fine location for proper functioning"
         }
     }
+}
+
+fun AchivitDialog.getDialogResource(): DialogResourceProvider = when (this) {
+    is AchivitDialog.ConfirmationDialog -> ConfirmationResourceProvider(action)
 }
 
 @Composable

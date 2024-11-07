@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +46,7 @@ import com.godzuche.achivitapp.core.design_system.theme.AchivitTypography
 import com.godzuche.achivitapp.core.design_system.theme.Alpha
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.model.UserData
-import com.godzuche.achivitapp.core.ui.util.removeWidthConstraint
+import com.godzuche.achivitapp.core.presentation.util.ext.removeWidthConstraint
 import com.godzuche.achivitapp.feature.auth.presentation.AuthViewModel
 import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 import com.godzuche.achivitapp.feature.home.presentation.component.CategoriesRow
@@ -87,6 +90,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     isOnline: Boolean,
 ) {
+    val layoutDirection = LocalLayoutDirection.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         rememberTopAppBarState()
     )
@@ -94,7 +98,7 @@ fun HomeScreen(
     val listState = rememberLazyGridState()
 
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+//        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             HomeTopAppBar(

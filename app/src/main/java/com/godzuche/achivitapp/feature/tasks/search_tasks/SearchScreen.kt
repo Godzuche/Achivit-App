@@ -49,7 +49,7 @@ import com.godzuche.achivitapp.core.design_system.components.SearchToolbar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TaskCard
 
 @Composable
 fun SearchRoute(

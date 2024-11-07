@@ -3,13 +3,12 @@ package com.godzuche.achivitapp.feature.tasks.task_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
+import com.godzuche.achivitapp.core.domain.model.AchivitDialog
+import com.godzuche.achivitapp.core.domain.model.ConfirmAction
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.usecase.GetTaskUseCase
-import com.godzuche.achivitapp.feature.tasks.task_list.AchivitDialog
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
-import com.godzuche.achivitapp.feature.tasks.task_list.DialogState
+import com.godzuche.achivitapp.core.presentation.state.DialogState
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -74,12 +73,8 @@ class TaskDetailViewModel @Inject constructor(
                 is TaskUiEvent.OnDeleteTask -> {
                     setDialogState(
                         shouldShow = true,
-                        dialog = ConfirmationDialog(
-                            titleText = "Delete Task",
-                            descriptionText = "Are you sure you want to delete this task?",
-                            confirmText = "Yes, delete",
-                            cancelText = "No, cancel",
-                            action = ConfirmActions.DeleteTask(task = action.task)
+                        dialog = AchivitDialog.ConfirmationDialog(
+                            action = ConfirmAction.DeleteTask(task = action.task)
                         )
                     )
                 }

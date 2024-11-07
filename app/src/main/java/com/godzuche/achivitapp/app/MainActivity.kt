@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
@@ -157,6 +158,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         var uiState by mutableStateOf<MainActivityUiState>(MainActivityUiState.Loading)
@@ -197,7 +199,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
 //        val windowInsetController = ViewCompat.getWindowInsetsController(window.decorView)
 //        windowInsetController?.isAppearanceLightNavigationBars = true
 
@@ -207,10 +209,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main)) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                or WindowInsetsCompat.Type.displayCutout()
+            )
             view.updateLayoutParams<MarginLayoutParams> {
                 leftMargin = insets.left
-                bottomMargin = insets.bottom
+//                bottomMargin = insets.bottom
                 rightMargin = insets.right
                 topMargin = insets.top
             }

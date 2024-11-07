@@ -54,7 +54,7 @@ import coil.size.Size
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
-import com.godzuche.achivitapp.core.ui.util.shimmerEffect
+import com.godzuche.achivitapp.core.presentation.util.ext.shimmerEffect
 import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 
 @OptIn(ExperimentalMaterial3Api::class)

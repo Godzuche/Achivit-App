@@ -14,8 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmActions
-import com.godzuche.achivitapp.feature.tasks.task_list.ConfirmationDialog
+import com.godzuche.achivitapp.core.domain.model.ConfirmAction
+import com.godzuche.achivitapp.feature.home.presentation.getDialogResource
+import com.godzuche.achivitapp.core.domain.model.AchivitDialog
 import com.google.android.material.transition.MaterialFadeThrough
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,15 +62,15 @@ class ProfileFragment : Fragment() {
                 if (dialogState.shouldShow) {
                     dialogState.dialog?.let { dialog ->
                         AchivitDialog(
-                            achivitDialog = dialog,
+                            dialogResource = dialog.getDialogResource(),
                             onDismiss = {
                                 profileViewModel.setDialogState(shouldShow = false)
                             },
                             onConfirm = {
                                 when (dialog) {
-                                    is ConfirmationDialog -> {
+                                    is AchivitDialog.ConfirmationDialog -> {
                                         when (dialog.action) {
-                                            is ConfirmActions.SignOut -> run {
+                                            is ConfirmAction.SignOut -> run {
                                                 profileViewModel.setDialogState(shouldShow = false)
                                                 profileViewModel.signOut()
                                             }
@@ -91,12 +92,12 @@ class ProfileFragment : Fragment() {
                     onSignOutClick = {
                         profileViewModel.setDialogState(
                             shouldShow = true,
-                            dialog = ConfirmationDialog(
-                                titleText = "Sign Out",
-                                descriptionText = "Are you sure you want to sign out?",
-                                confirmText = "Yes, sign-out",
-                                cancelText = "No, cancel",
-                                action = ConfirmActions.SignOut
+                            dialog = AchivitDialog.ConfirmationDialog(
+//                                titleText = "Sign Out",
+//                                descriptionText = "Are you sure you want to sign out?",
+//                                confirmText = "Yes, sign-out",
+//                                cancelText = "No, cancel",
+                                action = ConfirmAction.SignOut
                             )
                         )
                     }

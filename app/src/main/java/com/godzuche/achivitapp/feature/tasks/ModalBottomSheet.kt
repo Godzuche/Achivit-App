@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
-import com.godzuche.achivitapp.core.ui.util.millisToString
+import com.godzuche.achivitapp.core.presentation.util.ext.millisToString
 import com.godzuche.achivitapp.databinding.ModalBottomSheetContentBinding
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.tasks.task_list.TasksFragment.Companion.NOT_SET
+import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksFragment.Companion.NOT_SET
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
