@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.core.design_system.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,10 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
@@ -56,6 +62,9 @@ import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.MOrange
 import com.godzuche.achivitapp.core.presentation.util.ext.shimmerEffect
 import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -209,79 +218,112 @@ fun SearchToolbar(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
+    onExitSearch: () -> Unit,
     content: @Composable (ColumnScope.() -> Unit),
     modifier: Modifier = Modifier
 ) {
-    var active by remember {
+    val focusRequester = remember { FocusRequester() }
+    var expanded by remember {
         mutableStateOf(false)
     }
-    Column(modifier = modifier) {
-        /*Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = AchivitIcons.ArrowBack,
-                    contentDescription = stringResource(
-                        id = R.string.back
-                    )
-                )
+    var firstComposition by remember {
+        mutableStateOf(true)
+    }
+    var expansionJob: Job? = null
+    LaunchedEffect(expanded, firstComposition) {
+        Log.d("SearchAppBar", expanded.toString())
+        expansionJob?.cancel()
+        if (!expanded && !firstComposition) {
+            expansionJob = launch {
+                // From the platform implementation, enter transition duration of search bar = 700L and exit = 450L
+                delay(450L)
+                onExitSearch()
             }
-        }*/
-        SearchBar(
-            query = searchQuery,
-            onQueryChange = onSearchQueryChanged,
-            onSearch = onSearchTriggered,
-            active = active,
-            onActiveChange = { isActive ->
-                active = isActive
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = AchivitIcons.Search,
-                    contentDescription = stringResource(
-                        id = R.string.search
-                    )
-                )
-            },
-            trailingIcon = {
-                AnimatedVisibility(
-                    visible = searchQuery.isNotEmpty(),
-                    enter = fadeIn() + slideInHorizontally(
-                        animationSpec = tween(),
-                        initialOffsetX = {
-                            it
-                        }
-                    ),
-                    exit = fadeOut() + slideOutHorizontally(
-                        animationSpec = tween(),
-                        targetOffsetX = {
-                            it
-                        }
-                    )
-                ) {
-                    IconButton(
-                        onClick = {
-                            onSearchQueryChanged("")
-                        }
+        }
+        firstComposition = false
+        expansionJob = null
+    }
+
+    SearchBar(
+        inputField = {
+            SearchBarDefaults.InputField(
+                query = searchQuery,
+                onQueryChange = onSearchQueryChanged,
+                onSearch = onSearchTriggered,
+                expanded = expanded,
+                onExpandedChange = { isExpanded ->
+                    expanded = isExpanded
+                },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                enabled = true,
+                placeholder = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = AchivitIcons.Close,
-                            contentDescription = stringResource(R.string.clear_search_text_content_desc)
+                            imageVector = AchivitIcons.Search,
+                            contentDescription = stringResource(id = R.string.search),
+                        )
+                        Text(text = "Search tasks")
+                    }
+                },
+                leadingIcon = {
+                    IconButton(onClick = onExitSearch) {
+                        Icon(
+                            imageVector = AchivitIcons.ArrowBack,
+                            contentDescription = stringResource(id = R.string.go_back),
                         )
                     }
-                }
-            },
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            placeholder = {
-                Text(text = "Search tasks")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding(),
-            content = content
-        )
+                },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = searchQuery.isNotEmpty(),
+                        enter = fadeIn() + slideInHorizontally(
+                            animationSpec = tween(),
+                            initialOffsetX = {
+                                it
+                            }
+                        ),
+                        exit = fadeOut() + slideOutHorizontally(
+                            animationSpec = tween(),
+                            targetOffsetX = {
+                                it
+                            }
+                        )
+                    ) {
+                        IconButton(
+                            onClick = { onSearchQueryChanged("") }
+                        ) {
+                            Icon(
+                                imageVector = AchivitIcons.Close,
+                                contentDescription = stringResource(R.string.clear_search_text_content_desc)
+                            )
+                        }
+                    }
+                },
+//                    colors = TODO(),
+//                    interactionSource = TODO(),
+            )
+        },
+        expanded = expanded,
+        onExpandedChange = { isExpanded ->
+            expanded = isExpanded
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+//            shape = TODO(),
+//            colors = TODO(),
+//            tonalElevation = TODO(),
+//            shadowElevation = TODO(),
+        windowInsets = WindowInsets(0, 0, 0, 0),
+        content = content,
+    )
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 

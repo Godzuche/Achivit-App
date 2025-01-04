@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list
+package com.godzuche.achivitapp.feature.tasks.task_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +13,7 @@ import com.godzuche.achivitapp.core.domain.repository.TaskCategoryRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskCollectionRepository
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
-import com.godzuche.achivitapp.core.presentation.state.DialogState
+import com.godzuche.achivitapp.core.presentation.state.DialogUiState
 import com.godzuche.achivitapp.core.presentation.util.ext.fromModifiedStatusText
 import com.godzuche.achivitapp.feature.tasks.util.Routes
 import com.godzuche.achivitapp.feature.tasks.util.SnackBarActions
@@ -103,8 +103,8 @@ class TasksViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
-    private val _dialogState = MutableStateFlow(DialogState())
-    val dialogState get() = _dialogState.asStateFlow()
+    private val _dialogUiState = MutableStateFlow(DialogUiState())
+    val dialogState get() = _dialogUiState.asStateFlow()
 
     init {
         accept = { action ->
@@ -192,7 +192,7 @@ class TasksViewModel @Inject constructor(
     }
 
     fun setDialogState(shouldShow: Boolean, dialog: AchivitDialog? = null) {
-        _dialogState.update {
+        _dialogUiState.update {
             it.copy(shouldShow = shouldShow, dialog = dialog)
         }
     }

@@ -14,9 +14,9 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.feature.tasks.task_detail.TaskDetailFragmentArgs
-import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
-import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
-import com.godzuche.achivitapp.feature.tasks.presentation.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
+import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_ID
+import com.godzuche.achivitapp.feature.tasks.receiver.DUE_TASK_NOTIFICATION_CHANNEL_NAME
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 

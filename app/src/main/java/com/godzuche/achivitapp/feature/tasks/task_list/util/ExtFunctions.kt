@@ -1,9 +1,9 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list.util
+package com.godzuche.achivitapp.feature.tasks.task_list.util
 
 import androidx.recyclerview.widget.RecyclerView
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentTasksBinding
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksFragment
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksFragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

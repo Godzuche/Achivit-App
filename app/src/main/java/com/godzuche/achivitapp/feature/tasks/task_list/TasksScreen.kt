@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list
+package com.godzuche.achivitapp.feature.tasks.task_list
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi

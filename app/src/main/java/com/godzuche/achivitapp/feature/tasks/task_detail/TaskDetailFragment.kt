@@ -22,8 +22,8 @@ import com.godzuche.achivitapp.core.domain.model.ConfirmAction
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.databinding.FragmentTaskDetailBinding
 import com.godzuche.achivitapp.feature.home.presentation.getDialogResource
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksUiEvent
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.google.android.material.R.integer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

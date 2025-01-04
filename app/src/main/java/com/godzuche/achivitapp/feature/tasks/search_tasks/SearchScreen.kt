@@ -3,7 +3,6 @@ package com.godzuche.achivitapp.feature.tasks.search_tasks
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -49,12 +48,13 @@ import com.godzuche.achivitapp.core.design_system.components.SearchToolbar
 import com.godzuche.achivitapp.core.design_system.icon.AchivitIcons
 import com.godzuche.achivitapp.core.design_system.theme.AchivitDimension
 import com.godzuche.achivitapp.core.domain.model.Task
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TaskCard
+import com.godzuche.achivitapp.feature.tasks.task_list.TaskCard
 
 @Composable
 fun SearchRoute(
     onExploreTasksClick: () -> Unit,
     onTaskClick: (Int) -> Unit,
+    onBackClick: () -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val recentSearchQueriesUiState by searchViewModel.recentSearchQueriesUiState.collectAsStateWithLifecycle()
@@ -73,14 +73,13 @@ fun SearchRoute(
             searchViewModel.onSearchTriggered(query)
         },
         onDeleteRecentQuery = searchViewModel::onDeleteRecentQuery,
-//        onBackClick = onBackClick,
+        onBackClick = onBackClick,
         onExploreTasksClick = onExploreTasksClick,
         onTaskClick = onTaskClick,
         onClearRecentSearches = searchViewModel::clearRecentSearches
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreen(
     searchQuery: String,
@@ -88,7 +87,7 @@ fun SearchScreen(
     recentSearchesUiState: RecentSearchQueriesUiState,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
-//    onBackClick: () -> Unit,
+    onBackClick: () -> Unit,
     onExploreTasksClick: () -> Unit,
     onClearRecentSearches: () -> Unit,
     onDeleteRecentQuery: (String) -> Unit,
@@ -107,6 +106,7 @@ fun SearchScreen(
                 searchQuery = searchQuery,
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchTriggered = onSearchTriggered,
+                onExitSearch = onBackClick,
                 content = {
                     when (searchResultUiState) {
                         SearchResultUiState.Loading,

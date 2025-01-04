@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.receiver
+package com.godzuche.achivitapp.feature.tasks.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

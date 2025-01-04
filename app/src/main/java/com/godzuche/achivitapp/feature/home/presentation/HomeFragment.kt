@@ -42,8 +42,8 @@ import com.godzuche.achivitapp.core.domain.model.AchivitDialog
 import com.godzuche.achivitapp.core.domain.model.ConfirmAction
 import com.godzuche.achivitapp.core.presentation.util.ConfirmationResourceProvider
 import com.godzuche.achivitapp.core.presentation.util.DialogResourceProvider
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksUiEvent
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksUiEvent
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis

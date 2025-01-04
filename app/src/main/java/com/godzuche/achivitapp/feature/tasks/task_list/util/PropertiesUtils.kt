@@ -1,11 +1,11 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list.util
+package com.godzuche.achivitapp.feature.tasks.task_list.util
 
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TaskListAdapter
+import com.godzuche.achivitapp.feature.tasks.task_list.TaskListAdapter
 
 data class Icons(
     val deleteIcon: Drawable?,

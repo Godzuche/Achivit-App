@@ -2,9 +2,9 @@ package com.godzuche.achivitapp.core.design_system.icon
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.Close
@@ -28,7 +28,7 @@ object AchivitIcons {
     val Delete = Icons.Rounded.Delete
     val DeviceTheme = R.drawable.device_theme
     val AccessTime = Icons.Rounded.AccessTime
-    val ArrowBack = Icons.Rounded.ArrowBack
+    val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
     val Search = Icons.Rounded.Search
     val Close = Icons.Rounded.Close
     val History = Icons.Rounded.History

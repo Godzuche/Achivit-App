@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list
+package com.godzuche.achivitapp.feature.tasks.task_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -167,14 +167,14 @@ class FilterBottomSheetDialog : BottomSheetDialogFragment() {
         }
         icButtonAddCategory.setOnClickListener {
             findNavController().navigate(
-                FilterBottomSheetDialogDirections.actionGlobalAddCategoryCollectionFragment(
+                FilterBottomSheetDialogDirections.Companion.actionGlobalAddCategoryCollectionFragment(
                     DialogTitle.CATEGORY
                 )
             )
         }
         icButtonAddCollection.setOnClickListener {
             findNavController().navigate(
-                FilterBottomSheetDialogDirections.actionGlobalAddCategoryCollectionFragment(
+                FilterBottomSheetDialogDirections.Companion.actionGlobalAddCategoryCollectionFragment(
                     DialogTitle.COLLECTION
                 )
             )

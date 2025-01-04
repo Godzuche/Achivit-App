@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
 import com.godzuche.achivitapp.core.domain.repository.AuthRepository
-import com.godzuche.achivitapp.core.presentation.state.DialogState
+import com.godzuche.achivitapp.core.presentation.state.DialogUiState
 import com.godzuche.achivitapp.feature.auth.presentation.UserAuthState
 import com.godzuche.achivitapp.feature.auth.presentation.isNotNull
 import com.godzuche.achivitapp.core.domain.model.AchivitDialog
@@ -25,8 +25,8 @@ class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val _dialogState = MutableStateFlow(DialogState())
-    val dialogState = _dialogState.asStateFlow()
+    private val _dialogUiState = MutableStateFlow(DialogUiState())
+    val dialogState = _dialogUiState.asStateFlow()
 
     private val _uiState: MutableStateFlow<ProfileUiState> =
         MutableStateFlow(ProfileUiState.Success())
@@ -112,7 +112,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun setDialogState(shouldShow: Boolean, dialog: AchivitDialog? = null) {
-        _dialogState.update {
+        _dialogUiState.update {
             it.copy(shouldShow = shouldShow, dialog = dialog)
         }
     }

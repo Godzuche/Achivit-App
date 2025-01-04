@@ -11,16 +11,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.R.integer
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,7 +64,10 @@ class SearchFragment : Fragment() {
                     onTaskClick = {
                         val action = SearchFragmentDirections.actionGlobalTaskFragment(id = it)
                         findNavController().navigate(action)
-                    }
+                    },
+                    onBackClick = {
+                        findNavController().navigateUp()
+                    },
                 )
             }
         }

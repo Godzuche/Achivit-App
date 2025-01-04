@@ -1,4 +1,4 @@
-package com.godzuche.achivitapp.feature.tasks.presentation.task_list
+package com.godzuche.achivitapp.feature.tasks.task_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.transition.Transition
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.core.design_system.components.AchivitDialog
 import com.godzuche.achivitapp.core.design_system.theme.AchivitTheme
@@ -85,7 +86,11 @@ class TasksFragment : Fragment() {
         }
 
         addTaskFab?.setOnClickListener {
-            findNavController().navigate(TasksFragmentDirections.actionGlobalModalBottomSheet(taskId = NOT_SET))
+            findNavController().navigate(
+                TasksFragmentDirections.Companion.actionGlobalModalBottomSheet(
+                    taskId = NOT_SET
+                )
+            )
         }
 
         /*binding.recyclerViewTasksList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -235,13 +240,13 @@ class TasksFragment : Fragment() {
 
                                 TasksTopBarActions.SETTINGS -> {
                                     val action =
-                                        TasksFragmentDirections.actionGlobalSettingsFragment()
+                                        TasksFragmentDirections.Companion.actionGlobalSettingsFragment()
                                     findNavController().navigate(action)
                                 }
 
                                 TasksTopBarActions.FILTER -> {
                                     val action =
-                                        TasksFragmentDirections.actionGlobalFilterBottomSheetDialog()
+                                        TasksFragmentDirections.Companion.actionGlobalFilterBottomSheetDialog()
                                     findNavController().navigate(action)
                                 }
                             }

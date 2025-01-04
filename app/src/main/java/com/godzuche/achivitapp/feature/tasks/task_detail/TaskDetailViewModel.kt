@@ -8,7 +8,7 @@ import com.godzuche.achivitapp.core.domain.model.ConfirmAction
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.repository.TaskRepository
 import com.godzuche.achivitapp.core.domain.usecase.GetTaskUseCase
-import com.godzuche.achivitapp.core.presentation.state.DialogState
+import com.godzuche.achivitapp.core.presentation.state.DialogUiState
 import com.godzuche.achivitapp.feature.tasks.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,8 +58,8 @@ class TaskDetailViewModel @Inject constructor(
 
     val accept: (TaskUiEvent) -> Unit
 
-    private val _dialogState = MutableStateFlow(DialogState())
-    val dialogState get() = _dialogState.asStateFlow()
+    private val _dialogUiState = MutableStateFlow(DialogUiState())
+    val dialogState get() = _dialogUiState.asStateFlow()
 
     init {
 
@@ -93,7 +93,7 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     fun setDialogState(shouldShow: Boolean, dialog: AchivitDialog? = null) {
-        _dialogState.update {
+        _dialogUiState.update {
             it.copy(shouldShow = shouldShow, dialog = dialog)
         }
     }

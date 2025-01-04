@@ -19,7 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.godzuche.achivitapp.R
 import com.godzuche.achivitapp.databinding.FragmentAddTaskCategoryBinding
-import com.godzuche.achivitapp.feature.tasks.presentation.task_list.TasksViewModel
+import com.godzuche.achivitapp.feature.tasks.task_list.TasksViewModel
 import com.godzuche.achivitapp.feature.tasks.util.DialogTitle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
