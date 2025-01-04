@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -182,6 +185,9 @@ class TaskDetailFragment : Fragment() {
              }
          }*/
 
+        val fab = requireActivity().findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
+        removeFabOverlapWithSystemBars(fab)
+
     }
 
     /*    private fun bind(task: Task) {
@@ -235,11 +241,50 @@ class TaskDetailFragment : Fragment() {
 
     }
 
+    private fun removeFabOverlapWithSystemBars(fab: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(fab) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val additionalBottomMargin = resources.getDimensionPixelSize(R.dimen.fab_bottom_margin)
+            val horizontal = resources.getDimensionPixelSize(R.dimen.fab_horizontal_margin)
+            // Apply the insets as a margin to the view. This solution sets
+            // only the bottom, left, and right dimensions, but you can apply whichever
+            // insets are appropriate to your layout. You can also update the view padding
+            // if that's more appropriate.
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+//                leftMargin = insets.left + horizontal
+                bottomMargin = insets.bottom + additionalBottomMargin
+//                rightMargin = insets.right + horizontal
+            }
+
+            // Return CONSUMED if you don't want want the window insets to keep passing
+            // down to descendant views.
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
     override fun onPause() {
         super.onPause()
 
         activity?.findViewById<ExtendedFloatingActionButton>(R.id.fab_add)
             ?.setOnClickListener(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val fab: View = requireActivity().findViewById(R.id.fab_add)
+
+        // Reset margins to default
+        val bottom = resources.getDimensionPixelSize(R.dimen.fab_bottom_margin)
+        val horizontal = resources.getDimensionPixelSize(R.dimen.fab_horizontal_margin)
+        fab.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+//            leftMargin = horizontal
+            bottomMargin = bottom
+//            rightMargin = horizontal
+        }
+
+        // Optionally remove any previously set insets listener
+        ViewCompat.setOnApplyWindowInsetsListener(fab, null)
     }
 
     private fun showConfirmationDialog() {
