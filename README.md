@@ -4,13 +4,18 @@ It is a work in progress 🚧.
 
 A planner app...
 
-[![Watch the video](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screenshots/splash-light.jpg)](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4)
+<!-- [![Watch the video](app/screenshots/splash-light.png)](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4) -->
+
+## Demo Video below:
+<a href="https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4">
+    <img src="https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screenshots/splash-light.png" alt="Demo Video" width="200"/>
+</a>
 
 
-![Screen Record](https://github.com/Godzuche/Achivit-App/blob/master/app/screen-records/Screen_recording_Achivit.gif)
+<!-- ![Screen Record](https://github.com/Godzuche/Achivit-App/blob/master/app/screen-records/Screen_recording_Achivit.gif) -->
 
 
-<table>
+<!-- <table>
   <tr>
     <td>
       <img src="https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/auth_screen.png" alt="Auth" width = "200px">
@@ -25,19 +30,12 @@ A planner app...
       <img src="https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/img_10.png" alt="Date Picker" width = "200px">
     </td>
   </tr>
- <!-- <tr>
-    <td>
-      <img src="https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/img_1.png" alt="Tasks" width = "200px">
-    </td>
-    <td>
-      <img src="https://github.com/Godzuche/Achivit-App/blob/master/app/screenshots/img_10.png" alt="Date Picker" width = "200px">
-    </td>
-  </tr> -->
-</table>
+</table> -->
 
 ## Features
 - Offline-first data using Room Database and Cloud Firestore
 - Full Text Search (Ft4)
+- Complex Database Relationships: One-to-Many, Many-to-Many, and Many-to-One
 - Asynchronous work with Coroutines
 - Persistent work with Work Manager
 - Schedules/Reminders with Alarm Manager
