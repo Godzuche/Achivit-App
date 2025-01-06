@@ -4,6 +4,9 @@ It is a work in progress 🚧.
 
 A planner app...
 
+[![Watch the video](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screenshots/splash-light.jpg)](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4)
+
+
 ![Screen Record](https://github.com/Godzuche/Achivit-App/blob/master/app/screen-records/Screen_recording_Achivit.gif)
 
 
