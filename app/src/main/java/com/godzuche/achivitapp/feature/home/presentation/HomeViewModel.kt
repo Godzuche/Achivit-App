@@ -142,7 +142,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun dismissPermissionDialog() {
-        visiblePermissionDialogQueue.removeFirst()
+        visiblePermissionDialogQueue.removeAt(0)
     }
 
     fun onPermissionResult(permission: String, isGranted: Boolean) {

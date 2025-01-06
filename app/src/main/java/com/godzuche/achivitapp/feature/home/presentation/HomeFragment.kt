@@ -2,6 +2,9 @@ package com.godzuche.achivitapp.feature.home.presentation
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -10,25 +13,29 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -128,14 +135,18 @@ class HomeFragment : Fragment() {
                         }
                     }
 
+                    var shouldShowExactAlarmDialog by rememberSaveable {
+                        mutableStateOf(true)
+                    }
                     val permissionDialogQueue = homeViewModel.visiblePermissionDialogQueue
                     val multiplePermissionsResultLauncher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.RequestMultiplePermissions()
                     ) { perms ->
                         perms.keys.forEach { permission ->
+                            val isGranted = perms[permission] == true
                             homeViewModel.onPermissionResult(
                                 permission = permission,
-                                isGranted = perms[permission] == true
+                                isGranted = isGranted
                             )
                         }
                     }
@@ -214,6 +225,7 @@ class HomeFragment : Fragment() {
                                     requireActivity().openAppSettings()
                                 }
                             )
+
                         }
 
                     // Try to request permission once at the start of the app
@@ -223,9 +235,29 @@ class HomeFragment : Fragment() {
                                 arrayOf(Manifest.permission.POST_NOTIFICATIONS)
                             )
                         } else {
-                            //
+                            // No permission needed
                         }
                     }
+
+                    if (
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                        !requireContext().canScheduleExactAlarms() &&
+                        shouldShowExactAlarmDialog
+                    ) {
+                        PermissionDialog(
+                            permissionTextProvider = ExactAlarmPermissionTextProvider(),
+                            isPermanentlyDeclined = false,
+                            onDismiss = {
+                                shouldShowExactAlarmDialog = false
+                            },
+                            onOkClicked = {
+                                requireContext().requestExactAlarmPermission()
+                                shouldShowExactAlarmDialog = false
+                            },
+                            onGoToAppSettingsClick = { }
+                        )
+                    }
+
                 }
 
             }
@@ -240,8 +272,37 @@ fun Activity.openAppSettings() {
     ).also(::startActivity)
 }
 
+// Check if the app can schedule exact alarms
+fun Context.canScheduleExactAlarms(): Boolean {
+    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    return Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+}
+
+// Launch the permission request intent
+private fun Context.requestExactAlarmPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val intent = Intent(
+            Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+            Uri.fromParts("package", packageName, null)
+        )
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "Unable to open exact alarm settings", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
 interface PermissionTextProvider {
-    fun getDescription(isPermanentlyDeclined: Boolean): String
+    fun getDescription(isPermanentlyDeclined: Boolean): String = ""
+    fun getDescription(): String = ""
+}
+
+class ExactAlarmPermissionTextProvider : PermissionTextProvider {
+    override fun getDescription(): String {
+        return "This app needs access to exact alarm to be able to send timely notifications. " +
+                "This is required for proper functioning."
+    }
 }
 
 class NotificationsPermissionTextProvider : PermissionTextProvider {
@@ -282,7 +343,7 @@ fun PermissionDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = DialogProperties(usePlatformDefaultWidth = true),
         title = {
             Text(text = "Permission Required")
         },
@@ -290,29 +351,43 @@ fun PermissionDialog(
             Text(
                 text = permissionTextProvider.getDescription(
                     isPermanentlyDeclined = isPermanentlyDeclined
-                )
+                ).ifBlank { permissionTextProvider.getDescription() }
             )
         },
         confirmButton = {
-            Text(
-                text = if (isPermanentlyDeclined) {
-                    "Grant Permission"
-                } else {
-                    "OK"
+            TextButton(
+                onClick = {
+                    if (isPermanentlyDeclined) {
+                        onGoToAppSettingsClick.invoke()
+                    } else {
+                        onOkClicked.invoke()
+                    }
                 },
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        if (isPermanentlyDeclined) {
-                            onGoToAppSettingsClick.invoke()
-                        } else {
-                            onOkClicked.invoke()
-                        }
-                    }
-                    .padding(16.dp)
-            )
+                    .wrapContentWidth(Alignment.CenterHorizontally),
+//                )
+            ) {
+                Text(
+                    text = if (isPermanentlyDeclined) {
+                        "Grant Permission"
+                    } else {
+                        "OK"
+                    },
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clickable {
+//                            if (isPermanentlyDeclined) {
+//                                onGoToAppSettingsClick.invoke()
+//                            } else {
+//                                onOkClicked.invoke()
+//                            }
+//                        }
+//                        .padding(16.dp)
+                )
+            }
         }
     )
 }

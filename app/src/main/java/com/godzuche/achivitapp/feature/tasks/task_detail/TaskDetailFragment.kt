@@ -66,9 +66,6 @@ class TaskDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        /*_binding = FragmentTaskDetailBinding.inflate(inflater, container, false)
-        return binding.root*/
-
         return ComposeView(requireContext()).apply {
             id = R.id.task_detail_fragment
             layoutParams = ViewGroup.LayoutParams(

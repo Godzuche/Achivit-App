@@ -3,6 +3,7 @@ package com.godzuche.achivitapp.feature.tasks.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkerParameters
@@ -19,6 +20,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 @HiltWorker
 class DueTaskWorker @AssistedInject constructor(
@@ -55,6 +57,7 @@ class DueTaskWorker @AssistedInject constructor(
     }
 
     companion object {
+        const val DUE_TASK_WORK_NAME = "DueTaskWorkName"
         /**
          * Expedited one time work to notify user of due tasks.
          * */
@@ -63,5 +66,14 @@ class DueTaskWorker @AssistedInject constructor(
             .setInputData(workDataOf(KEY_TASK_ID to taskId))
             .addTag("due_task")
             .build()
+
+        fun buildFallbackDueTaskWork(taskId: Int, triggerTime: Long): OneTimeWorkRequest {
+            val delay = triggerTime - System.currentTimeMillis()
+            val workRequest = OneTimeWorkRequestBuilder<DueTaskWorker>()
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .setInputData(workDataOf(KEY_TASK_ID to taskId))
+                .build()
+            return workRequest
+        }
     }
 }

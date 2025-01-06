@@ -7,6 +7,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.godzuche.achivitapp.core.common.util.Constants
 import com.godzuche.achivitapp.feature.tasks.worker.DueTaskWorker
+import com.godzuche.achivitapp.feature.tasks.worker.DueTaskWorker.Companion.DUE_TASK_WORK_NAME
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +31,7 @@ class DueTaskAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    companion object {
-        private const val DUE_TASK_WORK_NAME = "DueTaskWorkName"
-    }
+//    companion object {
+//        private const val DUE_TASK_WORK_NAME = "DueTaskWorkName"
+//    }
 }

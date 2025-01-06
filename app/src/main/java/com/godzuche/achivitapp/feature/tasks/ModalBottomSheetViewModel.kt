@@ -1,5 +1,6 @@
 package com.godzuche.achivitapp.feature.tasks
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.godzuche.achivitapp.core.common.AchivitResult
@@ -18,6 +19,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import timber.log.Timber
 import javax.inject.Inject
@@ -137,6 +139,7 @@ class ModalBottomSheetViewModel @Inject constructor(
         taskDescription: String,
         dueDate: Long,
     ) {
+        Log.d("Add Task", "Add New Task VM")
 
         val created = Clock.System.now().toEpochMilliseconds()
 
@@ -150,12 +153,15 @@ class ModalBottomSheetViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            val insertedTaskId = async { taskRepository.insertAndGetTaskId(newTask) }.await()
+            // Switch to Default Dispatcher since this block can be long running.
+            withContext(Dispatchers.Default) {
+                val insertedTaskId = async { taskRepository.insertAndGetTaskId(newTask) }
 
-            dueTaskAlarmScheduler.schedule(
-                newTask.copy(id = insertedTaskId)
-            )
-            Timber.tag("Add Task").d("schedule() fun called in VM")
+                dueTaskAlarmScheduler.schedule(
+                    newTask.copy(id = insertedTaskId.await())
+                )
+                Timber.tag("Add Task").d("schedule() fun called in VM")
+            }
         }
 
         /*        viewModelScope.launch {

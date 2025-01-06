@@ -6,10 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
+import com.godzuche.achivitapp.core.common.util.Constants
 import com.godzuche.achivitapp.core.domain.model.Task
 import com.godzuche.achivitapp.core.domain.util.DueTaskAlarmScheduler
-import com.godzuche.achivitapp.core.common.util.Constants
+import com.godzuche.achivitapp.feature.home.presentation.canScheduleExactAlarms
 import com.godzuche.achivitapp.feature.tasks.receiver.DueTaskAlarmReceiver
+import com.godzuche.achivitapp.feature.tasks.worker.DueTaskWorker
+import com.godzuche.achivitapp.feature.tasks.worker.DueTaskWorker.Companion.DUE_TASK_WORK_NAME
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,18 +39,19 @@ class DueTaskAndroidAlarmScheduler @Inject constructor(
         }
         val pendingIntent = getAlarmPendingIntent(task, intent)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                /*alarmManager.setExactAndAllowWhileIdle(
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (context.canScheduleExactAlarms()) {
+//                val alarmClockInfo = AlarmManager.AlarmClockInfo(task.dueDate, pendingIntent)
+//                alarmManager.setAlarmClock(
+//                    alarmClockInfo,
+//                    pendingIntent,
+//                )
+                alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     task.dueDate,
-                    pendingIntent
-                )*/
-                val alarmClockInfo = AlarmManager.AlarmClockInfo(task.dueDate, pendingIntent)
-                alarmManager.setAlarmClock(
-                    alarmClockInfo,
                     pendingIntent,
                 )
+                Log.d("DueTask", "scheduled exact alarm")
             } else {
                 //
                 /*// Ask users to go to exact alarm page in system settings.
@@ -52,19 +59,34 @@ class DueTaskAndroidAlarmScheduler @Inject constructor(
                 // Permission not yet approved. Display user notice and revert to a fallback
                 // approach.
 //                alarmManager.setWindow()
-                alarmManager.set(
-                    AlarmManager.RTC_WAKEUP,
-                    task.dueDate,
-                    pendingIntent,
-                )
+//                alarmManager.set(
+//                    AlarmManager.RTC_WAKEUP,
+//                    task.dueDate,
+//                    pendingIntent,
+//                )
+//                Log.d("DueTask", "scheduled inexact alarm")
+                task.id?.let { id ->
+                    val dueTaskWorkUniqueName = DUE_TASK_WORK_NAME + id
+                    WorkManager.getInstance(context)
+                        .enqueueUniqueWork(
+                            dueTaskWorkUniqueName,
+                            ExistingWorkPolicy.REPLACE,
+                            DueTaskWorker.buildFallbackDueTaskWork(
+                                taskId = id,
+                                triggerTime = task.dueDate
+                            )
+                        )
+                }
+                Log.d("DueTask", "Fallback WorkManager reminder scheduled")
             }
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                task.dueDate,
-                pendingIntent,
-            )
-        }
+//        } else {
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                task.dueDate,
+//                pendingIntent,
+//            )
+//            Log.d("DueTask", "scheduled exact alarm")
+//        }
     }
 
     override fun cancel(task: Task) {
@@ -89,7 +111,7 @@ class DueTaskAndroidAlarmScheduler @Inject constructor(
         )
         return pendingIntent
     }
-    
+
     companion object {
         private const val TAG = "DueTaskAndroidAlarmScheduler"
     }
