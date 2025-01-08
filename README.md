@@ -6,7 +6,8 @@ A planner app...
 
 <!-- [![Watch the video](app/screenshots/splash-light.png)](https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4) -->
 
-## Demo Video below:
+## Demo Video
+Click the image below to get the video 👇🏽
 <a href="https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screen-records/screen_record_latest.mp4">
     <img src="https://raw.githubusercontent.com/Godzuche/Achivit-App/more-compose/app/screenshots/splash-light.png" alt="Demo Video" width="200"/>
 </a>
