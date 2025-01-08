@@ -36,11 +36,13 @@ Click the image below to get the video 👇🏽
 
 ## Features
 - Offline-first data using Room Database and Cloud Firestore
-- Full Text Search (Ft4)
+- Pagination with Paging 3
+- Efficient Search functionality using Full Text Search (Ft4)
 - Complex Database Relationships: One-to-Many, Many-to-Many, and Many-to-One
 - Asynchronous work with Coroutines
 - Persistent work with Work Manager
 - Schedules/Reminders with Alarm Manager
+- Network Connectivity monitoring
 - In-App Notifications
 - Beautiful and minimalistic UI with Jetpack Compose
 - Filter Tasks
@@ -49,7 +51,7 @@ Click the image below to get the video 👇🏽
 ## Tech Stack, API and Libraries used
 + Room Database
 + Firebase Firestore & Google Auth
-+ XML plus Jetpack Compose Migration
++ XML and Jetpack Compose
 + Alarm Manager
 + Coroutines
 + Work Manager
